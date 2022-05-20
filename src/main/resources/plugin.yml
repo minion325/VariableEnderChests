@@ -1,0 +1,4 @@
+name: BetterEnderChests
+version: '${project.version}'
+main: me.saif.betterenderchests.BetterEnderChests
+api-version: 1.18
