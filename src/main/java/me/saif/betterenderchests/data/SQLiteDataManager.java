@@ -88,8 +88,8 @@ public class SQLiteDataManager extends DataManager {
     public Map<UUID, EnderChestSnapshot> loadEnderChestsByUUID(Set<UUID> uuids) {
         if (uuids.isEmpty())
             return new HashMap<>();
-        String sql = "SELECT * FROM " + getDataTableName() + "," + getPlayersTableName() + ".NAME LEFT JOIN" + getPlayersTableName()
-                + " ON " + getDataTableName() + ".UUID=" + getPlayersTableName() + " WHERE " + getWhereConditionForUUID(uuids.size());
+        String sql = "SELECT " + getDataTableName() + ".UUID," + getPlayersTableName() + ".NAME,ROWS,CONTENTS FROM " + getDataTableName() + " LEFT JOIN " + getPlayersTableName()
+                + " ON " + getDataTableName() + ".UUID=" + getPlayersTableName() + ".UUID WHERE " + getWhereConditionForUUID(uuids.size());
         try (PreparedStatement statement = this.database.getConnection().prepareStatement(sql)) {
             Map<UUID, EnderChestSnapshot> resultMap = new HashMap<>();
             Iterator<UUID> uuidIterator = uuids.iterator();

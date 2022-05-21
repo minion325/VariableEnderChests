@@ -2,6 +2,7 @@ package me.saif.betterenderchests.enderchest;
 
 import me.saif.betterenderchests.BetterEnderChests;
 import me.saif.betterenderchests.data.DataManager;
+import me.saif.betterenderchests.utils.Callback;
 import me.saif.betterenderchests.utils.Manager;
 import me.saif.betterenderchests.utils.MinecraftName;
 import org.bukkit.Bukkit;
@@ -26,16 +27,26 @@ public class EnderChestManager extends Manager<BetterEnderChests> implements Lis
     private Map<UUID, EnderChest> uuidEnderChestMap = new ConcurrentHashMap<>();
     private Map<MinecraftName, UUID> nameUUIDMap = new ConcurrentHashMap<>();
     private Set<UUID> toCreate = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private int defaultRows = 1;
 
     public EnderChestManager(BetterEnderChests plugin) {
         super(plugin);
         this.dataManager = getPlugin().getDataManager();
 
         //load data for already online players eg. if plugin is reloaded.
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            this.onPlayerLogin(onlinePlayer.getName(), onlinePlayer.getUniqueId());
-            this.onJoin(new PlayerJoinEvent(onlinePlayer, ""));
-        }
+
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                this.onPlayerLogin(onlinePlayer.getName(), onlinePlayer.getUniqueId());
+                this.onJoin(new PlayerJoinEvent(onlinePlayer, ""));
+                onlinePlayer.getOpenInventory();
+                onlinePlayer.getOpenInventory().getTopInventory();
+                if (onlinePlayer.getOpenInventory().getTopInventory().equals(onlinePlayer.getEnderChest())) {
+                    this.openEnderChest(this.getEnderChest(onlinePlayer), onlinePlayer);
+                }
+            }
+        });
+
     }
 
     @EventHandler
@@ -57,13 +68,14 @@ public class EnderChestManager extends Manager<BetterEnderChests> implements Lis
         }
 
         EnderChestSnapshot enderChestSnapshot = this.dataManager.loadEnderChest(uuid);
+        System.out.println("Loading data for " + name);
 
         if (enderChestSnapshot == null) {
             toCreate.add(uuid);
             return;
         }
 
-        EnderChest enderChest = new EnderChest(uuid, name, enderChestSnapshot.getContents());
+        EnderChest enderChest = new EnderChest(uuid, name, enderChestSnapshot.getContents(), enderChestSnapshot.getRows());
         this.uuidEnderChestMap.put(uuid, enderChest);
     }
 
@@ -81,16 +93,15 @@ public class EnderChestManager extends Manager<BetterEnderChests> implements Lis
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onInventoryOpen(InventoryOpenEvent event) {
-        if (event.isCancelled()) return;
+        if (event.isCancelled())
+            return;
 
-        if (!(event.getPlayer() instanceof Player player)) return;
-        if (event.getInventory().equals(player.getEnderChest())) event.setCancelled(true);
+        if (!(event.getPlayer() instanceof Player player))
+            return;
 
-        for (int i = 6; i > 0; i--) {
-            if (player.hasPermission("enderchest.size." + i)) {
-                openEnderChest(player, i);
-                return;
-            }
+        if (event.getInventory().equals(player.getEnderChest())) {
+            event.setCancelled(true);
+            this.openEnderChest(this.getEnderChest(player), player);
         }
     }
 
@@ -99,7 +110,10 @@ public class EnderChestManager extends Manager<BetterEnderChests> implements Lis
         EnderChest enderChest = getEnderChest(event.getPlayer());
         event.getPlayer().closeInventory();
 
-        if (isSafeToRemove(enderChest)) {
+        for (int i = 0; i < enderChest.getInventory().getViewers().size(); i++) {
+            System.out.println(i + ": " + enderChest.getInventory().getViewers().get(i).getName());
+        }
+        if (!enderChest.hasViewers()) {
             EnderChestSnapshot snapshot = enderChest.snapshot();
             this.uuidEnderChestMap.remove(snapshot.getUuid());
             this.nameUUIDMap.remove(new MinecraftName(snapshot.getName()));
@@ -109,7 +123,8 @@ public class EnderChestManager extends Manager<BetterEnderChests> implements Lis
             });
         }
 
-        //else do nothing, we will deal with this later when clearing cache.
+        //someone is watching the enderchest so keep it loaded
+        //we will deal with this later when clearing cache periodically.
     }
 
     public EnderChest getEnderChest(Player player) {
@@ -117,36 +132,33 @@ public class EnderChestManager extends Manager<BetterEnderChests> implements Lis
     }
 
     //opens ender chest and reopens updated enderchest for players
-    public void openEnderChest(Player player, int rows) {
-        EnderChest enderChest = getEnderChest(player);
-
-        Inventory oldChest = enderChest.getInventory();
-        Inventory newChest = enderChest.getInventory(rows);
-
-        //if they're the same
-        if (oldChest.equals(newChest)) {
-            player.openInventory(newChest);
-            return;
-        }
-
-        //if not we need to open the new one for all viewers as well
-        List<HumanEntity> list = oldChest.getViewers();
-        if (!list.contains(player))
-            list.add(player);
-
-        for (HumanEntity humanEntity : list) {
-            humanEntity.closeInventory();
-            humanEntity.openInventory(enderChest.getInventory());
+    public void openEnderChest(EnderChest chest, Player player) {
+        //owner is online
+        if (Bukkit.getPlayer(chest.getUUID()) != null) {
+            int rows = getNumRows(Bukkit.getPlayer(chest.getUUID()));
+            chest.setRows(rows);
+            chest.openInventory(player);
+        } else {
+            chest.openInventory(player);
         }
     }
 
-    //checks if anyone has the inventory open. if yes then it is not safe to remove
-    public boolean isSafeToRemove(EnderChest enderChest) {
-        List<HumanEntity> viewers = enderChest.getInventory().getViewers();
-        //debug start
-        getPlugin().getLogger().info(viewers.size() == 0 ? "Safe to remove" : "Unsafe to remove");
-        //debug end
-        return viewers.size() == 0;
+    private int getNumRows(Player player) {
+        for (int i = 6; i > 0; i--) {
+            if (player.hasPermission("enderchest.size." + i)) {
+                return i;
+            }
+        }
+        return defaultRows;
+
+    }
+
+    public Callback<EnderChest> getEnderChest(String name) {
+        return null;
+    }
+
+    public Callback<EnderChest> getEnderChest(UUID uuid) {
+        return null;
     }
 
     //saves data
