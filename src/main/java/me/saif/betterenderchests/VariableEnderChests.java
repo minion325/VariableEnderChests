@@ -4,13 +4,10 @@ import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.data.SQLiteDataManager;
 import me.saif.betterenderchests.commands.EnderChestCommand;
-import me.saif.betterenderchests.enderchest.EnderChest;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
-import me.saif.betterenderchests.utils.Callback;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import revxrsal.commands.CommandHandler;
 import revxrsal.commands.bukkit.core.BukkitHandler;
@@ -19,7 +16,7 @@ import java.util.Locale;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public final class BetterEnderChests extends JavaPlugin {
+public final class VariableEnderChests extends JavaPlugin {
 
     private DataManager dataManager;
     private EnderChestManager enderChestManager;

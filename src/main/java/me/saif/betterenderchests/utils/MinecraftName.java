@@ -1,7 +1,5 @@
 package me.saif.betterenderchests.utils;
 
-import java.util.Objects;
-
 public class MinecraftName {
 
     private String name;

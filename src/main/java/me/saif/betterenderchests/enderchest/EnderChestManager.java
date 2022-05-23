@@ -1,6 +1,6 @@
 package me.saif.betterenderchests.enderchest;
 
-import me.saif.betterenderchests.BetterEnderChests;
+import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.utils.Callback;
@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class EnderChestManager extends Manager<BetterEnderChests> implements Listener {
+public class EnderChestManager extends Manager<VariableEnderChests> implements Listener {
 
     private DataManager dataManager;
 
@@ -44,7 +44,7 @@ public class EnderChestManager extends Manager<BetterEnderChests> implements Lis
     private static Sound OPEN_SOUND;
     private static Sound CLOSE_SOUND;
 
-    public EnderChestManager(BetterEnderChests plugin) {
+    public EnderChestManager(VariableEnderChests plugin) {
         super(plugin);
         this.dataManager = getPlugin().getDataManager();
 

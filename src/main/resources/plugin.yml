@@ -1,4 +1,4 @@
-name: BetterEnderChests
+name: VariableEnderChests
 version: '${project.version}'
-main: me.saif.betterenderchests.BetterEnderChests
+main: me.saif.betterenderchests.VariableEnderChests
 api-version: 1.13

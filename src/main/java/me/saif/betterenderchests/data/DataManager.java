@@ -1,14 +1,14 @@
 package me.saif.betterenderchests.data;
 
-import me.saif.betterenderchests.BetterEnderChests;
+import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.enderchest.EnderChestSnapshot;
 import me.saif.betterenderchests.utils.Manager;
 
 import java.util.*;
 
-public abstract class DataManager extends Manager<BetterEnderChests> {
+public abstract class DataManager extends Manager<VariableEnderChests> {
 
-    public DataManager(BetterEnderChests plugin) {
+    public DataManager(VariableEnderChests plugin) {
         super(plugin);
     }
 

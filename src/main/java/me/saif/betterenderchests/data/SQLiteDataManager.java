@@ -1,6 +1,6 @@
 package me.saif.betterenderchests.data;
 
-import me.saif.betterenderchests.BetterEnderChests;
+import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.data.database.Database;
 import me.saif.betterenderchests.data.database.SQLiteDatabase;
 import me.saif.betterenderchests.enderchest.EnderChestSnapshot;
@@ -21,7 +21,7 @@ public class SQLiteDataManager extends DataManager {
     private String dataTableName = "enderchests";
     private String playersTableName = "players";
 
-    public SQLiteDataManager(BetterEnderChests plugin) {
+    public SQLiteDataManager(VariableEnderChests plugin) {
         super(plugin);
         try {
             this.database = new SQLiteDatabase(new File(getPlugin().getDataFolder(), "data.db"));

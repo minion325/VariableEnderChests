@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.saif</groupId>
-    <artifactId>BetterEnderChests</artifactId>
+    <artifactId>VariableEnderChests</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 

@@ -1,6 +1,6 @@
 package me.saif.betterenderchests.commands;
 
-import me.saif.betterenderchests.BetterEnderChests;
+import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.enderchest.EnderChest;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
@@ -17,7 +17,7 @@ public class EnderChestCommand {
     private EnderChestManager ecm;
     private Messages messages;
 
-    public EnderChestCommand(BetterEnderChests plugin) {
+    public EnderChestCommand(VariableEnderChests plugin) {
         this.ecm = plugin.getEnderChestManager();
         this.messages = plugin.getMessages();
     }
