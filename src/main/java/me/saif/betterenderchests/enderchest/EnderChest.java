@@ -65,6 +65,8 @@ public class EnderChest {
     }
 
     protected void openInventory(Player player) {
+        if (player.getOpenInventory().getTopInventory().equals(this.inventory))
+            return;
         player.openInventory(this.inventory);
     }
 

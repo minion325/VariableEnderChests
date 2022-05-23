@@ -131,6 +131,47 @@ public class SQLiteDataManager extends DataManager {
 
     @Override
     public Map<String, EnderChestSnapshot> loadEnderChestsByName(Set<String> names) {
-        return null;
+        if (names.isEmpty())
+            return new HashMap<>();
+        String sql = "SELECT " + getDataTableName() + ".UUID," + getPlayersTableName() + ".NAME,ROWS,CONTENTS FROM " + getDataTableName() + " LEFT JOIN " + getPlayersTableName()
+                + " ON " + getDataTableName() + ".UUID=" + getPlayersTableName() + ".UUID WHERE " + getWhereConditionForNames(names.size());
+        try (PreparedStatement statement = this.database.getConnection().prepareStatement(sql)) {
+            Map<String, EnderChestSnapshot> resultMap = new HashMap<>();
+            Iterator<String> nameIterator = names.iterator();
+            int i = 0;
+            while (i < names.size()) {
+                statement.setString(i + 1, nameIterator.next());
+                i++;
+            }
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                ItemStack[] items = ItemStackSerializer.deserialize(resultSet.getString("CONTENTS"));
+                int rows = resultSet.getInt("ROWS");
+                UUID uuid = UUID.fromString(resultSet.getString("UUID"));
+                String name = resultSet.getString("NAME");
+                EnderChestSnapshot snapshot = new EnderChestSnapshot(uuid, name, items, rows);
+                resultMap.put(name.toLowerCase(), snapshot);
+            }
+
+            return resultMap;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private String getWhereConditionForNames(int num) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < num; i++) {
+            stringBuilder.append(dataTableName).append(".UUID = (SELECT ").append("UUID FROM ")
+                    .append(playersTableName).append(" WHERE ").append("NAME=? LIMIT 1)");
+            if (i == num - 1)
+                stringBuilder.append(";");
+            else
+                stringBuilder.append("OR ");
+        }
+        return stringBuilder.toString();
     }
 }

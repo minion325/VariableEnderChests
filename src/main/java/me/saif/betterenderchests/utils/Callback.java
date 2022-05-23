@@ -9,7 +9,7 @@ public class Callback<T> {
     private T result;
     private boolean results = false;
 
-    public void addResultListener(Runnable runnable) {
+    public synchronized void addResultListener(Runnable runnable) {
         if (!this.hasResults())
             this.runnables.add(runnable);
         else {
@@ -22,7 +22,7 @@ public class Callback<T> {
      *
      * @param result Result that is being proviaded to the callback.
      */
-    public void setResult(T result) {
+    public synchronized void setResult(T result) {
         if (this.hasResults())
             throw new IllegalStateException("Callback already has a result");
         this.result = result;
@@ -41,7 +41,7 @@ public class Callback<T> {
         return this.results;
     }
 
-    public synchronized T getResult() {
+    public T getResult() {
         return result;
     }
 

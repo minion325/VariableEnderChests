@@ -2,118 +2,198 @@ package me.saif.betterenderchests.enderchest;
 
 import me.saif.betterenderchests.BetterEnderChests;
 import me.saif.betterenderchests.data.DataManager;
+import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.utils.Callback;
 import me.saif.betterenderchests.utils.Manager;
 import me.saif.betterenderchests.utils.MinecraftName;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.HumanEntity;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class EnderChestManager extends Manager<BetterEnderChests> implements Listener {
 
     private DataManager dataManager;
 
-    private Map<UUID, EnderChest> uuidEnderChestMap = new ConcurrentHashMap<>();
-    private Map<MinecraftName, UUID> nameUUIDMap = new ConcurrentHashMap<>();
-    private Set<UUID> toCreate = Collections.newSetFromMap(new ConcurrentHashMap<>());
-    private int defaultRows = 1;
+    private Map<UUID, EnderChest> uuidEnderChestMap = new HashMap<>();
+    private Map<MinecraftName, UUID> nameUUIDMap = new HashMap<>();
+
+    private Map<UUID, Callback<EnderChest>> uuidCallbackMap = new HashMap<>();
+    private Map<MinecraftName, Callback<EnderChest>> nameCallbackMap = new HashMap<>();
+
+    private Map<UUID, Block> openFromBlocks = new HashMap<>();
+    private int defaultRows;
+    private boolean convert;
+
+    private static Sound OPEN_SOUND;
+    private static Sound CLOSE_SOUND;
 
     public EnderChestManager(BetterEnderChests plugin) {
         super(plugin);
         this.dataManager = getPlugin().getDataManager();
 
-        //load data for already online players eg. if plugin is reloaded.
+        int ver = Integer.parseInt(StringUtils.split(Bukkit.getVersion(), ".")[1]);
 
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                this.onPlayerLogin(onlinePlayer.getName(), onlinePlayer.getUniqueId());
-                this.onJoin(new PlayerJoinEvent(onlinePlayer, ""));
-                onlinePlayer.getOpenInventory();
-                onlinePlayer.getOpenInventory().getTopInventory();
-                if (onlinePlayer.getOpenInventory().getTopInventory().equals(onlinePlayer.getEnderChest())) {
-                    this.openEnderChest(this.getEnderChest(onlinePlayer), onlinePlayer);
+        //load the correct sound depending on verison
+        if (ver == 8) {
+            OPEN_SOUND = Sound.valueOf("CHEST_OPEN");
+            CLOSE_SOUND = Sound.valueOf("CHEST_CLOSE");
+        } else if (ver < 13) {
+            OPEN_SOUND = Sound.valueOf("BLOCK_ENDERCHEST_OPEN");
+            CLOSE_SOUND = Sound.valueOf("BLOCK_ENDERCHEST_CLOSE");
+        } else {
+            OPEN_SOUND = Sound.BLOCK_ENDER_CHEST_OPEN;
+            CLOSE_SOUND = Sound.BLOCK_ENDER_CHEST_CLOSE;
+        }
+
+        //getting config values
+        this.convert = this.getPlugin().getConfig().getBoolean("convert-current-ender-chest", true);
+        this.defaultRows = this.getPlugin().getConfig().getInt("default-rows", 3);
+        if (this.defaultRows > 6)
+            this.defaultRows = 6;
+        else if (this.defaultRows < 0)
+            this.defaultRows = 0;
+
+            //load data for already online players eg. if plugin is reloaded.
+            Bukkit.getScheduler().runTask(plugin, () -> {
+
+
+                Set<UUID> toGet = Bukkit.getOnlinePlayers().stream().map((Function<Player, UUID>) Entity::getUniqueId).collect(Collectors.toSet());
+                Map<UUID, EnderChestSnapshot> data = this.dataManager.loadEnderChestsByUUID(toGet);
+
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    this.dataManager.saveNameAndUUID(player.getName(), player.getUniqueId());
+
+                    EnderChestSnapshot snapshot = data.get(player.getUniqueId());
+                    if (snapshot == null) {
+                        this.uuidEnderChestMap.put(player.getUniqueId(),
+                                createNew(player));
+                    } else {
+                        this.uuidEnderChestMap.put(player.getUniqueId(),
+                                new EnderChest(player.getUniqueId(), player.getName(), snapshot.getContents(), snapshot.getRows()));
+                    }
+
+                    if (player.getOpenInventory().getTopInventory().equals(player.getEnderChest())) {
+                        player.closeInventory();
+                        int rows = this.getNumRows(player);
+                        if (rows == 0) {
+                            this.getPlugin().getMessages().sendTo(player, Messages.NO_ROWS);
+                        }
+                        this.openEnderChest(this.getEnderChest(player), player, this.getNumRows(player));
+                    }
+                }
+            });
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this.getPlugin(), () -> {
+            Map<UUID, EnderChestSnapshot> toSave = new HashMap<>();
+            for (UUID uuid : this.uuidEnderChestMap.keySet()) {
+                if (Bukkit.getPlayer(uuid) == null) {
+                    toSave.put(uuid, this.uuidEnderChestMap.remove(uuid).snapshot());
                 }
             }
-        });
 
+            Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> this.dataManager.saveEnderChestMultiple(toSave));
+
+            for (MinecraftName minecraftName : this.nameCallbackMap.keySet()) {
+                Player player = Bukkit.getPlayerExact(minecraftName.getName());
+                if (player == null)
+                    this.nameCallbackMap.remove(minecraftName);
+            }
+        }, 6000L, 6000L);
+    }
+
+    private EnderChest loadData(String name, UUID uuid) {
+        EnderChestSnapshot enderChestSnapshot = this.dataManager.loadEnderChest(uuid);
+
+        if (enderChestSnapshot == null) {
+            return null;
+        }
+
+        return new EnderChest(uuid, name, enderChestSnapshot.getContents(), enderChestSnapshot.getRows());
     }
 
     @EventHandler
-    private void onAsyncPlayerLogin(AsyncPlayerPreLoginEvent event) {
-        if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED)
+    private void onJoin(PlayerLoginEvent event) {
+        if (event.getResult() != PlayerLoginEvent.Result.ALLOWED)
             return;
 
-        onPlayerLogin(event.getName(), event.getUniqueId());
-    }
-
-    private void onPlayerLogin(String name, UUID uuid) {
-        this.dataManager.saveNameAndUUID(name, uuid);
+        String name = event.getPlayer().getName();
+        UUID uuid = event.getPlayer().getUniqueId();
 
         this.nameUUIDMap.put(new MinecraftName(name), uuid);
 
         if (this.uuidEnderChestMap.containsKey(uuid)) {
-            //data is loaded :D so we just need to check that name is the same
             return;
         }
 
-        EnderChestSnapshot enderChestSnapshot = this.dataManager.loadEnderChest(uuid);
-        System.out.println("Loading data for " + name);
-
-        if (enderChestSnapshot == null) {
-            toCreate.add(uuid);
-            return;
-        }
-
-        EnderChest enderChest = new EnderChest(uuid, name, enderChestSnapshot.getContents(), enderChestSnapshot.getRows());
-        this.uuidEnderChestMap.put(uuid, enderChest);
+        Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
+            dataManager.saveNameAndUUID(name, uuid);
+            EnderChest enderChest = loadData(name, uuid);
+            Bukkit.getScheduler().runTask(getPlugin(), () -> uuidEnderChestMap.put(uuid, Objects.requireNonNullElseGet(enderChest,
+                    () -> createNew(event.getPlayer()))));
+        });
     }
 
-    @EventHandler
-    private void onJoin(PlayerJoinEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    private void onInventoryOpen(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
+            return;
+
         Player player = event.getPlayer();
-        if (!toCreate.contains(player.getUniqueId())) return;
+        if (event.getClickedBlock().getType() == Material.ENDER_CHEST) {
+            event.setCancelled(true);
 
-        if (this.uuidEnderChestMap.containsKey(player.getUniqueId()))
-            throw new IllegalStateException("Cannot create new enderchest for a player with an already loaded enderchest");
+            int rows = this.getNumRows(player);
+            if (rows == 0) {
+                this.getPlugin().getMessages().sendTo(player, Messages.NO_ROWS);
+            } else {
 
-        EnderChest enderChest = new EnderChest(player.getUniqueId(), player.getName(), player.getEnderChest().getContents());
-        this.uuidEnderChestMap.put(player.getUniqueId(), enderChest);
+                EnderChest enderChest = this.getEnderChest(player);
+                event.getPlayer().playSound(event.getClickedBlock().getLocation(), OPEN_SOUND, 1, 1F);
+                this.openEnderChest(enderChest, player, rows);
+                this.openFromBlocks.put(player.getUniqueId(), event.getClickedBlock());
+            }
+        }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    private void onInventoryOpen(InventoryOpenEvent event) {
-        if (event.isCancelled())
-            return;
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    private void onInventoryClose(InventoryCloseEvent event) {
+        if (this.openFromBlocks.containsKey(event.getPlayer().getUniqueId())) {
+            event.getViewers().remove(event.getPlayer());
 
-        if (!(event.getPlayer() instanceof Player player))
-            return;
-
-        if (event.getInventory().equals(player.getEnderChest())) {
-            event.setCancelled(true);
-            this.openEnderChest(this.getEnderChest(player), player);
+            Block block = this.openFromBlocks.remove(event.getPlayer().getUniqueId());
+            ((Player) event.getPlayer()).playSound(block.getLocation(), CLOSE_SOUND, 1, 1F);
         }
     }
 
     @EventHandler
     private void onPlayerQuit(PlayerQuitEvent event) {
+        this.openFromBlocks.remove(event.getPlayer().getUniqueId());
+
         EnderChest enderChest = getEnderChest(event.getPlayer());
+
+        //remove the player as a viewer
+        enderChest.getInventory().getViewers().remove(event.getPlayer());
         event.getPlayer().closeInventory();
 
-        for (int i = 0; i < enderChest.getInventory().getViewers().size(); i++) {
-            System.out.println(i + ": " + enderChest.getInventory().getViewers().get(i).getName());
-        }
         if (!enderChest.hasViewers()) {
+            this.getPlugin().getLogger().info("Saving data for " + enderChest.getName());
             EnderChestSnapshot snapshot = enderChest.snapshot();
             this.uuidEnderChestMap.remove(snapshot.getUuid());
             this.nameUUIDMap.remove(new MinecraftName(snapshot.getName()));
@@ -132,33 +212,84 @@ public class EnderChestManager extends Manager<BetterEnderChests> implements Lis
     }
 
     //opens ender chest and reopens updated enderchest for players
+    public void openEnderChest(EnderChest chest, Player player, int rows) {
+        chest.setRows(rows);
+        this.openEnderChest(chest, player);
+    }
+
     public void openEnderChest(EnderChest chest, Player player) {
-        //owner is online
         if (Bukkit.getPlayer(chest.getUUID()) != null) {
-            int rows = getNumRows(Bukkit.getPlayer(chest.getUUID()));
-            chest.setRows(rows);
             chest.openInventory(player);
         } else {
             chest.openInventory(player);
         }
     }
 
-    private int getNumRows(Player player) {
+    public void openEnderChest(Player player, int rows) {
+        EnderChest chest = this.getEnderChest(player);
+        chest.setRows(rows);
+        this.openEnderChest(chest, player);
+    }
+
+    public int getNumRows(Player player) {
         for (int i = 6; i > 0; i--) {
             if (player.hasPermission("enderchest.size." + i)) {
                 return i;
             }
         }
         return defaultRows;
-
     }
 
     public Callback<EnderChest> getEnderChest(String name) {
-        return null;
+        MinecraftName mcName = new MinecraftName(name);
+        if (this.nameUUIDMap.containsKey(mcName) && this.uuidEnderChestMap.get(this.nameUUIDMap.get(mcName)) != null)
+            return Callback.withResult(this.uuidEnderChestMap.get(this.nameUUIDMap.get(mcName)));
+
+        if (this.nameCallbackMap.containsKey(mcName))
+            return nameCallbackMap.get(mcName);
+
+        Callback<EnderChest> callback = new Callback<>();
+        this.nameCallbackMap.put(mcName, callback);
+
+        Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
+            EnderChestSnapshot snapshot = this.dataManager.loadEnderChest(name);
+
+            EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents());
+            Bukkit.getScheduler().runTask(this.getPlugin(), () -> {
+                this.nameCallbackMap.remove(mcName);
+                if (enderChest != null) {
+                    this.uuidEnderChestMap.put(snapshot.getUuid(), enderChest);
+                    this.nameUUIDMap.put(mcName, snapshot.getUuid());
+                }
+                callback.setResult(enderChest);
+            });
+        });
+
+        return callback;
     }
 
     public Callback<EnderChest> getEnderChest(UUID uuid) {
-        return null;
+        if (this.uuidEnderChestMap.get(uuid) != null)
+            return Callback.withResult(this.uuidEnderChestMap.get(uuid));
+
+        if (this.uuidCallbackMap.containsKey(uuid))
+            return uuidCallbackMap.get(uuid);
+
+        Callback<EnderChest> callback = new Callback<>();
+        this.uuidCallbackMap.put(uuid, callback);
+
+        Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
+            EnderChestSnapshot snapshot = this.dataManager.loadEnderChest(uuid);
+
+            EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents());
+            Bukkit.getScheduler().runTask(this.getPlugin(), () -> {
+                this.uuidCallbackMap.remove(uuid);
+                this.uuidEnderChestMap.put(uuid, enderChest);
+                callback.setResult(enderChest);
+            });
+        });
+
+        return callback;
     }
 
     //saves data
@@ -171,5 +302,9 @@ public class EnderChestManager extends Manager<BetterEnderChests> implements Lis
         this.dataManager.saveEnderChestMultiple(enderChestSnapshotMap);
         enderChestSnapshotMap.clear();
         nameUUIDMap.clear();
+    }
+
+    private EnderChest createNew(Player player) {
+        return new EnderChest(player.getUniqueId(), player.getName(), this.convert ? player.getEnderChest().getContents() : new ItemStack[]{});
     }
 }

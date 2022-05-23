@@ -34,6 +34,7 @@ public abstract class DataManager extends Manager<BetterEnderChests> {
     public abstract Map<UUID, EnderChestSnapshot> loadEnderChestsByUUID(Set<UUID> uuids);
 
     public EnderChestSnapshot loadEnderChest(String name) {
+        name = name.toLowerCase();
         Map<String, EnderChestSnapshot> enderChestSnapshotMap = loadEnderChestsByName(Collections.singleton(name));
         return enderChestSnapshotMap.get(name);
     }
