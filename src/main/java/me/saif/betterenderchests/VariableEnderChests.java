@@ -1,10 +1,12 @@
 package me.saif.betterenderchests;
 
+import me.saif.betterenderchests.commands.EnderChestCommand;
 import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.data.SQLiteDataManager;
-import me.saif.betterenderchests.commands.EnderChestCommand;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.MultiLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -12,7 +14,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import revxrsal.commands.CommandHandler;
 import revxrsal.commands.bukkit.core.BukkitHandler;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -31,6 +35,8 @@ public final class VariableEnderChests extends JavaPlugin {
         setupDataManager();
         setupEnderChestManager();
         setupCommands();
+
+        Metrics metrics = new Metrics(this, 15279);
     }
 
     private void setupDataManager() {
