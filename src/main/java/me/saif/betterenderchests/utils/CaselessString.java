@@ -1,11 +1,11 @@
 package me.saif.betterenderchests.utils;
 
-public class MinecraftName {
+public class CaselessString {
 
     private String name;
     private String lowerCase;
 
-    public MinecraftName(String name) {
+    public CaselessString(String name) {
         this.name = name;
         this.lowerCase = name.toLowerCase();
     }
@@ -17,7 +17,7 @@ public class MinecraftName {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MinecraftName mcName)) return false;
+        if (!(o instanceof CaselessString mcName)) return false;
         return mcName.lowerCase.equals(this.lowerCase);
     }
 

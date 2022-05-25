@@ -1,23 +1,21 @@
 package me.saif.betterenderchests;
 
+import me.saif.betterenderchests.commands.ConversionCommand;
 import me.saif.betterenderchests.commands.EnderChestCommand;
+import me.saif.betterenderchests.converters.Converter;
+import me.saif.betterenderchests.converters.ConverterManager;
 import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.data.SQLiteDataManager;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
 import org.bstats.bukkit.Metrics;
-import org.bstats.charts.MultiLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import revxrsal.commands.CommandHandler;
 import revxrsal.commands.bukkit.core.BukkitHandler;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class VariableEnderChests extends JavaPlugin {
@@ -25,6 +23,7 @@ public final class VariableEnderChests extends JavaPlugin {
     private DataManager dataManager;
     private EnderChestManager enderChestManager;
     private Messages messages;
+    private ConverterManager converterManager;
 
     @Override
     public void onEnable() {
@@ -47,15 +46,21 @@ public final class VariableEnderChests extends JavaPlugin {
     private void setupEnderChestManager() {
         this.enderChestManager = new EnderChestManager(this);
         Bukkit.getPluginManager().registerEvents(this.enderChestManager, this);
+
+        this.converterManager = new ConverterManager(this);
     }
 
     private void setupCommands() {
         CommandHandler commandHandler = new BukkitHandler(this)
                 .getAutoCompleter().registerSuggestion("players", (args, sender, command) -> {
                     String last = args.get(args.size() - 1).toLowerCase(Locale.ROOT);
-                    return Bukkit.getOnlinePlayers().stream().map((Function<Player, String>) HumanEntity::getName).filter(s -> s.toLowerCase(Locale.ROOT).startsWith(last)).collect(Collectors.toList());
+                    return Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).filter(s -> s.toLowerCase(Locale.ROOT).startsWith(last)).collect(Collectors.toList());
+                }).registerSuggestion("converters", (args, sender, command) -> {
+                    String last = args.get(args.size() - 1).toLowerCase(Locale.ROOT);
+                    return this.converterManager.getConverters().stream().map(Converter::getName).filter(s -> s.toLowerCase(Locale.ROOT).startsWith(last)).collect(Collectors.toList());
                 }).and()
-                .register(new EnderChestCommand(this));
+                .register(new EnderChestCommand(this))
+                .register(new ConversionCommand(this));
 
         ((BukkitHandler) commandHandler).registerBrigadier();
     }
@@ -76,5 +81,9 @@ public final class VariableEnderChests extends JavaPlugin {
 
     public Messages getMessages() {
         return messages;
+    }
+
+    public ConverterManager getConverterManager() {
+        return converterManager;
     }
 }

@@ -56,6 +56,21 @@ public class SQLiteDataManager extends DataManager {
     }
 
     @Override
+    public void saveNameAndUUIDs(Map<String, UUID> map) {
+        String sql = "REPLACE INTO " + getPlayersTableName() + " (UUID,NAME) VALUES (?, ?)";
+        try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
+            for (String s : map.keySet()) {
+                statement.setString(1, map.get(s).toString());
+                statement.setString(2, s);
+                statement.addBatch();
+            }
+            statement.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void saveNameAndUUID(String name, UUID uuid) {
         String sql = "REPLACE INTO " + getPlayersTableName() + " (UUID,NAME) VALUES (?, ?)";
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
@@ -173,5 +188,28 @@ public class SQLiteDataManager extends DataManager {
                 stringBuilder.append("OR ");
         }
         return stringBuilder.toString();
+    }
+
+    @Override
+    public void createBackup() {
+        try (Statement statement = this.database.getConnection().createStatement()) {
+            this.getPlugin().getLogger().info("Creating backup of data.");
+            statement.executeUpdate("backup to " + new File(this.getPlugin().getDataFolder(), "backup.db"));
+            this.getPlugin().getLogger().info("Finished backing up to backup.db");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void purge(char... confirm) {
+        if (!new String(confirm).equals("YES"))
+            return;
+        try (Statement statement = this.database.getConnection().createStatement()) {
+            statement.executeUpdate("delete from " + this.getDataTableName());
+            statement.executeUpdate("delete from " + this.getPlayersTableName());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

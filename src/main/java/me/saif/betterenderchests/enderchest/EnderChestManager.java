@@ -5,7 +5,7 @@ import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.utils.Callback;
 import me.saif.betterenderchests.utils.Manager;
-import me.saif.betterenderchests.utils.MinecraftName;
+import me.saif.betterenderchests.utils.CaselessString;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -32,10 +32,10 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
     private DataManager dataManager;
 
     private Map<UUID, EnderChest> uuidEnderChestMap = new HashMap<>();
-    private Map<MinecraftName, UUID> nameUUIDMap = new HashMap<>();
+    private Map<CaselessString, UUID> nameUUIDMap = new HashMap<>();
 
     private Map<UUID, Callback<EnderChest>> uuidCallbackMap = new HashMap<>();
-    private Map<MinecraftName, Callback<EnderChest>> nameCallbackMap = new HashMap<>();
+    private Map<CaselessString, Callback<EnderChest>> nameCallbackMap = new HashMap<>();
 
     private Map<UUID, Block> openFromBlocks = new HashMap<>();
     private int defaultRows;
@@ -110,7 +110,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
 
             Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> this.dataManager.saveEnderChestMultiple(toSave));
 
-            for (MinecraftName minecraftName : this.nameCallbackMap.keySet()) {
+            for (CaselessString minecraftName : this.nameCallbackMap.keySet()) {
                 Player player = Bukkit.getPlayerExact(minecraftName.getName());
                 if (player == null)
                     this.nameCallbackMap.remove(minecraftName);
@@ -136,7 +136,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         String name = event.getPlayer().getName();
         UUID uuid = event.getPlayer().getUniqueId();
 
-        this.nameUUIDMap.put(new MinecraftName(name), uuid);
+        this.nameUUIDMap.put(new CaselessString(name), uuid);
 
         if (this.uuidEnderChestMap.containsKey(uuid)) {
             return;
@@ -196,7 +196,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             this.getPlugin().getLogger().info("Saving data for " + enderChest.getName());
             EnderChestSnapshot snapshot = enderChest.snapshot();
             this.uuidEnderChestMap.remove(snapshot.getUuid());
-            this.nameUUIDMap.remove(new MinecraftName(snapshot.getName()));
+            this.nameUUIDMap.remove(new CaselessString(snapshot.getName()));
 
             Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
                 this.dataManager.saveEnderChest(snapshot.getUuid(), snapshot);
@@ -241,7 +241,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
     }
 
     public Callback<EnderChest> getEnderChest(String name) {
-        MinecraftName mcName = new MinecraftName(name);
+        CaselessString mcName = new CaselessString(name);
         if (this.nameUUIDMap.containsKey(mcName) && this.uuidEnderChestMap.get(this.nameUUIDMap.get(mcName)) != null)
             return Callback.withResult(this.uuidEnderChestMap.get(this.nameUUIDMap.get(mcName)));
 
@@ -292,14 +292,19 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         return callback;
     }
 
-    //saves data
-    //only to be called by the main class
+    //saves all data
     public void finishUp() {
         Map<UUID, EnderChestSnapshot> enderChestSnapshotMap = new HashMap<>();
         for (EnderChest value : this.uuidEnderChestMap.values()) {
             enderChestSnapshotMap.put(value.getUUID(), value.snapshot());
         }
         this.dataManager.saveEnderChestMultiple(enderChestSnapshotMap);
+
+        this.uuidCallbackMap.clear();
+        this.nameCallbackMap.clear();
+        this.uuidEnderChestMap.clear();
+        this.nameUUIDMap.clear();
+
         enderChestSnapshotMap.clear();
         nameUUIDMap.clear();
     }

@@ -24,6 +24,8 @@ public abstract class DataManager extends Manager<VariableEnderChests> {
 
     public abstract void saveEnderChestMultiple(Map<UUID, EnderChestSnapshot> snapshotMap);
 
+    public abstract void saveNameAndUUIDs(Map<String, UUID> map);
+
     public abstract void saveNameAndUUID(String name, UUID uuid);
 
     public EnderChestSnapshot loadEnderChest(UUID uuid) {
@@ -40,5 +42,9 @@ public abstract class DataManager extends Manager<VariableEnderChests> {
     }
 
     public abstract Map<String, EnderChestSnapshot> loadEnderChestsByName(Set<String> names);
+
+    public abstract void createBackup();
+
+    public abstract void purge(char... confirm);
 
 }
