@@ -8,6 +8,7 @@ import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.data.SQLiteDataManager;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
+import me.saif.betterenderchests.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -16,6 +17,7 @@ import revxrsal.commands.CommandHandler;
 import revxrsal.commands.bukkit.core.BukkitHandler;
 
 import java.util.Locale;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public final class VariableEnderChests extends JavaPlugin {
@@ -34,8 +36,7 @@ public final class VariableEnderChests extends JavaPlugin {
         setupDataManager();
         setupEnderChestManager();
         setupCommands();
-
-        Metrics metrics = new Metrics(this, 15279);
+        setupMetricsAndCheckForUpdate();
     }
 
     private void setupDataManager() {
@@ -63,6 +64,18 @@ public final class VariableEnderChests extends JavaPlugin {
                 .register(new ConversionCommand(this));
 
         ((BukkitHandler) commandHandler).registerBrigadier();
+    }
+
+    private void setupMetricsAndCheckForUpdate() {
+        Metrics metrics = new Metrics(this, 15279);
+        UpdateChecker updateChecker = new UpdateChecker(this, 102187);
+        updateChecker.getVersion(s -> {
+            if (this.getDescription().getVersion().equals(s)) {
+                getLogger().info(this.getName() + " is up to date.");
+            } else {
+                getLogger().info("There is a new update available.");
+            }
+        });
     }
 
     @Override
