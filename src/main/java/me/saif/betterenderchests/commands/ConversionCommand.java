@@ -8,7 +8,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import revxrsal.commands.annotation.AutoComplete;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Named;
-import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 import java.util.HashMap;
 import java.util.Map;

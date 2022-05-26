@@ -231,6 +231,10 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         this.openEnderChest(chest, player);
     }
 
+    public void clearEnderChest(EnderChest enderChest) {
+        enderChest.getInventory().clear();
+    }
+
     public int getNumRows(Player player) {
         for (int i = 6; i > 0; i--) {
             if (player.hasPermission("enderchest.size." + i)) {
