@@ -6,10 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class EnderChest {
 
@@ -17,20 +14,20 @@ public class EnderChest {
     private final String name;
     private final ItemStack[] contents;
     private Inventory inventory;
+    private Map<Integer, String> inventoryNames;
     private int lastNumRows = 6;
-    private String inventoryName;
 
-    protected EnderChest(UUID owner, String name, ItemStack[] contents) {
+    protected EnderChest(UUID owner, String name, ItemStack[] contents, Map<Integer, String> inventoryNames) {
         this.UUID = owner;
         this.name = name;
-        this.inventoryName = name + "'s Enderchest";
+        this.inventoryNames = inventoryNames;
         this.contents = contents.length == 54 ? contents : Arrays.copyOf(contents, 54);
-        this.inventory = Bukkit.createInventory(null, 54, this.inventoryName);
+        this.inventory = Bukkit.createInventory(null, lastNumRows * 6, this.inventoryNames.get(lastNumRows));
         populateInventory();
     }
 
-    protected EnderChest(UUID owner, String name, ItemStack[] contents, int lastNumRows) {
-        this(owner, name, contents);
+    protected EnderChest(UUID owner, String name, ItemStack[] contents, int lastNumRows, Map<Integer, String> inventoryNames) {
+        this(owner, name, contents, inventoryNames);
         this.setRows(lastNumRows);
     }
 
@@ -48,7 +45,7 @@ public class EnderChest {
         //else
         updateContentsArray();
         List<HumanEntity> viewers = new ArrayList<>(this.inventory.getViewers());
-        inventory = Bukkit.createInventory(null, rows * 9, this.inventoryName);
+        inventory = Bukkit.createInventory(null, rows * 9, this.inventoryNames.get(rows));
         populateInventory();
         for (HumanEntity viewer : viewers) {
             viewer.openInventory(inventory);
@@ -99,14 +96,6 @@ public class EnderChest {
 
     public UUID getUUID() {
         return UUID;
-    }
-
-    public void setInventoryName(String name) {
-        this.inventoryName = name;
-    }
-
-    public String getInventoryName() {
-        return this.inventoryName;
     }
 
     public EnderChestSnapshot snapshot() {

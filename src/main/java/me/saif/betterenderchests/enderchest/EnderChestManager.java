@@ -4,10 +4,11 @@ import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.utils.Callback;
-import me.saif.betterenderchests.utils.Manager;
 import me.saif.betterenderchests.utils.CaselessString;
+import me.saif.betterenderchests.utils.Manager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -29,17 +30,19 @@ import java.util.stream.Collectors;
 
 public class EnderChestManager extends Manager<VariableEnderChests> implements Listener {
 
-    private DataManager dataManager;
+    private final DataManager dataManager;
 
-    private Map<UUID, EnderChest> uuidEnderChestMap = new HashMap<>();
-    private Map<CaselessString, UUID> nameUUIDMap = new HashMap<>();
+    private final Map<UUID, EnderChest> uuidEnderChestMap = new HashMap<>();
+    private final Map<CaselessString, UUID> nameUUIDMap = new HashMap<>();
 
-    private Map<UUID, Callback<EnderChest>> uuidCallbackMap = new HashMap<>();
-    private Map<CaselessString, Callback<EnderChest>> nameCallbackMap = new HashMap<>();
+    private final Map<UUID, Callback<EnderChest>> uuidCallbackMap = new HashMap<>();
+    private final Map<CaselessString, Callback<EnderChest>> nameCallbackMap = new HashMap<>();
 
-    private Map<UUID, Block> openFromBlocks = new HashMap<>();
+    private final Map<UUID, Block> openFromBlocks = new HashMap<>();
     private int defaultRows;
-    private boolean convert;
+    private final boolean convert;
+
+    private final Map<Integer, String> inventoryNames = new HashMap<>();
 
     private static Sound OPEN_SOUND;
     private static Sound CLOSE_SOUND;
@@ -48,13 +51,12 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         super(plugin);
         this.dataManager = getPlugin().getDataManager();
 
-        int ver = Integer.parseInt(StringUtils.split(Bukkit.getVersion(), ".")[1]);
 
         //load the correct sound depending on verison
-        if (ver == 8) {
+        if (plugin.getVersion() == 8) {
             OPEN_SOUND = Sound.valueOf("CHEST_OPEN");
             CLOSE_SOUND = Sound.valueOf("CHEST_CLOSE");
-        } else if (ver < 13) {
+        } else if (plugin.getVersion() < 13) {
             OPEN_SOUND = Sound.valueOf("BLOCK_ENDERCHEST_OPEN");
             CLOSE_SOUND = Sound.valueOf("BLOCK_ENDERCHEST_CLOSE");
         } else {
@@ -65,40 +67,44 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         //getting config values
         this.convert = this.getPlugin().getConfig().getBoolean("convert-current-ender-chest", true);
         this.defaultRows = this.getPlugin().getConfig().getInt("default-rows", 3);
+        for (int i = 1; i <= 6; i++) {
+            this.inventoryNames.put(i, ChatColor.translateAlternateColorCodes('&',
+                    this.getPlugin().getConfig().getString("enderchest-names." + i + "-rows", "&a<player>'s Enderchest")));
+        }
         if (this.defaultRows > 6)
             this.defaultRows = 6;
         else if (this.defaultRows < 0)
             this.defaultRows = 0;
 
-            //load data for already online players eg. if plugin is reloaded.
-            Bukkit.getScheduler().runTask(plugin, () -> {
+        //load data for already online players eg. if plugin is reloaded.
+        Bukkit.getScheduler().runTask(plugin, () -> {
 
 
-                Set<UUID> toGet = Bukkit.getOnlinePlayers().stream().map((Function<Player, UUID>) Entity::getUniqueId).collect(Collectors.toSet());
-                Map<UUID, EnderChestSnapshot> data = this.dataManager.loadEnderChestsByUUID(toGet);
+            Set<UUID> toGet = Bukkit.getOnlinePlayers().stream().map((Function<Player, UUID>) Entity::getUniqueId).collect(Collectors.toSet());
+            Map<UUID, EnderChestSnapshot> data = this.dataManager.loadEnderChestsByUUID(toGet);
 
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    this.dataManager.saveNameAndUUID(player.getName(), player.getUniqueId());
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                this.dataManager.saveNameAndUUID(player.getName(), player.getUniqueId());
 
-                    EnderChestSnapshot snapshot = data.get(player.getUniqueId());
-                    if (snapshot == null) {
-                        this.uuidEnderChestMap.put(player.getUniqueId(),
-                                createNew(player));
-                    } else {
-                        this.uuidEnderChestMap.put(player.getUniqueId(),
-                                new EnderChest(player.getUniqueId(), player.getName(), snapshot.getContents(), snapshot.getRows()));
-                    }
-
-                    if (player.getOpenInventory().getTopInventory().equals(player.getEnderChest())) {
-                        player.closeInventory();
-                        int rows = this.getNumRows(player);
-                        if (rows == 0) {
-                            this.getPlugin().getMessages().sendTo(player, Messages.NO_ROWS);
-                        }
-                        this.openEnderChest(this.getEnderChest(player), player, this.getNumRows(player));
-                    }
+                EnderChestSnapshot snapshot = data.get(player.getUniqueId());
+                if (snapshot == null) {
+                    this.uuidEnderChestMap.put(player.getUniqueId(),
+                            createNew(player));
+                } else {
+                    this.uuidEnderChestMap.put(player.getUniqueId(),
+                            new EnderChest(player.getUniqueId(), player.getName(), snapshot.getContents(), snapshot.getRows(), getInventoryNames(player.getName())));
                 }
-            });
+
+                if (player.getOpenInventory().getTopInventory().equals(player.getEnderChest())) {
+                    player.closeInventory();
+                    int rows = this.getNumRows(player);
+                    if (rows == 0) {
+                        this.getPlugin().getMessages().sendTo(player, Messages.NO_ROWS);
+                    }
+                    this.openEnderChest(this.getEnderChest(player), player, this.getNumRows(player));
+                }
+            }
+        });
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this.getPlugin(), () -> {
             Map<UUID, EnderChestSnapshot> toSave = new HashMap<>();
@@ -125,7 +131,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             return null;
         }
 
-        return new EnderChest(uuid, name, enderChestSnapshot.getContents(), enderChestSnapshot.getRows());
+        return new EnderChest(uuid, name, enderChestSnapshot.getContents(), enderChestSnapshot.getRows(), getInventoryNames(name));
     }
 
     @EventHandler
@@ -258,7 +264,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
             EnderChestSnapshot snapshot = this.dataManager.loadEnderChest(name);
 
-            EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents());
+            EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents(), getInventoryNames(snapshot.getName()));
             Bukkit.getScheduler().runTask(this.getPlugin(), () -> {
                 this.nameCallbackMap.remove(mcName);
                 if (enderChest != null) {
@@ -285,7 +291,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
             EnderChestSnapshot snapshot = this.dataManager.loadEnderChest(uuid);
 
-            EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents());
+            EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents(), getInventoryNames(snapshot.getName()));
             Bukkit.getScheduler().runTask(this.getPlugin(), () -> {
                 this.uuidCallbackMap.remove(uuid);
                 this.uuidEnderChestMap.put(uuid, enderChest);
@@ -314,6 +320,12 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
     }
 
     private EnderChest createNew(Player player) {
-        return new EnderChest(player.getUniqueId(), player.getName(), this.convert ? player.getEnderChest().getContents() : new ItemStack[]{});
+        return new EnderChest(player.getUniqueId(), player.getName(), this.convert ? player.getEnderChest().getContents() : new ItemStack[]{}, getInventoryNames(player.getName()));
+    }
+
+    private Map<Integer, String> getInventoryNames(String name) {
+        Map<Integer, String> map = new HashMap<>();
+        this.inventoryNames.forEach((integer, s) -> map.put(integer, StringUtils.replace(s, "<player>", name)));
+        return map;
     }
 }

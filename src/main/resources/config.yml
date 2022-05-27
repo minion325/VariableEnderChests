@@ -1,5 +1,5 @@
 #Do not change this manually, this is to keep track of config changes.
-config-version: 1
+config-version: 2
 
 #If this is set to false, it will convert current ender chests to be used by this plugin;
 #Whether this is set to true or false, does NOT affect the enderchest contents that is saved by default minecraft.
@@ -13,3 +13,14 @@ command-permission-self: '&4You do not have permission to use this command.'
 command-permission-others: '&4You do not have permission to view the enderchest of others.'
 no-enderchest-found: '&4That player does not have an enderchest.'
 no-rows: '&4You do not have an enderchest.'
+
+#These are the inventory names that players will see when they open their inventory
+#You can set a different name for each size eg. Level 1, Level 2
+#<player> is replaced with the player's name
+enderchest-names:
+  1-rows: "&7<player>'s Enderchest"
+  2-rows: "&7<player>'s Enderchest"
+  3-rows: "&7<player>'s Enderchest"
+  4-rows: "&7<player>'s Enderchest"
+  5-rows: "&7<player>'s Enderchest"
+  6-rows: "&7<player>'s Enderchest"

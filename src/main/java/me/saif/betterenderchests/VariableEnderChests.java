@@ -4,11 +4,13 @@ import me.saif.betterenderchests.commands.ConversionCommand;
 import me.saif.betterenderchests.commands.EnderChestCommand;
 import me.saif.betterenderchests.converters.Converter;
 import me.saif.betterenderchests.converters.ConverterManager;
+import me.saif.betterenderchests.data.ConfigUpdater;
 import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.data.SQLiteDataManager;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
 import me.saif.betterenderchests.utils.UpdateChecker;
+import org.apache.commons.lang.StringUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -17,7 +19,6 @@ import revxrsal.commands.CommandHandler;
 import revxrsal.commands.bukkit.core.BukkitHandler;
 
 import java.util.Locale;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public final class VariableEnderChests extends JavaPlugin {
@@ -26,10 +27,14 @@ public final class VariableEnderChests extends JavaPlugin {
     private EnderChestManager enderChestManager;
     private Messages messages;
     private ConverterManager converterManager;
+    private int version;
 
     @Override
     public void onEnable() {
+        this.version = Integer.parseInt(StringUtils.split(Bukkit.getVersion(), ".")[1]);
+
         this.saveDefaultConfig();
+        new ConfigUpdater(this);
 
         this.messages = new Messages(this.getConfig());
 
@@ -98,5 +103,9 @@ public final class VariableEnderChests extends JavaPlugin {
 
     public ConverterManager getConverterManager() {
         return converterManager;
+    }
+
+    public int getVersion() {
+        return version;
     }
 }
