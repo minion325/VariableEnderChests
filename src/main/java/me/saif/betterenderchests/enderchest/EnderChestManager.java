@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -304,6 +305,12 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
 
     //saves all data
     public void finishUp() {
+        for (EnderChest value : this.uuidEnderChestMap.values()) {
+            List<HumanEntity> list = new ArrayList<>(value.getInventory().getViewers());
+            for (HumanEntity humanEntity : list) {
+                humanEntity.closeInventory();
+            }
+        }
         Map<UUID, EnderChestSnapshot> enderChestSnapshotMap = new HashMap<>();
         for (EnderChest value : this.uuidEnderChestMap.values()) {
             enderChestSnapshotMap.put(value.getUUID(), value.snapshot());

@@ -23,6 +23,12 @@ import java.util.stream.Collectors;
 
 public final class VariableEnderChests extends JavaPlugin {
 
+    private static VariableEnderChestAPI API;
+
+    public static VariableEnderChestAPI getAPI() {
+        return API;
+    }
+
     private DataManager dataManager;
     private EnderChestManager enderChestManager;
     private Messages messages;
@@ -31,6 +37,7 @@ public final class VariableEnderChests extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        API = new VariableEnderChestAPI(this);
         this.version = Integer.parseInt(StringUtils.split(Bukkit.getVersion(), ".")[1]);
 
         this.saveDefaultConfig();
