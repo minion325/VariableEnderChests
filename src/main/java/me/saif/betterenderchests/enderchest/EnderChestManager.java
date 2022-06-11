@@ -6,7 +6,6 @@ import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.utils.Callback;
 import me.saif.betterenderchests.utils.CaselessString;
 import me.saif.betterenderchests.utils.Manager;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -45,8 +44,8 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
 
     private final Map<Integer, String> inventoryNames = new HashMap<>();
 
-    private static Sound OPEN_SOUND;
-    private static Sound CLOSE_SOUND;
+    private final Sound OPEN_SOUND;
+    private final Sound CLOSE_SOUND;
 
     public EnderChestManager(VariableEnderChests plugin) {
         super(plugin);
@@ -239,7 +238,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
     }
 
     public void clearEnderChest(EnderChest enderChest) {
-        enderChest.getInventory().clear();
+        enderChest.clearContents();
     }
 
     public int getNumRows(Player player) {
@@ -303,6 +302,43 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         return callback;
     }
 
+    public void deleteEnderChest(UUID uuid) {
+        EnderChest enderChest = this.uuidEnderChestMap.get(uuid);
+        Player player = Bukkit.getPlayer(uuid);
+        if (enderChest != null) {
+            enderChest.clearContents();
+
+            if (player != null) {
+                if (this.convert)
+                    enderChest.setContents(player.getEnderChest().getContents());
+                return;
+            }
+
+            //unload enderchest without saving
+            this.uuidEnderChestMap.remove(enderChest.getUUID());
+        }
+        this.dataManager.deleteEnderChest(uuid);
+    }
+
+    public void deleteEnderChest(String name) {
+        CaselessString caselessString = new CaselessString(name);
+        EnderChest enderChest = this.uuidEnderChestMap.get(this.nameUUIDMap.get(caselessString));
+        Player player = Bukkit.getPlayerExact(name);
+        if (enderChest != null) {
+            enderChest.clearContents();
+
+            if (player != null) {
+                if (this.convert)
+                    enderChest.setContents(player.getEnderChest().getContents());
+                return;
+            }
+
+            //unload enderchest without saving
+            this.uuidEnderChestMap.remove(enderChest.getUUID());
+        }
+        this.dataManager.deleteEnderChest(name);
+    }
+
     //saves all data
     public void finishUp() {
         for (EnderChest value : this.uuidEnderChestMap.values()) {
@@ -332,7 +368,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
 
     private Map<Integer, String> getInventoryNames(String name) {
         Map<Integer, String> map = new HashMap<>();
-        this.inventoryNames.forEach((integer, s) -> map.put(integer, StringUtils.replace(s, "<player>", name)));
+        this.inventoryNames.forEach((integer, s) -> map.put(integer, s.replace("<player>", name)));
         return map;
     }
 }

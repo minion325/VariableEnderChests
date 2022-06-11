@@ -8,10 +8,7 @@ import me.saif.betterenderchests.utils.Callback;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import revxrsal.commands.annotation.AutoComplete;
-import revxrsal.commands.annotation.Command;
-import revxrsal.commands.annotation.Named;
-import revxrsal.commands.annotation.Optional;
+import revxrsal.commands.annotation.*;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 import java.util.HashMap;
@@ -119,7 +116,6 @@ public class EnderChestCommand {
             player.sendMessage(ChatColor.AQUA + "Are you sure you wish to clear the enderchest of " + enderChest.getName(),
                     ChatColor.GRAY + "Run this command again within 5 seconds to confirm");
             Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> this.toClear.remove(player.getUniqueId()), 100L);
-
         });
     }
 

@@ -4,15 +4,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class EnderChest {
+public class EnderChest implements InventoryHolder {
 
     private final UUID UUID;
     private final String name;
-    private final ItemStack[] contents;
+    private ItemStack[] contents;
     private Inventory inventory;
     private Map<Integer, String> inventoryNames;
     private int lastNumRows = 6;
@@ -22,7 +23,7 @@ public class EnderChest {
         this.name = name;
         this.inventoryNames = inventoryNames;
         this.contents = contents.length == 54 ? contents : Arrays.copyOf(contents, 54);
-        this.inventory = Bukkit.createInventory(null, lastNumRows * 6, this.inventoryNames.get(lastNumRows));
+        this.inventory = Bukkit.createInventory(this, lastNumRows * 6, this.inventoryNames.get(lastNumRows));
         populateInventory();
     }
 
@@ -45,15 +46,26 @@ public class EnderChest {
         //else
         updateContentsArray();
         List<HumanEntity> viewers = new ArrayList<>(this.inventory.getViewers());
-        inventory = Bukkit.createInventory(null, rows * 9, this.inventoryNames.get(rows));
+        inventory = Bukkit.createInventory(this, rows * 9, this.inventoryNames.get(rows));
         populateInventory();
         for (HumanEntity viewer : viewers) {
             viewer.openInventory(inventory);
         }
     }
 
+    @Override
     public Inventory getInventory() {
         return this.inventory;
+    }
+
+    public void clearContents() {
+        this.contents = new ItemStack[54];
+        this.populateInventory();
+    }
+
+    public void setContents(ItemStack[] contents) {
+        this.contents = Arrays.copyOf(contents, 54);
+        this.populateInventory();
     }
 
     public boolean hasViewers() {

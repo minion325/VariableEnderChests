@@ -212,4 +212,24 @@ public class SQLiteDataManager extends DataManager {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void deleteEnderChest(UUID uuid) {
+        try (PreparedStatement statement = this.database.getConnection().prepareStatement("delete from " + this.getDataTableName() + " WHERE UUID=?;")) {
+            statement.setString(1,uuid.toString());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteEnderChest(String name) {
+        try (PreparedStatement statement = this.database.getConnection().prepareStatement("delete from " + this.getDataTableName() + " WHERE UUID=(SELECT * FROM " + this.getPlayersTableName() + " WHERE NAME=? LIMIT 1);")) {
+            statement.setString(1,name);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

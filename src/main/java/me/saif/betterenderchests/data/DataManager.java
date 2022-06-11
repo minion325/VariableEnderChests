@@ -43,6 +43,10 @@ public abstract class DataManager extends Manager<VariableEnderChests> {
 
     public abstract Map<String, EnderChestSnapshot> loadEnderChestsByName(Set<String> names);
 
+    public abstract void deleteEnderChest(UUID uuid);
+
+    public abstract void deleteEnderChest(String name);
+
     public abstract void createBackup();
 
     public abstract void purge(char... confirm);

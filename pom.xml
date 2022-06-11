@@ -6,7 +6,7 @@
 
     <groupId>me.saif</groupId>
     <artifactId>VariableEnderChests</artifactId>
-    <version>1.4</version>
+    <version>1.5.1</version>
     <packaging>jar</packaging>
 
     <name>BetterEnderChests</name>
@@ -39,6 +39,10 @@
                         </goals>
                         <configuration>
                             <relocations>
+                                <relocation>
+                                    <pattern>revxrsal.commands</pattern>
+                                    <shadedPattern>me.saif.betterenderchests.lamp</shadedPattern>
+                                </relocation>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
                                     <shadedPattern>me.saif.betterenderchests</shadedPattern>
@@ -78,21 +82,21 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18.2-R0.1-SNAPSHOT</version>
+            <version>1.19-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- For the common module -->
         <dependency>
             <groupId>com.github.Revxrsal.Lamp</groupId>
             <artifactId>common</artifactId>
-            <version>3.0.4</version>
+            <version>3.0.6-SNAPSHOT</version>
         </dependency>
 
         <!-- For the bukkit module -->
         <dependency>
             <groupId>com.github.Revxrsal.Lamp</groupId>
             <artifactId>bukkit</artifactId>
-            <version>3.0.4</version>
+            <version>3.0.6-SNAPSHOT</version>
         </dependency>
 
         <dependency>

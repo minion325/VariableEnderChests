@@ -22,6 +22,7 @@ public class ItemStackSerializer {
             }
 
             dataOutput.close();
+            outputStream.close();
             return Base64Coder.encodeLines(outputStream.toByteArray());
         } catch (Exception e) {
             throw new IllegalStateException("Unable to save item stacks.", e);

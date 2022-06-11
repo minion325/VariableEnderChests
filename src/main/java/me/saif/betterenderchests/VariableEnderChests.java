@@ -8,9 +8,9 @@ import me.saif.betterenderchests.data.ConfigUpdater;
 import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.data.SQLiteDataManager;
+import me.saif.betterenderchests.enderchest.EnderChestClickListener;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
 import me.saif.betterenderchests.utils.UpdateChecker;
-import org.apache.commons.lang.StringUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -38,7 +38,8 @@ public final class VariableEnderChests extends JavaPlugin {
     @Override
     public void onEnable() {
         API = new VariableEnderChestAPI(this);
-        this.version = Integer.parseInt(StringUtils.split(Bukkit.getVersion(), ".")[1]);
+        this.version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
+        System.out.println(this.version);
 
         this.saveDefaultConfig();
         new ConfigUpdater(this);
@@ -59,6 +60,7 @@ public final class VariableEnderChests extends JavaPlugin {
     private void setupEnderChestManager() {
         this.enderChestManager = new EnderChestManager(this);
         Bukkit.getPluginManager().registerEvents(this.enderChestManager, this);
+        Bukkit.getPluginManager().registerEvents(new EnderChestClickListener(), this);
 
         this.converterManager = new ConverterManager(this);
     }
