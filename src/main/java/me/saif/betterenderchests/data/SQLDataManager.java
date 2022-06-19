@@ -1,33 +1,26 @@
 package me.saif.betterenderchests.data;
 
 import me.saif.betterenderchests.VariableEnderChests;
-import me.saif.betterenderchests.data.database.Database;
+import me.saif.betterenderchests.data.database.SQLDatabase;
 import me.saif.betterenderchests.data.database.SQLiteDatabase;
 import me.saif.betterenderchests.enderchest.EnderChestSnapshot;
 import me.saif.betterenderchests.utils.ItemStackSerializer;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
 
-public class SQLiteDataManager extends DataManager {
+public class SQLDataManager extends DataManager {
 
-    private Database database;
-    private String dataTableName = "enderchests";
-    private String playersTableName = "players";
+    private final SQLDatabase database;
+    private final String dataTableName = "enderchests";
+    private final String playersTableName = "players";
 
-    public SQLiteDataManager(VariableEnderChests plugin) {
+    public SQLDataManager(VariableEnderChests plugin) {
         super(plugin);
-        try {
-            this.database = new SQLiteDatabase(new File(getPlugin().getDataFolder(), "data.db"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        this.database = plugin.getDatabase();
     }
 
     public String getPlayersTableName() {
@@ -42,7 +35,8 @@ public class SQLiteDataManager extends DataManager {
     public void init() {
         String createDataTable = "CREATE TABLE IF NOT EXISTS " + getDataTableName() + " (UUID VARCHAR(36) NOT NULL PRIMARY KEY, ROWS INT, CONTENTS MEDIUMTEXT);";
         String createPlayersTable = "CREATE TABLE IF NOT EXISTS " + getPlayersTableName() + " (UUID VARCHAR(36) NOT NULL UNIQUE, NAME VARCHAR(16) NOT NULL UNIQUE);";
-        try (Statement statement = this.database.getConnection().createStatement()) {
+        try (Connection connection = this.database.getConnection();
+             Statement statement = connection.createStatement()) {
             statement.executeUpdate(createDataTable);
             statement.executeUpdate(createPlayersTable);
         } catch (SQLException e) {
@@ -58,7 +52,8 @@ public class SQLiteDataManager extends DataManager {
     @Override
     public void saveNameAndUUIDs(Map<String, UUID> map) {
         String sql = "REPLACE INTO " + getPlayersTableName() + " (UUID,NAME) VALUES (?, ?)";
-        try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
+        try (Connection connection = this.database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             for (String s : map.keySet()) {
                 statement.setString(1, map.get(s).toString());
                 statement.setString(2, s);
@@ -73,7 +68,8 @@ public class SQLiteDataManager extends DataManager {
     @Override
     public void saveNameAndUUID(String name, UUID uuid) {
         String sql = "REPLACE INTO " + getPlayersTableName() + " (UUID,NAME) VALUES (?, ?)";
-        try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
+        try (Connection connection = this.database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, uuid.toString());
             statement.setString(2, name);
             statement.executeUpdate();
@@ -85,7 +81,8 @@ public class SQLiteDataManager extends DataManager {
     @Override
     public void saveEnderChestMultiple(Map<UUID, EnderChestSnapshot> snapshotMap) {
         String sql = "REPLACE INTO " + getDataTableName() + " (UUID,ROWS,CONTENTS) VALUES (?,?,?)";
-        try (PreparedStatement statement = this.database.getConnection().prepareStatement(sql)) {
+        try (Connection connection = this.database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             for (UUID uuid : snapshotMap.keySet()) {
                 EnderChestSnapshot snapshot = snapshotMap.get(uuid);
                 statement.setString(1, uuid.toString());
@@ -105,7 +102,8 @@ public class SQLiteDataManager extends DataManager {
             return new HashMap<>();
         String sql = "SELECT " + getDataTableName() + ".UUID," + getPlayersTableName() + ".NAME,ROWS,CONTENTS FROM " + getDataTableName() + " LEFT JOIN " + getPlayersTableName()
                 + " ON " + getDataTableName() + ".UUID=" + getPlayersTableName() + ".UUID WHERE " + getWhereConditionForUUID(uuids.size());
-        try (PreparedStatement statement = this.database.getConnection().prepareStatement(sql)) {
+        try (Connection connection = this.database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             Map<UUID, EnderChestSnapshot> resultMap = new HashMap<>();
             Iterator<UUID> uuidIterator = uuids.iterator();
             int i = 0;
@@ -150,7 +148,8 @@ public class SQLiteDataManager extends DataManager {
             return new HashMap<>();
         String sql = "SELECT " + getDataTableName() + ".UUID," + getPlayersTableName() + ".NAME,ROWS,CONTENTS FROM " + getDataTableName() + " LEFT JOIN " + getPlayersTableName()
                 + " ON " + getDataTableName() + ".UUID=" + getPlayersTableName() + ".UUID WHERE " + getWhereConditionForNames(names.size());
-        try (PreparedStatement statement = this.database.getConnection().prepareStatement(sql)) {
+        try (Connection connection = this.database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             Map<String, EnderChestSnapshot> resultMap = new HashMap<>();
             Iterator<String> nameIterator = names.iterator();
             int i = 0;
@@ -192,12 +191,17 @@ public class SQLiteDataManager extends DataManager {
 
     @Override
     public void createBackup() {
-        try (Statement statement = this.database.getConnection().createStatement()) {
-            this.getPlugin().getLogger().info("Creating backup of data.");
-            statement.executeUpdate("backup to " + new File(this.getPlugin().getDataFolder(), "backup.db"));
-            this.getPlugin().getLogger().info("Finished backing up to backup.db");
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (this.database instanceof SQLiteDatabase) {
+            try (Connection connection = this.database.getConnection();
+                 Statement statement = connection.createStatement()) {
+                this.getPlugin().getLogger().info("Creating backup of data.");
+                statement.executeUpdate("backup to " + new File(this.getPlugin().getDataFolder(), "backup.db"));
+                this.getPlugin().getLogger().info("Finished backing up to backup.db");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            this.getPlugin().getLogger().info("Backup is not supported for this database type.");
         }
     }
 
@@ -205,7 +209,8 @@ public class SQLiteDataManager extends DataManager {
     public void purge(char... confirm) {
         if (!new String(confirm).equals("YES"))
             return;
-        try (Statement statement = this.database.getConnection().createStatement()) {
+        try (Connection connection = this.database.getConnection();
+             Statement statement = connection.createStatement()) {
             statement.executeUpdate("delete from " + this.getDataTableName());
             statement.executeUpdate("delete from " + this.getPlayersTableName());
         } catch (SQLException e) {
@@ -215,8 +220,9 @@ public class SQLiteDataManager extends DataManager {
 
     @Override
     public void deleteEnderChest(UUID uuid) {
-        try (PreparedStatement statement = this.database.getConnection().prepareStatement("delete from " + this.getDataTableName() + " WHERE UUID=?;")) {
-            statement.setString(1,uuid.toString());
+        try (Connection connection = this.database.getConnection();
+             PreparedStatement statement = connection.prepareStatement("delete from " + this.getDataTableName() + " WHERE UUID=?;")) {
+            statement.setString(1, uuid.toString());
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -225,8 +231,9 @@ public class SQLiteDataManager extends DataManager {
 
     @Override
     public void deleteEnderChest(String name) {
-        try (PreparedStatement statement = this.database.getConnection().prepareStatement("delete from " + this.getDataTableName() + " WHERE UUID=(SELECT * FROM " + this.getPlayersTableName() + " WHERE NAME=? LIMIT 1);")) {
-            statement.setString(1,name);
+        try (Connection connection = this.database.getConnection();
+             PreparedStatement statement = connection.prepareStatement("delete from " + this.getDataTableName() + " WHERE UUID=(SELECT * FROM " + this.getPlayersTableName() + " WHERE NAME=? LIMIT 1);")) {
+            statement.setString(1, name);
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

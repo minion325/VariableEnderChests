@@ -2,50 +2,34 @@ package me.saif.betterenderchests.data.database;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.logging.Logger;
 
-public class SQLiteDatabase extends Database{
+public class SQLiteDatabase extends SQLDatabase {
 
-    private final File file;
-    private Connection connection;
+    private File folder;
+    private String fileName;
 
-    public SQLiteDatabase(File file) throws IOException {
-        this.file = file;
-        if (!this.file.getParentFile().isDirectory()) {
-            if (!this.file.getParentFile().mkdirs()) {
-                throw new UnsupportedOperationException("Could not create the following directory: " + this.file.getParentFile().getAbsolutePath());
-            }
-        }
+    public SQLiteDatabase(File folder, String fileName) {
+        this.folder = folder;
+        this.fileName = fileName;
+
+        if (!this.folder.isDirectory())
+            this.folder.mkdirs();
+
+        File file = new File(this.folder, this.fileName);
         try {
-            if (!this.file.exists())
-                this.file.createNewFile();
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:" + this.file);
-            Logger.getGlobal().info("Opened database at " + this.file + " successfully");
-        } catch (Exception e) {
+            if (!file.exists())
+                file.createNewFile();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        dataSource.setJdbcUrl("jdbc:sqlite:" + folder.toPath().toAbsolutePath().resolve(fileName));
+        dataSource.setDriverClassName("org.sqlite.JDBC");
+        dataSource.setConnectionTestQuery("SELECT 1");
+        dataSource.setPoolName("[VariableEnderChests-SQLite]");
     }
 
     @Override
-    public Connection getConnection() {
-        return connection;
-    }
-
-    @Override
-    public void close() {
-        try {
-            this.connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public String getDatabaseName() {
-        return String.valueOf(file);
+    public String getType() {
+        return "SQLite";
     }
 }

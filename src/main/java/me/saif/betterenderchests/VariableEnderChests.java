@@ -7,7 +7,9 @@ import me.saif.betterenderchests.converters.ConverterManager;
 import me.saif.betterenderchests.data.ConfigUpdater;
 import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.data.Messages;
-import me.saif.betterenderchests.data.SQLiteDataManager;
+import me.saif.betterenderchests.data.SQLDataManager;
+import me.saif.betterenderchests.data.database.SQLDatabase;
+import me.saif.betterenderchests.data.database.SQLiteDatabase;
 import me.saif.betterenderchests.enderchest.EnderChestClickListener;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
 import me.saif.betterenderchests.utils.UpdateChecker;
@@ -34,12 +36,16 @@ public final class VariableEnderChests extends JavaPlugin {
     private Messages messages;
     private ConverterManager converterManager;
     private int version;
+    private SQLDatabase database;
 
     @Override
     public void onEnable() {
         API = new VariableEnderChestAPI(this);
-        this.version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
-        System.out.println(this.version);
+        try {
+            this.version = Integer.parseInt(Bukkit.getServer().getClass().getPackageName().split("\\.")[3].split("_")[1]);
+        } catch (NumberFormatException e) {
+            this.version = 13;
+        }
 
         this.saveDefaultConfig();
         new ConfigUpdater(this);
@@ -53,8 +59,13 @@ public final class VariableEnderChests extends JavaPlugin {
     }
 
     private void setupDataManager() {
-        this.dataManager = new SQLiteDataManager(this);
+        this.database = new SQLiteDatabase(this.getDataFolder(), "data.db");
+        this.dataManager = new SQLDataManager(this);
         this.dataManager.init();
+    }
+
+    public SQLDatabase getDatabase() {
+        return database;
     }
 
     private void setupEnderChestManager() {
