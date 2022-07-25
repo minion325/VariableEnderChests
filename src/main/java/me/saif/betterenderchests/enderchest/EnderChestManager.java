@@ -108,10 +108,16 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this.getPlugin(), () -> {
             Map<UUID, EnderChestSnapshot> toSave = new HashMap<>();
-            for (UUID uuid : this.uuidEnderChestMap.keySet()) {
-                if (Bukkit.getPlayer(uuid) == null) {
-                    toSave.put(uuid, this.uuidEnderChestMap.remove(uuid).snapshot());
+            Set<UUID> toRemove = new HashSet<>();
+            for (EnderChest enderChest : this.uuidEnderChestMap.values()) {
+                toSave.put(enderChest.getUUID(), enderChest.snapshot());
+                if (Bukkit.getPlayer(enderChest.getUUID()) == null) {
+                    toRemove.add(enderChest.getUUID());
                 }
+            }
+
+            for (UUID uuid : toRemove) {
+                this.uuidEnderChestMap.remove(uuid);
             }
 
             Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> this.dataManager.saveEnderChestMultiple(toSave));
@@ -264,7 +270,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
             EnderChestSnapshot snapshot = this.dataManager.loadEnderChest(name);
 
-            EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents(), getInventoryNames(snapshot.getName()));
+            EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents(), snapshot.getRows(), getInventoryNames(snapshot.getName()));
             Bukkit.getScheduler().runTask(this.getPlugin(), () -> {
                 this.nameCallbackMap.remove(mcName);
                 if (enderChest != null) {
@@ -291,7 +297,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
             EnderChestSnapshot snapshot = this.dataManager.loadEnderChest(uuid);
 
-            EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents(), getInventoryNames(snapshot.getName()));
+            EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents(), snapshot.getRows(), getInventoryNames(snapshot.getName()));
             Bukkit.getScheduler().runTask(this.getPlugin(), () -> {
                 this.uuidCallbackMap.remove(uuid);
                 this.uuidEnderChestMap.put(uuid, enderChest);

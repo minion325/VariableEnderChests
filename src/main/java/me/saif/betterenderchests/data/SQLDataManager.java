@@ -154,7 +154,7 @@ public class SQLDataManager extends DataManager {
             Iterator<String> nameIterator = names.iterator();
             int i = 0;
             while (i < names.size()) {
-                statement.setString(i + 1, nameIterator.next());
+                statement.setString(i + 1, nameIterator.next().toLowerCase());
                 i++;
             }
 
@@ -180,7 +180,7 @@ public class SQLDataManager extends DataManager {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < num; i++) {
             stringBuilder.append(dataTableName).append(".UUID = (SELECT ").append("UUID FROM ")
-                    .append(playersTableName).append(" WHERE ").append("NAME=? LIMIT 1)");
+                    .append(playersTableName).append(" WHERE ").append("LOWER(NAME)=? LIMIT 1)");
             if (i == num - 1)
                 stringBuilder.append(";");
             else
@@ -232,8 +232,8 @@ public class SQLDataManager extends DataManager {
     @Override
     public void deleteEnderChest(String name) {
         try (Connection connection = this.database.getConnection();
-             PreparedStatement statement = connection.prepareStatement("delete from " + this.getDataTableName() + " WHERE UUID=(SELECT * FROM " + this.getPlayersTableName() + " WHERE NAME=? LIMIT 1);")) {
-            statement.setString(1, name);
+             PreparedStatement statement = connection.prepareStatement("delete from " + this.getDataTableName() + " WHERE UUID=(SELECT * FROM " + this.getPlayersTableName() + " WHERE LOWER(NAME)=? LIMIT 1);")) {
+            statement.setString(1, name.toLowerCase(Locale.ROOT));
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
