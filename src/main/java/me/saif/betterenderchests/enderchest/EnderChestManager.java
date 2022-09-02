@@ -47,6 +47,8 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
     private final Sound OPEN_SOUND;
     private final Sound CLOSE_SOUND;
 
+    private final Set<Material> blacklist = new HashSet<>();
+
     public EnderChestManager(VariableEnderChests plugin) {
         super(plugin);
         this.dataManager = getPlugin().getDataManager();
@@ -75,6 +77,16 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             this.defaultRows = 6;
         else if (this.defaultRows < 0)
             this.defaultRows = 0;
+
+        for (String s : this.getPlugin().getConfig().getStringList("blacklisted-items")) {
+            Material material = Material.matchMaterial(s);
+            if (material == null) {
+                plugin.getLogger().warning("Blacklisted item by the name of \"" + s + "\" found. This is not a valid minecraft material. Ignoring...");
+                return;
+            }
+
+            this.blacklist.add(material);
+        }
 
         //load data for already online players eg. if plugin is reloaded.
         Bukkit.getScheduler().runTask(plugin, () -> {
@@ -376,5 +388,9 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         Map<Integer, String> map = new HashMap<>();
         this.inventoryNames.forEach((integer, s) -> map.put(integer, s.replace("<player>", name)));
         return map;
+    }
+
+    public Set<Material> getBlacklist() {
+        return blacklist;
     }
 }

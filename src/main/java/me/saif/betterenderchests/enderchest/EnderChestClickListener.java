@@ -1,34 +1,76 @@
 package me.saif.betterenderchests.enderchest;
 
+import me.saif.betterenderchests.VariableEnderChests;
+import me.saif.betterenderchests.data.Messages;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryInteractEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 public class EnderChestClickListener implements Listener {
 
     private static final String PERMISSION_TO_EDIT = "enderchest.modify.others";
 
+    private VariableEnderChests plugin;
+
+    public EnderChestClickListener(VariableEnderChests plugin) {
+        this.plugin = plugin;
+    }
+
     @EventHandler
     private void onInventoryInteract(InventoryClickEvent event) {
+        if (!isEnderChest(event.getWhoClicked().getOpenInventory().getTopInventory()))
+            return;
+
         onInvInteract(event);
+
+        if (event.isCancelled())
+            return;
+
+        if (event.getCursor() != null && event.getRawSlot() < event.getWhoClicked().getOpenInventory().getTopInventory().getSize() && plugin.getEnderChestManager().getBlacklist().contains(event.getCursor().getType())) {
+            event.setCancelled(true);
+            plugin.getMessages().sendTo(event.getWhoClicked(), Messages.BLACKLIST_MESSAGE);
+        }
+        else if (event.getClick().isShiftClick() && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && event.getRawSlot() >= event.getWhoClicked().getOpenInventory().getTopInventory().getSize()) {
+            event.setCancelled(true);
+            plugin.getMessages().sendTo(event.getWhoClicked(), Messages.BLACKLIST_MESSAGE);
+        } else if (event.getClick() == ClickType.NUMBER_KEY && event.getRawSlot() < event.getWhoClicked().getOpenInventory().getTopInventory().getSize()) {
+            ItemStack hotbarItem = event.getWhoClicked().getInventory().getContents()[event.getHotbarButton()];
+            if (hotbarItem != null && plugin.getEnderChestManager().getBlacklist().contains(hotbarItem.getType())) {
+                event.setCancelled(true);
+                plugin.getMessages().sendTo(event.getWhoClicked(), Messages.BLACKLIST_MESSAGE);
+            }
+        }
+
     }
 
     @EventHandler
     private void onInventoryInteract(InventoryDragEvent event) {
+        if (!isEnderChest(event.getWhoClicked().getOpenInventory().getTopInventory()))
+            return;
+
         onInvInteract(event);
+
+        if (event.isCancelled())
+            return;
+
+        if (event.getOldCursor() != null && event.getRawSlots().stream().anyMatch(integer -> integer < event.getWhoClicked().getOpenInventory().getTopInventory().getSize()) && plugin.getEnderChestManager().getBlacklist().contains(event.getOldCursor().getType())) {
+            event.setCancelled(true);
+            plugin.getMessages().sendTo(event.getWhoClicked(), Messages.BLACKLIST_MESSAGE);
+        }
+
     }
 
     private void onInvInteract(InventoryInteractEvent event) {
         Inventory inventory = event.getWhoClicked().getOpenInventory().getTopInventory();
 
-        if (inventory == null || inventory.getHolder() == null || !(inventory.getHolder() instanceof EnderChest))
-            return;
-
         if (!event.getWhoClicked().hasPermission(PERMISSION_TO_EDIT) && !event.getWhoClicked().getUniqueId().equals(((EnderChest) inventory.getHolder()).getUUID()))
             event.setCancelled(true);
+    }
+
+    private boolean isEnderChest(Inventory inventory) {
+        return inventory != null && inventory.getHolder() != null && inventory.getHolder() instanceof EnderChest;
     }
 
 }

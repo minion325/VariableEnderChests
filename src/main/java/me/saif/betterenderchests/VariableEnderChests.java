@@ -71,7 +71,7 @@ public final class VariableEnderChests extends JavaPlugin {
     private void setupEnderChestManager() {
         this.enderChestManager = new EnderChestManager(this);
         Bukkit.getPluginManager().registerEvents(this.enderChestManager, this);
-        Bukkit.getPluginManager().registerEvents(new EnderChestClickListener(), this);
+        Bukkit.getPluginManager().registerEvents(new EnderChestClickListener(this), this);
 
         this.converterManager = new ConverterManager(this);
     }

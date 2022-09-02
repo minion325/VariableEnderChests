@@ -8,7 +8,7 @@ public class ConfigUpdater {
 
     private VariableEnderChests plugin;
 
-    private final int latest = 2;
+    private final int latest = 3;
 
     private int current;
 
@@ -17,19 +17,20 @@ public class ConfigUpdater {
 
         this.current = this.plugin.getConfig().getInt("config-version");
 
+        if (current < latest && this.plugin.getVersion() < 18) {
+            this.plugin.getConfig().options().header("You are using an older version of minecraft so comments have been deleted by updating the config\n" +
+                    "Check out https://github.com/minion325/VariableEnderChests/blob/master/src/main/resources/config.yml to see the config.yml with comments\n" +
+                    "Do not touch config-version. This is automatically updated by the plugin.");
+        }
         while (current < latest) {
             update();
         }
     }
 
     private void update() {
-        //updates from 1 to 2
         this.plugin.getLogger().info("Updating config from version " + this.current + " to " + (this.current + 1));
-        if (this.plugin.getVersion() < 18) {
-            this.plugin.getConfig().options().header("You are using an older version of minecraft so comments have been deleted by updating the config\n" +
-                    "Check out https://github.com/minion325/VariableEnderChests/blob/master/src/main/resources/config.yml to see the config.yml with comments\n" +
-                    "Do not touch config-version. This is automatically updated by the plugin.");
-        }
+
+        //updates from 1 to 2
         if (this.current == 1) {
             this.plugin.getConfig().set("config-version", 2);
 
@@ -41,6 +42,16 @@ public class ConfigUpdater {
                         "You can set a different name for each size eg. Level 1, Level 2",
                         "<player> is replaced with the player's name"));
             }
+            this.current++;
+            this.plugin.saveConfig();
+        }
+
+        //frm 2 to 3
+        if (this.current == 2) {
+            this.plugin.getConfig().set("config-version", 3);
+
+            this.plugin.getConfig().set("blacklisted-message", "&4You cannot put that item into an ender chest.");
+            this.plugin.getConfig().set("blacklisted-items", Arrays.asList("COMMAND_BLOCK"));
             this.current++;
             this.plugin.saveConfig();
         }
