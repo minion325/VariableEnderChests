@@ -33,8 +33,10 @@ public class EnderChestClickListener implements Listener {
             plugin.getMessages().sendTo(event.getWhoClicked(), Messages.BLACKLIST_MESSAGE);
         }
         else if (event.getClick().isShiftClick() && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && event.getRawSlot() >= event.getWhoClicked().getOpenInventory().getTopInventory().getSize()) {
-            event.setCancelled(true);
-            plugin.getMessages().sendTo(event.getWhoClicked(), Messages.BLACKLIST_MESSAGE);
+            if (event.getCurrentItem() != null && plugin.getEnderChestManager().getBlacklist().contains(event.getCurrentItem().getType())) {
+                event.setCancelled(true);
+                plugin.getMessages().sendTo(event.getWhoClicked(), Messages.BLACKLIST_MESSAGE);
+            }
         } else if (event.getClick() == ClickType.NUMBER_KEY && event.getRawSlot() < event.getWhoClicked().getOpenInventory().getTopInventory().getSize()) {
             ItemStack hotbarItem = event.getWhoClicked().getInventory().getContents()[event.getHotbarButton()];
             if (hotbarItem != null && plugin.getEnderChestManager().getBlacklist().contains(hotbarItem.getType())) {
