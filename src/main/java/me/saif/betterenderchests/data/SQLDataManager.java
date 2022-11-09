@@ -33,8 +33,8 @@ public class SQLDataManager extends DataManager {
 
     @Override
     public void init() {
-        String createDataTable = "CREATE TABLE IF NOT EXISTS " + getDataTableName() + " (UUID VARCHAR(36) NOT NULL PRIMARY KEY, ROWS INT, CONTENTS MEDIUMTEXT);";
-        String createPlayersTable = "CREATE TABLE IF NOT EXISTS " + getPlayersTableName() + " (UUID VARCHAR(36) NOT NULL UNIQUE, NAME VARCHAR(16) NOT NULL UNIQUE);";
+        String createDataTable = "CREATE TABLE IF NOT EXISTS " + getDataTableName() + " (`UUID` VARCHAR(36) NOT NULL PRIMARY KEY, `ROWS` INT, `CONTENTS` MEDIUMTEXT);";
+        String createPlayersTable = "CREATE TABLE IF NOT EXISTS " + getPlayersTableName() + " (`UUID` VARCHAR(36) NOT NULL UNIQUE, `NAME` VARCHAR(16) NOT NULL UNIQUE);";
         try (Connection connection = this.database.getConnection();
              Statement statement = connection.createStatement()) {
             statement.executeUpdate(createDataTable);
@@ -80,7 +80,7 @@ public class SQLDataManager extends DataManager {
 
     @Override
     public void saveEnderChestMultiple(Map<UUID, EnderChestSnapshot> snapshotMap) {
-        String sql = "REPLACE INTO " + getDataTableName() + " (UUID,ROWS,CONTENTS) VALUES (?,?,?)";
+        String sql = "REPLACE INTO " + getDataTableName() + " (UUID,`ROWS`,CONTENTS) VALUES (?,?,?)";
         try (Connection connection = this.database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             for (UUID uuid : snapshotMap.keySet()) {
@@ -100,7 +100,7 @@ public class SQLDataManager extends DataManager {
     public Map<UUID, EnderChestSnapshot> loadEnderChestsByUUID(Set<UUID> uuids) {
         if (uuids.isEmpty())
             return new HashMap<>();
-        String sql = "SELECT " + getDataTableName() + ".UUID," + getPlayersTableName() + ".NAME,ROWS,CONTENTS FROM " + getDataTableName() + " LEFT JOIN " + getPlayersTableName()
+        String sql = "SELECT " + getDataTableName() + ".UUID," + getPlayersTableName() + ".NAME,`ROWS`,CONTENTS FROM " + getDataTableName() + " LEFT JOIN " + getPlayersTableName()
                 + " ON " + getDataTableName() + ".UUID=" + getPlayersTableName() + ".UUID WHERE " + getWhereConditionForUUID(uuids.size());
         try (Connection connection = this.database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -146,7 +146,7 @@ public class SQLDataManager extends DataManager {
     public Map<String, EnderChestSnapshot> loadEnderChestsByName(Set<String> names) {
         if (names.isEmpty())
             return new HashMap<>();
-        String sql = "SELECT " + getDataTableName() + ".UUID," + getPlayersTableName() + ".NAME,ROWS,CONTENTS FROM " + getDataTableName() + " LEFT JOIN " + getPlayersTableName()
+        String sql = "SELECT " + getDataTableName() + ".UUID," + getPlayersTableName() + ".NAME,`ROWS`,CONTENTS FROM " + getDataTableName() + " LEFT JOIN " + getPlayersTableName()
                 + " ON " + getDataTableName() + ".UUID=" + getPlayersTableName() + ".UUID WHERE " + getWhereConditionForNames(names.size());
         try (Connection connection = this.database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {

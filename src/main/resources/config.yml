@@ -1,5 +1,15 @@
 #Do not change this manually, this is to keep track of config changes.
-config-version: 3
+config-version: 4
+
+#If mysql is set to false, database defaults to a data.db file
+#Do not set mysql to true unless you have a mysql database set up
+database:
+  mysql: false
+  host: 'localhost'
+  port: 3306
+  database: 'database'
+  username: 'username'
+  password: 'password'
 
 #If this is set to false, it will convert current ender chests to be used by this plugin;
 #Whether this is set to true or false, does NOT affect the enderchest contents that is saved by default minecraft.

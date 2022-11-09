@@ -82,7 +82,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             Material material = Material.matchMaterial(s);
             if (material == null) {
                 plugin.getLogger().warning("Blacklisted item by the name of \"" + s + "\" found. This is not a valid minecraft material. Ignoring...");
-                return;
+                continue;
             }
 
             this.blacklist.add(material);
@@ -169,8 +169,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
             dataManager.saveNameAndUUID(name, uuid);
             EnderChest enderChest = loadData(name, uuid);
-            Bukkit.getScheduler().runTask(getPlugin(), () -> uuidEnderChestMap.put(uuid, Objects.requireNonNullElseGet(enderChest,
-                    () -> createNew(event.getPlayer()))));
+            Bukkit.getScheduler().runTask(getPlugin(), () -> uuidEnderChestMap.put(uuid, enderChest == null ? createNew(event.getPlayer()) : enderChest));
         });
     }
 

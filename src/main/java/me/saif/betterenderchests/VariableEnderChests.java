@@ -8,6 +8,7 @@ import me.saif.betterenderchests.data.ConfigUpdater;
 import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.data.SQLDataManager;
+import me.saif.betterenderchests.data.database.MySQLDatabase;
 import me.saif.betterenderchests.data.database.SQLDatabase;
 import me.saif.betterenderchests.data.database.SQLiteDatabase;
 import me.saif.betterenderchests.enderchest.EnderChestClickListener;
@@ -20,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import revxrsal.commands.CommandHandler;
 import revxrsal.commands.bukkit.core.BukkitHandler;
 
+import java.sql.SQLException;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
@@ -42,7 +44,7 @@ public final class VariableEnderChests extends JavaPlugin {
     public void onEnable() {
         API = new VariableEnderChestAPI(this);
         try {
-            this.version = Integer.parseInt(Bukkit.getServer().getClass().getPackageName().split("\\.")[3].split("_")[1]);
+            this.version = Integer.parseInt(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].split("_")[1]);
         } catch (NumberFormatException e) {
             this.version = 13;
         }
@@ -52,14 +54,30 @@ public final class VariableEnderChests extends JavaPlugin {
 
         this.messages = new Messages(this.getConfig());
 
-        setupDataManager();
+        try {
+            setupDataManager();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            this.getLogger().severe("Could not connect to the database. Disabling plugin");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
         setupEnderChestManager();
         setupCommands();
         setupMetricsAndCheckForUpdate();
     }
 
-    private void setupDataManager() {
-        this.database = new SQLiteDatabase(this.getDataFolder(), "data.db");
+    private void setupDataManager() throws SQLException {
+        if (getConfig().getBoolean("database.mysql", false)) {
+            this.database = new MySQLDatabase(
+                    getConfig().getString("database.host"),
+                    getConfig().getInt("database.port"),
+                    getConfig().getString("database.database"),
+                    getConfig().getString("database.username"),
+                    getConfig().getString("database.password"));
+        } else {
+            this.database = new SQLiteDatabase(this.getDataFolder(), "data.db");
+        }
         this.dataManager = new SQLDataManager(this);
         this.dataManager.init();
     }

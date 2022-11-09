@@ -1,5 +1,9 @@
 package me.saif.betterenderchests.data.database;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class MySQLDatabase extends SQLDatabase {
 
     private final String host;
@@ -8,7 +12,7 @@ public class MySQLDatabase extends SQLDatabase {
     private final String username;
     private final String password;
 
-    public MySQLDatabase(String host, int port, String database, String username, String password) {
+    public MySQLDatabase(String host, int port, String database, String username, String password) throws SQLException {
         super();
         this.database = database;
         this.host = host;
@@ -21,6 +25,11 @@ public class MySQLDatabase extends SQLDatabase {
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
         dataSource.setPoolName("[VariableEnderChests-MySQL]");
         dataSource.setConnectionTestQuery("SELECT 1");
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement()) {
+
+            statement.executeQuery("SELECT 1;");
+        }
     }
 
     @Override

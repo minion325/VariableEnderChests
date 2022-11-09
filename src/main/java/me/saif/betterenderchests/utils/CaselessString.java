@@ -17,7 +17,8 @@ public class CaselessString {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CaselessString mcName)) return false;
+        if (!(o instanceof CaselessString)) return false;
+        CaselessString mcName = (CaselessString) o;
         return mcName.lowerCase.equals(this.lowerCase);
     }
 

@@ -8,7 +8,7 @@ public class ConfigUpdater {
 
     private VariableEnderChests plugin;
 
-    private final int latest = 3;
+    private final int latest = 4;
 
     private int current;
 
@@ -52,6 +52,20 @@ public class ConfigUpdater {
 
             this.plugin.getConfig().set("blacklisted-message", "&4You cannot put that item into an ender chest.");
             this.plugin.getConfig().set("blacklisted-items", Arrays.asList("COMMAND_BLOCK"));
+            this.current++;
+            this.plugin.saveConfig();
+        }
+
+        if (this.current == 3) {
+            this.plugin.getConfig().set("config-version", 4);
+
+            this.plugin.getConfig().set("database.mysql", false);
+            this.plugin.getConfig().set("database.host", "localhost");
+            this.plugin.getConfig().set("database.port", 3306);
+            this.plugin.getConfig().set("database.database", "database");
+            this.plugin.getConfig().set("database.username", "username");
+            this.plugin.getConfig().set("database.password", "password");
+
             this.current++;
             this.plugin.saveConfig();
         }
