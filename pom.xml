@@ -6,7 +6,7 @@
 
     <groupId>me.saif</groupId>
     <artifactId>VariableEnderChests</artifactId>
-    <version>1.8.0</version>
+    <version>1.8.2</version>
     <packaging>jar</packaging>
 
     <name>BetterEnderChests</name>
@@ -44,12 +44,16 @@
                                     <shadedPattern>me.saif.betterenderchests.lamp</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>org.bstats</pattern>
-                                    <shadedPattern>me.saif.betterenderchests</shadedPattern>
-                                </relocation>
+                                <pattern>org.bstats</pattern>
+                                <shadedPattern>me.saif.betterenderchests</shadedPattern>
+                            </relocation>
                                 <relocation>
                                     <pattern>com.zaxxer.hikari</pattern>
                                     <shadedPattern>me.saif.betterenderchests.hikari</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.slf4j</pattern>
+                                    <shadedPattern>me.saif.betterenderchests.slf4j</shadedPattern>
                                 </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
@@ -93,14 +97,14 @@
         <dependency>
             <groupId>com.github.Revxrsal.Lamp</groupId>
             <artifactId>common</artifactId>
-            <version>3.0.6-SNAPSHOT</version>
+            <version>3.1.0</version>
         </dependency>
 
         <!-- For the bukkit module -->
         <dependency>
             <groupId>com.github.Revxrsal.Lamp</groupId>
             <artifactId>bukkit</artifactId>
-            <version>3.0.6-SNAPSHOT</version>
+            <version>3.1.0</version>
         </dependency>
 
         <dependency>
@@ -112,7 +116,7 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>5.0.1</version>
+            <version>4.0.3</version>
         </dependency>
 
 

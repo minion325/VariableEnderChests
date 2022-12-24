@@ -19,7 +19,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 import revxrsal.commands.CommandHandler;
+import revxrsal.commands.bukkit.BukkitCommandHandler;
 import revxrsal.commands.bukkit.core.BukkitHandler;
+import revxrsal.commands.core.BaseCommandHandler;
 
 import java.sql.SQLException;
 import java.util.Locale;
@@ -106,7 +108,8 @@ public final class VariableEnderChests extends JavaPlugin {
                 .register(new EnderChestCommand(this))
                 .register(new ConversionCommand(this));
 
-        ((BukkitHandler) commandHandler).registerBrigadier();
+        if (((BukkitHandler) commandHandler).isBrigadierSupported())
+            ((BukkitHandler) commandHandler).registerBrigadier();
     }
 
     private void setupMetricsAndCheckForUpdate() {

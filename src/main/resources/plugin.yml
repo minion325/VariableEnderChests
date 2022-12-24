@@ -1,4 +1,5 @@
 name: VariableEnderChests
 version: '${project.version}'
 main: me.saif.betterenderchests.VariableEnderChests
+author: minion325
 api-version: 1.13
