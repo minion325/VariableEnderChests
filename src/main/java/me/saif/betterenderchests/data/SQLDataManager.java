@@ -20,7 +20,7 @@ public class SQLDataManager extends DataManager {
     public SQLDataManager(VariableEnderChests plugin) {
         super(plugin);
 
-        this.database = plugin.getDatabase();
+        this.database = plugin.getSQLDatabase();
     }
 
     public String getPlayersTableName() {

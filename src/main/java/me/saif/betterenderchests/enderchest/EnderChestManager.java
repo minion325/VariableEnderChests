@@ -2,7 +2,7 @@ package me.saif.betterenderchests.enderchest;
 
 import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.data.DataManager;
-import me.saif.betterenderchests.data.Messages;
+import me.saif.betterenderchests.lang.MessageKey;
 import me.saif.betterenderchests.utils.Callback;
 import me.saif.betterenderchests.utils.CaselessString;
 import me.saif.betterenderchests.utils.Manager;
@@ -111,7 +111,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
                     player.closeInventory();
                     int rows = this.getNumRows(player);
                     if (rows == 0) {
-                        this.getPlugin().getMessages().sendTo(player, Messages.NO_ROWS);
+                        this.getPlugin().getMessenger().sendMessage(player, MessageKey.NO_ENDERCHEST_SELF);
                     }
                     this.openEnderChest(this.getEnderChest(player), player, this.getNumRows(player));
                 }
@@ -184,7 +184,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
 
             int rows = this.getNumRows(player);
             if (rows == 0) {
-                this.getPlugin().getMessages().sendTo(player, Messages.NO_ROWS);
+                this.getPlugin().getMessenger().sendMessage(player, MessageKey.NO_ENDERCHEST_SELF);
             } else {
 
                 EnderChest enderChest = this.getEnderChest(player);

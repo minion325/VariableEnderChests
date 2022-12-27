@@ -1,0 +1,43 @@
+#This is meant to be configurable
+configurable:
+  command-permission-self:
+    - '&4You do not have permission to use this command.'
+  command-permission-others:
+    - '&4You do not have permission to view the enderchest of others.'
+  no-rows:
+    - '&4You do not have an enderchest.'
+  no-enderchest-found:
+    - '&4<player> does not have an enderchest.'
+  blacklisted-message:
+    - '&4You cannot put that item into an ender chest.'
+
+
+#These are meant for translation only
+internal:
+  converter:
+    all-players-offline:
+      - 'All players must be offline to use this command'
+    not-valid-conveter:
+      - 'That is not a valid converter.'
+    list-valid-convenrters:
+      - 'The valid converters are listed below'
+    confirm-converter:
+      - 'You need to execute this command again to be sure that you would like to convert.'
+      - 'This may result in everyone online being kicked from the server or major lag.'
+      - 'This will also result in the loss of all data being stored by this plugin'
+      - 'Proceed with caution!'
+    conversion-start:
+      - 'Conversion from <converter> is starting.'
+    conversion-success:
+      - 'Conversion successfully finished'
+    conversion-failure:
+      - 'Conversion failed'
+  enderchest:
+    cleared-enderchest:
+      - 'Cleared the enderchest of <player>'
+    confirm-clear:
+      - 'Are you sure you wish to clear the enderchest of <player>'
+      - 'Run this command again within <seconds> seconds to confirm'
+  blacklist:
+    invalid-type:
+      - 'Blacklisted item by the name of <type> found. This is not a valid minecraft material. Ignoring...'

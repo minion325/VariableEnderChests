@@ -6,23 +6,24 @@ import me.saif.betterenderchests.converters.Converter;
 import me.saif.betterenderchests.converters.ConverterManager;
 import me.saif.betterenderchests.data.ConfigUpdater;
 import me.saif.betterenderchests.data.DataManager;
-import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.data.SQLDataManager;
 import me.saif.betterenderchests.data.database.MySQLDatabase;
 import me.saif.betterenderchests.data.database.SQLDatabase;
 import me.saif.betterenderchests.data.database.SQLiteDatabase;
 import me.saif.betterenderchests.enderchest.EnderChestClickListener;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
+import me.saif.betterenderchests.lang.Messenger;
+import me.saif.betterenderchests.lang.locale.LocaleManager;
+import me.saif.betterenderchests.lang.locale.PlayerLocaleLoader;
 import me.saif.betterenderchests.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 import revxrsal.commands.CommandHandler;
-import revxrsal.commands.bukkit.BukkitCommandHandler;
 import revxrsal.commands.bukkit.core.BukkitHandler;
-import revxrsal.commands.core.BaseCommandHandler;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -37,8 +38,10 @@ public final class VariableEnderChests extends JavaPlugin {
 
     private DataManager dataManager;
     private EnderChestManager enderChestManager;
-    private Messages messages;
     private ConverterManager converterManager;
+    private LocaleManager localeManager;
+    private Messenger messenger;
+    private PlayerLocaleLoader playerLocaleLoader;
     private int version;
     private SQLDatabase database;
 
@@ -52,9 +55,11 @@ public final class VariableEnderChests extends JavaPlugin {
         }
 
         this.saveDefaultConfig();
+        this.localeManager = new LocaleManager(this);
+        this.playerLocaleLoader = new PlayerLocaleLoader(this);
         new ConfigUpdater(this);
 
-        this.messages = new Messages(this.getConfig());
+        this.messenger = new Messenger(this.localeManager, this.playerLocaleLoader);
 
         try {
             setupDataManager();
@@ -84,7 +89,7 @@ public final class VariableEnderChests extends JavaPlugin {
         this.dataManager.init();
     }
 
-    public SQLDatabase getDatabase() {
+    public SQLDatabase getSQLDatabase() {
         return database;
     }
 
@@ -138,8 +143,12 @@ public final class VariableEnderChests extends JavaPlugin {
         return enderChestManager;
     }
 
-    public Messages getMessages() {
-        return messages;
+    public Messenger getMessenger() {
+        return messenger;
+    }
+
+    public File getPluginFile() {
+        return getFile();
     }
 
     public ConverterManager getConverterManager() {

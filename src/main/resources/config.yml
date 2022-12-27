@@ -20,8 +20,8 @@ default-rows: 3
 
 #These are messages that will be sent to players.
 command-permission-self: '&4You do not have permission to use this command.'
-command-permission-others: '&4You do not have permission to view the enderchest of others.'
-no-enderchest-found: '&4That player does not have an enderchest.'
+command-permission-others: '&4You do not have permission to view the enderchest of <player>.'
+no-enderchest-found: '&4<player> does not have an enderchest.'
 no-rows: '&4You do not have an enderchest.'
 
 #These are the inventory names that players will see when they open their inventory
