@@ -1,7 +1,10 @@
 package me.saif.betterenderchests.lang.locale;
 
+import com.google.common.collect.Sets;
 import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.lang.MessageKey;
+import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,6 +14,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -18,15 +22,16 @@ import java.util.zip.ZipInputStream;
 public class LocaleManager {
 
     private VariableEnderChests plugin;
-    private final Map<String, Locale> localeMap = new HashMap<>();
-    private final String defaultLocale = "en_us";
+    private final Map<String, Locale> localeMap = new ConcurrentHashMap<>();
+    private Locale defaultLocale;
 
     public LocaleManager(VariableEnderChests plugin) {
         this.plugin = plugin;
-        try {
-            this.loadLocales();
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+        this.loadLocales();
+        this.defaultLocale = this.localeMap.get(plugin.getConfig().getString("default-locale", "en_us").toLowerCase());
+
+        if (this.defaultLocale == null) {
+            defaultLocale = this.localeMap.values().stream().findFirst().orElse(new Locale("en", Sets.newHashSet("us"), new HashMap<>()));
         }
     }
 
@@ -34,22 +39,57 @@ public class LocaleManager {
         return localeMap.get(name);
     }
 
-    private void loadLocales() throws IOException, InvalidConfigurationException {
+    private void loadLocales() {
         List<String> inJar = findLocaleResources();
         for (String s : inJar) {
-            this.saveResource(s, true);
+            this.saveResource(s, false);
         }
 
-        FileConfiguration config = new YamlConfiguration();
-        config.load(new File(this.plugin.getDataFolder(), inJar.get(0)));
-        for (MessageKey value : MessageKey.values()) {
-            config.set(value.getPath(), value.getDefault());
-        }
+        File langFolder = new File(plugin.getDataFolder(), "lang");
 
-        config.save(new File(this.plugin.getDataFolder(), inJar.get(0)));
+        for (File localeFile : langFolder.listFiles()) {
+            if (localeFile.isDirectory())
+                continue;
+
+            if (!localeFile.getName().endsWith(".yml"))
+                continue;
+
+            FileConfiguration localeConfig = new YamlConfiguration();
+
+            try {
+                localeConfig.load(localeFile);
+            } catch (IOException | InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+
+            String lang = localeConfig.getString("lang");
+            List<String> countries = localeConfig.getStringList("countries");
+
+            Map<MessageKey, String[]> messages = new HashMap<>();
+
+            for (MessageKey key : MessageKey.values()) {
+                List<String> lines = localeConfig.getStringList(key.getPath());
+                if (lines.size() != 0) {
+                    messages.put(key, lines.toArray(new String[0]));
+                } else {
+                    String single = localeConfig.getString(key.getPath());
+                    if (single == null)
+                        continue;
+
+                    messages.put(key, new String[]{single});
+
+                }
+            }
+
+            Locale locale = new Locale(lang, new HashSet<>(countries), messages);
+
+            for (String localeLocale : locale.getLocales()) {
+                this.localeMap.put(localeLocale.toLowerCase(), locale);
+            }
+        }
     }
 
-    private List<String> findLocaleResources(){
+    private List<String> findLocaleResources() {
         CodeSource src = plugin.getClass().getProtectionDomain().getCodeSource();
         List<String> list = new ArrayList<String>();
 
@@ -57,7 +97,7 @@ public class LocaleManager {
             if (src != null) {
                 URL jar = src.getLocation();
                 ZipInputStream zip = new ZipInputStream(jar.openStream());
-                ZipEntry ze = null;
+                ZipEntry ze;
 
                 while ((ze = zip.getNextEntry()) != null) {
                     String entryName = ze.getName();
@@ -72,6 +112,14 @@ public class LocaleManager {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public Locale getDefaultLocale() {
+        return defaultLocale;
+    }
+
+    public Locale getOrDefault(String localeString) {
+        return this.localeMap.getOrDefault(localeString.toLowerCase(), defaultLocale);
     }
 
     private void saveResource(String resourcePath, boolean replace) {

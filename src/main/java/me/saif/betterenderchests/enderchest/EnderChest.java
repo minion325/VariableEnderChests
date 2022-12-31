@@ -8,27 +8,41 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
 public class EnderChest implements InventoryHolder {
+
+    private static final Map<Integer, String> INVENTORY_NAMES = new HashMap<>();
+
+    static {
+        INVENTORY_NAMES.put(1, "VEC:<player>:1");
+        INVENTORY_NAMES.put(2, "VEC:<player>:2");
+        INVENTORY_NAMES.put(3, "VEC:<player>:3");
+        INVENTORY_NAMES.put(4, "VEC:<player>:4");
+        INVENTORY_NAMES.put(5, "VEC:<player>:5");
+        INVENTORY_NAMES.put(6, "VEC:<player>:6");
+    }
 
     private final UUID UUID;
     private final String name;
     private ItemStack[] contents;
     private Inventory inventory;
-    private Map<Integer, String> inventoryNames;
+    private final Map<Integer, String> inventoryNames = new HashMap<>();
     private int lastNumRows = 6;
 
-    protected EnderChest(UUID owner, String name, ItemStack[] contents, Map<Integer, String> inventoryNames) {
+    protected EnderChest(UUID owner, String name, ItemStack[] contents) {
         this.UUID = owner;
         this.name = name;
-        this.inventoryNames = inventoryNames;
+        INVENTORY_NAMES.forEach((integer, s) -> {
+            this.inventoryNames.put(integer, s.replace("<player>", name));
+        });
         this.contents = contents.length == 54 ? contents : Arrays.copyOf(contents, 54);
         this.inventory = Bukkit.createInventory(this, lastNumRows * 6, this.inventoryNames.get(lastNumRows));
         populateInventory();
     }
 
-    protected EnderChest(UUID owner, String name, ItemStack[] contents, int lastNumRows, Map<Integer, String> inventoryNames) {
-        this(owner, name, contents, inventoryNames);
+    protected EnderChest(UUID owner, String name, ItemStack[] contents, int lastNumRows) {
+        this(owner, name, contents);
         this.setRows(lastNumRows);
     }
 

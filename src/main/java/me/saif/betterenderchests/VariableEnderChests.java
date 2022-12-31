@@ -1,5 +1,7 @@
 package me.saif.betterenderchests;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import me.saif.betterenderchests.commands.ConversionCommand;
 import me.saif.betterenderchests.commands.EnderChestCommand;
 import me.saif.betterenderchests.converters.Converter;
@@ -15,7 +17,13 @@ import me.saif.betterenderchests.enderchest.EnderChestManager;
 import me.saif.betterenderchests.lang.Messenger;
 import me.saif.betterenderchests.lang.locale.LocaleManager;
 import me.saif.betterenderchests.lang.locale.PlayerLocaleLoader;
+import me.saif.betterenderchests.protocol.InvOpenPacketListener;
+import me.saif.betterenderchests.protocol.OutboundPacketListener;
+import me.saif.betterenderchests.protocol.PacketInterceptor;
 import me.saif.betterenderchests.utils.UpdateChecker;
+import net.minecraft.network.PacketDataSerializer;
+import net.minecraft.network.protocol.game.PacketPlayOutOpenWindow;
+import net.minecraft.world.inventory.Containers;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -24,6 +32,9 @@ import revxrsal.commands.CommandHandler;
 import revxrsal.commands.bukkit.core.BukkitHandler;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -40,6 +51,7 @@ public final class VariableEnderChests extends JavaPlugin {
     private EnderChestManager enderChestManager;
     private ConverterManager converterManager;
     private LocaleManager localeManager;
+    private PacketInterceptor packetInterceptor;
     private Messenger messenger;
     private PlayerLocaleLoader playerLocaleLoader;
     private int version;
@@ -57,6 +69,10 @@ public final class VariableEnderChests extends JavaPlugin {
         this.saveDefaultConfig();
         this.localeManager = new LocaleManager(this);
         this.playerLocaleLoader = new PlayerLocaleLoader(this);
+        this.packetInterceptor = new PacketInterceptor(this);
+
+        packetInterceptor.addPacketListener(new InvOpenPacketListener());
+
         new ConfigUpdater(this);
 
         this.messenger = new Messenger(this.localeManager, this.playerLocaleLoader);
@@ -157,5 +173,13 @@ public final class VariableEnderChests extends JavaPlugin {
 
     public int getVersion() {
         return version;
+    }
+
+    public LocaleManager getLocaleManager() {
+        return localeManager;
+    }
+
+    public PlayerLocaleLoader getPlayerLocaleLoader() {
+        return playerLocaleLoader;
     }
 }

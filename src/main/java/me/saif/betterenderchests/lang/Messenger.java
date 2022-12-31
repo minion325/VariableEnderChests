@@ -11,7 +11,6 @@ public class Messenger {
 
     private LocaleManager lm;
     private PlayerLocaleLoader pll;
-    private final String systemLocale = java.util.Locale.getDefault().toLanguageTag().replace('-', '_');
 
     public Messenger(LocaleManager lm, PlayerLocaleLoader pll) {
         this.lm = lm;
@@ -19,8 +18,7 @@ public class Messenger {
     }
 
     public String[] getMessage(CommandSender sender, MessageKey messageKey, PlaceholderResult... placeholders) {
-        String localeString = !(sender instanceof Player) ? systemLocale : pll.getLocale(((Player) sender));
-        Locale locale = lm.getLocale(localeString);
+        Locale locale = !(sender instanceof Player) ? lm.getDefaultLocale() : pll.getLocale(((Player) sender));
 
         return locale.getFormattedMessage(messageKey, placeholders);
     }

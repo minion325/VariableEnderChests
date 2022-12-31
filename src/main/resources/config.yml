@@ -1,5 +1,5 @@
 #Do not change this manually, this is to keep track of config changes.
-config-version: 4
+config-version: 5
 
 #If mysql is set to false, database defaults to a data.db file
 #Do not set mysql to true unless you have a mysql database set up
@@ -18,11 +18,7 @@ convert-current-ender-chest: true
 #If this is set to 0, players will need a permission to be able to open an enderchest
 default-rows: 3
 
-#These are messages that will be sent to players.
-command-permission-self: '&4You do not have permission to use this command.'
-command-permission-others: '&4You do not have permission to view the enderchest of <player>.'
-no-enderchest-found: '&4<player> does not have an enderchest.'
-no-rows: '&4You do not have an enderchest.'
+default-locale: 'en_us'
 
 #These are the inventory names that players will see when they open their inventory
 #You can set a different name for each size eg. Level 1, Level 2

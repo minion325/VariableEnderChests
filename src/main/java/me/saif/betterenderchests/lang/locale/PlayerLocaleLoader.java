@@ -8,19 +8,21 @@ import org.bukkit.event.Listener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerLocaleLoader implements Listener {
 
     private VariableEnderChests plugin;
-    private Map<UUID, String> playerLocaleMap = new HashMap<>();
+    private Map<UUID, String> playerLocaleMap = new ConcurrentHashMap<>();
 
     public PlayerLocaleLoader(VariableEnderChests plugin) {
+        this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     //TODO implement logic
-    public String getLocale(Player player) {
-        return "en_US";
+    public Locale getLocale(Player player) {
+        return plugin.getLocaleManager().getOrDefault(player.getLocale());
     }
 
 }
