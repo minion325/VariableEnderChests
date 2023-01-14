@@ -7,13 +7,13 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class PlayerLocale {
+public class PlayerLocaleFinder {
 
     private VariableEnderChests plugin;
     private Method getLocaleMethod;
 
 
-    public PlayerLocale(VariableEnderChests plugin) {
+    public PlayerLocaleFinder(VariableEnderChests plugin) {
         this.plugin = plugin;
 
         if (VariableEnderChests.getMCVersion() < 12) {
@@ -23,11 +23,11 @@ public class PlayerLocale {
 
     public Locale getLocale(Player player) {
         if (VariableEnderChests.getMCVersion() >= 12)
-            return plugin.getLocaleManager().getOrDefault(player.getLocale());
+            return plugin.getLocaleLoader().getOrDefault(player.getLocale());
         try {
-            return plugin.getLocaleManager().getOrDefault((String) getLocaleMethod.invoke(player.spigot()));
+            return plugin.getLocaleLoader().getOrDefault((String) getLocaleMethod.invoke(player.spigot()));
         } catch (IllegalAccessException | InvocationTargetException e) {
-            return plugin.getLocaleManager().getDefaultLocale();
+            return plugin.getLocaleLoader().getDefaultLocale();
         }
     }
 

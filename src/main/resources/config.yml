@@ -20,6 +20,5 @@ default-rows: 3
 
 default-locale: 'en_us'
 
-blacklisted-message: '&4You cannot put that item into an ender chest.'
 blacklisted-items:
   - 'COMMAND_BLOCK'

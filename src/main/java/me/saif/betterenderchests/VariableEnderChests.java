@@ -18,18 +18,15 @@ import me.saif.betterenderchests.lang.inventory.impl.OpenEnderchestPacketModifie
 import me.saif.betterenderchests.lang.inventory.impl.OpenEnderchestPacketModifier_1_16_Below;
 import me.saif.betterenderchests.lang.inventory.impl.OpenEnderchestPacketModifier_1_19_Below;
 import me.saif.betterenderchests.lang.inventory.packetinterceptor.PacketInterceptor;
-import me.saif.betterenderchests.lang.locale.LocaleManager;
-import me.saif.betterenderchests.lang.locale.PlayerLocale;
+import me.saif.betterenderchests.lang.locale.LocaleLoader;
+import me.saif.betterenderchests.lang.locale.PlayerLocaleFinder;
 import me.saif.betterenderchests.utils.UpdateChecker;
-import org.apache.commons.logging.impl.SLF4JLogFactory;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.slf4j.helpers.NOPLogger;
 import revxrsal.commands.CommandHandler;
+import revxrsal.commands.bukkit.BukkitCommandHandler;
 import revxrsal.commands.bukkit.core.BukkitHandler;
 
 import java.io.File;
@@ -63,9 +60,9 @@ public final class VariableEnderChests extends JavaPlugin {
     private DataManager dataManager;
     private EnderChestManager enderChestManager;
     private ConverterManager converterManager;
-    private LocaleManager localeManager;
+    private LocaleLoader localeLoader;
     private Messenger messenger;
-    private PlayerLocale playerLocale;
+    private PlayerLocaleFinder playerLocaleFinder;
     private SQLDatabase database;
     private PacketInterceptor packetInterceptor;
 
@@ -76,21 +73,21 @@ public final class VariableEnderChests extends JavaPlugin {
 
         new ConfigUpdater(this);
 
-        this.localeManager = new LocaleManager(this);
-        this.playerLocale = new PlayerLocale(this);
+        this.localeLoader = new LocaleLoader(this);
+        this.playerLocaleFinder = new PlayerLocaleFinder(this);
 
         PacketModifier packetModifier;
 
         if (getMCVersion() <= 12)
-            packetModifier = new OpenEnderchestPacketModifier_1_12_Below(this.playerLocale);
+            packetModifier = new OpenEnderchestPacketModifier_1_12_Below(this.playerLocaleFinder);
         else if (getMCVersion() <= 16)
-            packetModifier = new OpenEnderchestPacketModifier_1_16_Below(this.playerLocale);
+            packetModifier = new OpenEnderchestPacketModifier_1_16_Below(this.playerLocaleFinder);
         else
-            packetModifier = new OpenEnderchestPacketModifier_1_19_Below(this.playerLocale);
+            packetModifier = new OpenEnderchestPacketModifier_1_19_Below(this.playerLocaleFinder);
 
         this.packetInterceptor = new PacketInterceptor(this, packetModifier);
 
-        this.messenger = new Messenger(this.localeManager, this.playerLocale);
+        this.messenger = new Messenger(this.localeLoader, this.playerLocaleFinder);
 
         try {
             setupDataManager();
@@ -144,8 +141,8 @@ public final class VariableEnderChests extends JavaPlugin {
                 .register(new EnderChestCommand(this))
                 .register(new ConversionCommand(this));
 
-        if (((BukkitHandler) commandHandler).isBrigadierSupported())
-            ((BukkitHandler) commandHandler).registerBrigadier();
+        if (((BukkitCommandHandler) commandHandler).isBrigadierSupported())
+            ((BukkitCommandHandler) commandHandler).registerBrigadier();
     }
 
     private void setupMetricsAndCheckForUpdate() {
@@ -192,11 +189,11 @@ public final class VariableEnderChests extends JavaPlugin {
         return getMCVersion;
     }
 
-    public LocaleManager getLocaleManager() {
-        return localeManager;
+    public LocaleLoader getLocaleLoader() {
+        return localeLoader;
     }
 
-    public PlayerLocale getPlayerLocaleLoader() {
-        return playerLocale;
+    public PlayerLocaleFinder getPlayerLocaleFinder() {
+        return playerLocaleFinder;
     }
 }

@@ -1,7 +1,7 @@
 package me.saif.betterenderchests.lang.inventory.impl;
 
 import me.saif.betterenderchests.lang.locale.Locale;
-import me.saif.betterenderchests.lang.locale.PlayerLocale;
+import me.saif.betterenderchests.lang.locale.PlayerLocaleFinder;
 import me.saif.reflectionutils.ReflectionUtils;
 import org.bukkit.entity.Player;
 
@@ -18,9 +18,9 @@ public class OpenEnderchestPacketModifier_1_12_Below extends OpenEnderchestPacke
     private Method Component_getText;
     private Constructor<?> ChatComponentText_init;
     private boolean initialized = false;
-    private final PlayerLocale locale;
+    private final PlayerLocaleFinder locale;
 
-    public OpenEnderchestPacketModifier_1_12_Below(PlayerLocale locale) {
+    public OpenEnderchestPacketModifier_1_12_Below(PlayerLocaleFinder locale) {
         this.locale = locale;
         try {
             OpenWindowPacketClass = Class.forName("net.minecraft.server." + VERSION + ".PacketPlayOutOpenWindow");

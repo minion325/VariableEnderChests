@@ -3,14 +3,11 @@ package me.saif.betterenderchests.lang.locale;
 import com.google.common.collect.Sets;
 import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.lang.MessageKey;
-import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.*;
@@ -19,13 +16,13 @@ import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class LocaleManager {
+public class LocaleLoader {
 
     private VariableEnderChests plugin;
     private final Map<String, Locale> localeMap = new ConcurrentHashMap<>();
     private Locale defaultLocale;
 
-    public LocaleManager(VariableEnderChests plugin) {
+    public LocaleLoader(VariableEnderChests plugin) {
         this.plugin = plugin;
         this.loadLocales();
         this.defaultLocale = this.localeMap.get(plugin.getConfig().getString("default-locale", "en_us").toLowerCase());
@@ -36,7 +33,17 @@ public class LocaleManager {
     }
 
     public Locale getLocale(String name) {
-        return localeMap.get(name);
+        Locale locale = localeMap.get(name.toLowerCase());
+
+        if (locale != null)
+            return locale;
+
+        String[] split = name.split("_");
+
+        if (split.length != 2)
+            return null;
+
+        return localeMap.get(split[0] + "_**");
     }
 
     private void loadLocales() {
@@ -77,7 +84,7 @@ public class LocaleManager {
                     if (single == null) {
                         //we set it in the file
                         madeChanges = true;
-                        plugin.getLogger().info(key.getPath() +" was not found in " + localeFile.getName() + ". Setting defaults.");
+                        plugin.getLogger().info(key.getPath() + " was not found in " + localeFile.getName() + ". Setting defaults.");
                         String[] def = key.getDefault();
                         if (def.length == 1) {
                             localeConfig.set(key.getPath(), def[0]);
@@ -136,7 +143,12 @@ public class LocaleManager {
     }
 
     public Locale getOrDefault(String localeString) {
-        return this.localeMap.getOrDefault(localeString.toLowerCase(), defaultLocale);
+        Locale locale = getLocale(localeString);
+
+        if (locale == null)
+            return defaultLocale;
+
+        return locale;
     }
 
     private void saveResource(String resourcePath, boolean replace) {

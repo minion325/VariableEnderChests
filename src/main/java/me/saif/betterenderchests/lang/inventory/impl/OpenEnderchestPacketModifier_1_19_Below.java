@@ -1,7 +1,7 @@
 package me.saif.betterenderchests.lang.inventory.impl;
 
 import me.saif.betterenderchests.lang.locale.Locale;
-import me.saif.betterenderchests.lang.locale.PlayerLocale;
+import me.saif.betterenderchests.lang.locale.PlayerLocaleFinder;
 import me.saif.reflectionutils.ReflectionUtils;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class OpenEnderchestPacketModifier_1_19_Below extends OpenEnderchestPacketModifier {
 
-    private final PlayerLocale locale;
+    private final PlayerLocaleFinder locale;
     private boolean initialized = false;
     private Field name, id;
     private Class<?> OpenWindowPacketClass;
@@ -23,7 +23,7 @@ public class OpenEnderchestPacketModifier_1_19_Below extends OpenEnderchestPacke
     private Constructor<?> OpenWindow_init;
 
 
-    public OpenEnderchestPacketModifier_1_19_Below(PlayerLocale locale) {
+    public OpenEnderchestPacketModifier_1_19_Below(PlayerLocaleFinder locale) {
         this.locale = locale;
         try {
             OpenWindowPacketClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutOpenWindow");

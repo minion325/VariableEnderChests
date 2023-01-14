@@ -8,7 +8,7 @@ public class ConfigUpdater {
 
     private VariableEnderChests plugin;
 
-    private final int latest = 4;
+    private final int latest = 5;
 
     private int current;
 
@@ -56,6 +56,7 @@ public class ConfigUpdater {
             this.plugin.saveConfig();
         }
 
+        //from 3 -> 4
         if (this.current == 3) {
             this.plugin.getConfig().set("config-version", 4);
 
@@ -65,6 +66,20 @@ public class ConfigUpdater {
             this.plugin.getConfig().set("database.database", "database");
             this.plugin.getConfig().set("database.username", "username");
             this.plugin.getConfig().set("database.password", "password");
+
+            this.current++;
+            this.plugin.saveConfig();
+        }
+
+        //from 4->5
+        if (this.current == 4) {
+            this.plugin.getConfig().set("enderchest-names", null);
+            this.plugin.getConfig().set("command-permission-self", null);
+            this.plugin.getConfig().set("command-permission-others", null);
+            this.plugin.getConfig().set("no-enderchest-found", null);
+            this.plugin.getConfig().set("no-rows", null);
+            this.plugin.getConfig().set("blacklisted-message", null);
+            this.plugin.getConfig().set("default-locale", "en_us");
 
             this.current++;
             this.plugin.saveConfig();

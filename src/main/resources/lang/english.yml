@@ -4,6 +4,7 @@ countries:
   - 'US'
   - 'AU'
   - 'UK'
+  - '**'
 
 #This is meant to be configurable
 configurable:
