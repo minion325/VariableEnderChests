@@ -2,6 +2,8 @@ package me.saif.betterenderchests.commands;
 
 import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.converters.Converter;
+import me.saif.betterenderchests.lang.MessageKey;
+import me.saif.betterenderchests.lang.Messenger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -11,48 +13,48 @@ import revxrsal.commands.annotation.Named;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ConversionCommand {
 
     private VariableEnderChests plugin;
     private Map<CommandSender, Converter> confirmMap = new HashMap<>();
+    private Messenger messenger;
 
     public ConversionCommand(VariableEnderChests plugin) {
         this.plugin = plugin;
+        this.messenger = plugin.getMessenger();
     }
 
     @Command({"echestconvert", "enderchestconvert"})
     @AutoComplete("@converters")
     public void onConvertCommand(ConsoleCommandSender sender, @Named("converter") String converterName) {
         if (Bukkit.getOnlinePlayers().size() > 0) {
-            sender.sendMessage("All players must be offline to use this command");
+            messenger.sendMessage(sender, MessageKey.ALL_PLAYERS_OFFLINE);
             return;
         }
         Converter converter = this.plugin.getConverterManager().getConverter(converterName);
         if (converter == null) {
-            sender.sendMessage("That is not a valid converter.");
-            sender.sendMessage("Valid converters");
-            sender.sendMessage(this.plugin.getConverterManager().getConverters().stream().map(Converter::getName).collect(Collectors.toSet()).toArray(new String[]{}));
+            messenger.sendMessage(sender, MessageKey.NOT_VALID_CONVERTER);
+            messenger.sendMessage(sender, MessageKey.LIST_VALID_CONVERTERS);
+            this.plugin.getConverterManager().getConverters().stream().map(Converter::getName).forEach(sender::sendMessage);
             return;
         }
 
         if (this.confirmMap.get(sender) != converter) {
             this.confirmMap.put(sender, converter);
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> confirmMap.remove(sender), 100L);
-            sender.sendMessage("You need to execute this command again to be sure that you would like to convert.",
-                    "This may result in everyone online being kicked from the server or major lag.",
-                    "This will also result in the loss of all data being stored by this plugin",
-                    "Proceed with caution!");
+            messenger.sendMessage(sender, MessageKey.CONFIRM_CONVERTER);
             return;
         }
         this.confirmMap.remove(sender);
-        sender.sendMessage("Conversion from " + converter.getName() + " is starting.");
+        messenger.sendMessage(sender, MessageKey.CONVERSION_STARTING);
         boolean succuess = converter.convert();
         if (succuess)
-            sender.sendMessage("Conversion successfully finished");
+            messenger.sendMessage(sender, MessageKey.CONVERSION_SUCCESS);
         else
-            sender.sendMessage("Conversion failed");
+            messenger.sendMessage(sender, MessageKey.CONVERSION_FAILURE);
     }
 
 }

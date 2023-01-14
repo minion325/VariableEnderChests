@@ -1,31 +1,40 @@
 package me.saif.betterenderchests.commands;
 
 import me.saif.betterenderchests.VariableEnderChests;
-import me.saif.betterenderchests.data.Messages;
 import me.saif.betterenderchests.enderchest.EnderChest;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
+import me.saif.betterenderchests.lang.MessageKey;
+import me.saif.betterenderchests.lang.Messenger;
+import me.saif.betterenderchests.lang.placeholder.Placeholder;
+import me.saif.betterenderchests.lang.placeholder.PlaceholderResult;
 import me.saif.betterenderchests.utils.Callback;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import revxrsal.commands.annotation.*;
+import revxrsal.commands.annotation.AutoComplete;
+import revxrsal.commands.annotation.Command;
+import revxrsal.commands.annotation.Named;
+import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class EnderChestCommand {
 
-    private EnderChestManager ecm;
-    private Messages messages;
-    private VariableEnderChests plugin;
-    private Map<UUID, EnderChest> toClear = new HashMap<>();
+    private final EnderChestManager ecm;
+    private final Messenger messenger;
+    private final VariableEnderChests plugin;
+    private final Map<UUID, EnderChest> toClear = new HashMap<>();
+    private final Placeholder<Player> playerPlaceholder = Placeholder.getPlaceholder("player", Player::getName);
+    private final Placeholder<EnderChest> enderChestPlaceholder = Placeholder.getPlaceholder("player", EnderChest::getName);
 
     public EnderChestCommand(VariableEnderChests plugin) {
         this.plugin = plugin;
         this.ecm = plugin.getEnderChestManager();
-        this.messages = plugin.getMessages();
+        this.messenger = plugin.getMessenger();
     }
 
     @Command({"echest", "enderchest", "ec"})
@@ -37,19 +46,19 @@ public class EnderChestCommand {
                 if (rows != 0)
                     this.ecm.openEnderChest(player, rows);
                 else
-                    messages.sendTo(player, Messages.NO_ROWS);
+                    messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_SELF);
                 return;
             }
-            messages.sendTo(player, Messages.COMMAND_NO_PERMISSION_SELF);
+            messenger.sendMessage(player, MessageKey.COMMAND_NO_PERMISSION_SELF);
             return;
         }
 
         if (!player.hasPermission("enderchest.command.others")) {
-            messages.sendTo(player, Messages.COMMAND_NO_PERMISSION_OTHERS);
+            messenger.sendMessage(player, MessageKey.COMMAND_NO_PERMISSION_OTHERS);
             return;
         }
         if (otherPlayer.length() < 3 || otherPlayer.length() > 16) {
-            messages.sendTo(player, Messages.NO_ENDERCHEST_FOUND);
+            messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_OTHER);
         }
 
         if (Bukkit.getPlayerExact(otherPlayer) != null) {
@@ -57,7 +66,7 @@ public class EnderChestCommand {
             EnderChest enderChest = this.ecm.getEnderChest(other);
             int rows = this.ecm.getNumRows(other);
             if (rows == 0) {
-                player.sendMessage(ChatColor.RED + other.getName() + " does not have an enderchest!");
+                messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_OTHER, playerPlaceholder.getResult(other));
                 return;
             }
             this.ecm.openEnderChest(enderChest, player, rows);
@@ -68,7 +77,7 @@ public class EnderChestCommand {
         callback.addResultListener(() -> {
             EnderChest enderChest = callback.getResult();
             if (enderChest == null) {
-                messages.sendTo(player, Messages.NO_ENDERCHEST_FOUND);
+                messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_OTHER, PlaceholderResult.of("<player>", otherPlayer));
                 return;
             }
 
@@ -81,21 +90,15 @@ public class EnderChestCommand {
     @AutoComplete("@players")
     public void clearEchest(Player player, @Named("player") String otherPlayer) {
         if (otherPlayer.length() < 3 || otherPlayer.length() > 16) {
-            messages.sendTo(player, Messages.NO_ENDERCHEST_FOUND);
+            messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_OTHER, PlaceholderResult.of("<player>", otherPlayer));
         }
 
         if (Bukkit.getPlayerExact(otherPlayer) != null) {
             Player other = Bukkit.getPlayerExact(otherPlayer);
             EnderChest enderChest = this.ecm.getEnderChest(other);
-            if (this.toClear.get(player.getUniqueId()) == enderChest) {
-                this.ecm.clearEnderChest(enderChest);
-                player.sendMessage("Cleared the enderchest of " + other.getName());
-                return;
-            }
-            this.toClear.put(player.getUniqueId(), enderChest);
-            player.sendMessage(ChatColor.AQUA + "Are you sure you wish to clear the enderchest of " + other.getName(),
-                    ChatColor.GRAY + "Run this command again within 5 seconds to confirm");
-            Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> this.toClear.remove(player.getUniqueId()), 100L);
+
+            commonClearEnderChest(player, enderChest);
+
             return;
         }
 
@@ -103,20 +106,23 @@ public class EnderChestCommand {
         callback.addResultListener(() -> {
             EnderChest enderChest = callback.getResult();
             if (enderChest == null) {
-                messages.sendTo(player, Messages.NO_ENDERCHEST_FOUND);
+                messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_OTHER);
                 return;
             }
 
-            if (this.toClear.get(player.getUniqueId()) == enderChest) {
-                this.ecm.clearEnderChest(enderChest);
-                player.sendMessage("Cleared the enderchest of " + enderChest.getName());
-                return;
-            }
-            this.toClear.put(player.getUniqueId(), enderChest);
-            player.sendMessage(ChatColor.AQUA + "Are you sure you wish to clear the enderchest of " + enderChest.getName(),
-                    ChatColor.GRAY + "Run this command again within 5 seconds to confirm");
-            Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> this.toClear.remove(player.getUniqueId()), 100L);
+            commonClearEnderChest(player, enderChest);
         });
+    }
+
+    private void commonClearEnderChest(Player player, EnderChest enderChest) {
+        if (this.toClear.get(player.getUniqueId()) == enderChest) {
+            this.ecm.clearEnderChest(enderChest);
+            messenger.sendMessage(player, MessageKey.CLEARED_ENDERCHEST, enderChestPlaceholder.getResult(enderChest));
+            return;
+        }
+        this.toClear.put(player.getUniqueId(), enderChest);
+        messenger.sendMessage(player, MessageKey.CONFIRM_CLEAR_ENDERCHEST, enderChestPlaceholder.getResult(enderChest));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> this.toClear.remove(player.getUniqueId()), 100L);
     }
 
 

@@ -8,7 +8,7 @@ public class ConfigUpdater {
 
     private VariableEnderChests plugin;
 
-    private final int latest = 4;
+    private final int latest = 5;
 
     private int current;
 
@@ -17,7 +17,7 @@ public class ConfigUpdater {
 
         this.current = this.plugin.getConfig().getInt("config-version");
 
-        if (current < latest && this.plugin.getVersion() < 18) {
+        if (current < latest && VariableEnderChests.getMCVersion() < 18) {
             this.plugin.getConfig().options().header("You are using an older version of minecraft so comments have been deleted by updating the config\n" +
                     "Check out https://github.com/minion325/VariableEnderChests/blob/master/src/main/resources/config.yml to see the config.yml with comments\n" +
                     "Do not touch config-version. This is automatically updated by the plugin.");
@@ -37,7 +37,7 @@ public class ConfigUpdater {
             for (int i = 1; i <= 6; i++) {
                 this.plugin.getConfig().set("enderchest-names." + i + "-rows", "&7<player>'s Enderchest");
             }
-            if (this.plugin.getVersion() >= 18) {
+            if (VariableEnderChests.getMCVersion() >= 18) {
                 this.plugin.getConfig().setComments("enderchest-names", Arrays.asList("These are the inventory names that players will see when they open their inventory",
                         "You can set a different name for each size eg. Level 1, Level 2",
                         "<player> is replaced with the player's name"));
@@ -56,6 +56,7 @@ public class ConfigUpdater {
             this.plugin.saveConfig();
         }
 
+        //from 3 -> 4
         if (this.current == 3) {
             this.plugin.getConfig().set("config-version", 4);
 
@@ -65,6 +66,20 @@ public class ConfigUpdater {
             this.plugin.getConfig().set("database.database", "database");
             this.plugin.getConfig().set("database.username", "username");
             this.plugin.getConfig().set("database.password", "password");
+
+            this.current++;
+            this.plugin.saveConfig();
+        }
+
+        //from 4->5
+        if (this.current == 4) {
+            this.plugin.getConfig().set("enderchest-names", null);
+            this.plugin.getConfig().set("command-permission-self", null);
+            this.plugin.getConfig().set("command-permission-others", null);
+            this.plugin.getConfig().set("no-enderchest-found", null);
+            this.plugin.getConfig().set("no-rows", null);
+            this.plugin.getConfig().set("blacklisted-message", null);
+            this.plugin.getConfig().set("default-locale", "en_us");
 
             this.current++;
             this.plugin.saveConfig();

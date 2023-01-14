@@ -2,7 +2,7 @@ package me.saif.betterenderchests.enderchest;
 
 import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.data.DataManager;
-import me.saif.betterenderchests.data.Messages;
+import me.saif.betterenderchests.lang.MessageKey;
 import me.saif.betterenderchests.utils.Callback;
 import me.saif.betterenderchests.utils.CaselessString;
 import me.saif.betterenderchests.utils.Manager;
@@ -42,8 +42,6 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
     private int defaultRows;
     private final boolean convert;
 
-    private final Map<Integer, String> inventoryNames = new HashMap<>();
-
     private final Sound OPEN_SOUND;
     private final Sound CLOSE_SOUND;
 
@@ -55,24 +53,20 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
 
 
         //load the correct sound depending on verison
-        if (plugin.getVersion() == 8) {
+        if (VariableEnderChests.getMCVersion() == 8) {
             OPEN_SOUND = Sound.valueOf("CHEST_OPEN");
             CLOSE_SOUND = Sound.valueOf("CHEST_CLOSE");
-        } else if (plugin.getVersion() < 13) {
+        } else if (VariableEnderChests.getMCVersion() < 13) {
             OPEN_SOUND = Sound.valueOf("BLOCK_ENDERCHEST_OPEN");
             CLOSE_SOUND = Sound.valueOf("BLOCK_ENDERCHEST_CLOSE");
         } else {
-            OPEN_SOUND = Sound.BLOCK_ENDER_CHEST_OPEN;
-            CLOSE_SOUND = Sound.BLOCK_ENDER_CHEST_CLOSE;
+            OPEN_SOUND = Sound.valueOf("BLOCK_ENDER_CHEST_OPEN");
+            CLOSE_SOUND = Sound.valueOf("BLOCK_ENDER_CHEST_CLOSE");
         }
 
         //getting config values
         this.convert = this.getPlugin().getConfig().getBoolean("convert-current-ender-chest", true);
         this.defaultRows = this.getPlugin().getConfig().getInt("default-rows", 3);
-        for (int i = 1; i <= 6; i++) {
-            this.inventoryNames.put(i, ChatColor.translateAlternateColorCodes('&',
-                    this.getPlugin().getConfig().getString("enderchest-names." + i + "-rows", "&a<player>'s Enderchest")));
-        }
         if (this.defaultRows > 6)
             this.defaultRows = 6;
         else if (this.defaultRows < 0)
@@ -104,14 +98,14 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
                             createNew(player));
                 } else {
                     this.uuidEnderChestMap.put(player.getUniqueId(),
-                            new EnderChest(player.getUniqueId(), player.getName(), snapshot.getContents(), snapshot.getRows(), getInventoryNames(player.getName())));
+                            new EnderChest(player.getUniqueId(), player.getName(), snapshot.getContents(), snapshot.getRows()));
                 }
 
                 if (player.getOpenInventory().getTopInventory().equals(player.getEnderChest())) {
                     player.closeInventory();
                     int rows = this.getNumRows(player);
                     if (rows == 0) {
-                        this.getPlugin().getMessages().sendTo(player, Messages.NO_ROWS);
+                        this.getPlugin().getMessenger().sendMessage(player, MessageKey.NO_ENDERCHEST_SELF);
                     }
                     this.openEnderChest(this.getEnderChest(player), player, this.getNumRows(player));
                 }
@@ -149,7 +143,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             return null;
         }
 
-        return new EnderChest(uuid, name, enderChestSnapshot.getContents(), enderChestSnapshot.getRows(), getInventoryNames(name));
+        return new EnderChest(uuid, name, enderChestSnapshot.getContents(), enderChestSnapshot.getRows());
     }
 
     @EventHandler
@@ -184,7 +178,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
 
             int rows = this.getNumRows(player);
             if (rows == 0) {
-                this.getPlugin().getMessages().sendTo(player, Messages.NO_ROWS);
+                this.getPlugin().getMessenger().sendMessage(player, MessageKey.NO_ENDERCHEST_SELF);
             } else {
 
                 EnderChest enderChest = this.getEnderChest(player);
@@ -281,7 +275,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
             EnderChestSnapshot snapshot = this.dataManager.loadEnderChest(name);
 
-            EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents(), snapshot.getRows(), getInventoryNames(snapshot.getName()));
+            EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents(), snapshot.getRows());
             Bukkit.getScheduler().runTask(this.getPlugin(), () -> {
                 this.nameCallbackMap.remove(mcName);
                 if (enderChest != null) {
@@ -308,7 +302,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
             EnderChestSnapshot snapshot = this.dataManager.loadEnderChest(uuid);
 
-            EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents(), snapshot.getRows(), getInventoryNames(snapshot.getName()));
+            EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents(), snapshot.getRows());
             Bukkit.getScheduler().runTask(this.getPlugin(), () -> {
                 this.uuidCallbackMap.remove(uuid);
                 this.uuidEnderChestMap.put(uuid, enderChest);
@@ -380,13 +374,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
     }
 
     private EnderChest createNew(Player player) {
-        return new EnderChest(player.getUniqueId(), player.getName(), this.convert ? player.getEnderChest().getContents() : new ItemStack[]{}, getInventoryNames(player.getName()));
-    }
-
-    private Map<Integer, String> getInventoryNames(String name) {
-        Map<Integer, String> map = new HashMap<>();
-        this.inventoryNames.forEach((integer, s) -> map.put(integer, s.replace("<player>", name)));
-        return map;
+        return new EnderChest(player.getUniqueId(), player.getName(), this.convert ? player.getEnderChest().getContents() : new ItemStack[]{});
     }
 
     public Set<Material> getBlacklist() {

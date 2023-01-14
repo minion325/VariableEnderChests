@@ -1,7 +1,7 @@
 package me.saif.betterenderchests.enderchest;
 
 import me.saif.betterenderchests.VariableEnderChests;
-import me.saif.betterenderchests.data.Messages;
+import me.saif.betterenderchests.lang.MessageKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
@@ -30,18 +30,18 @@ public class EnderChestClickListener implements Listener {
 
         if (event.getCursor() != null && event.getRawSlot() < event.getWhoClicked().getOpenInventory().getTopInventory().getSize() && plugin.getEnderChestManager().getBlacklist().contains(event.getCursor().getType())) {
             event.setCancelled(true);
-            plugin.getMessages().sendTo(event.getWhoClicked(), Messages.BLACKLIST_MESSAGE);
+            plugin.getMessenger().sendMessage(event.getWhoClicked(), MessageKey.BLACKLIST_MESSAGE);
         }
         else if (event.getClick().isShiftClick() && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && event.getRawSlot() >= event.getWhoClicked().getOpenInventory().getTopInventory().getSize()) {
             if (event.getCurrentItem() != null && plugin.getEnderChestManager().getBlacklist().contains(event.getCurrentItem().getType())) {
                 event.setCancelled(true);
-                plugin.getMessages().sendTo(event.getWhoClicked(), Messages.BLACKLIST_MESSAGE);
+                plugin.getMessenger().sendMessage(event.getWhoClicked(), MessageKey.BLACKLIST_MESSAGE);
             }
         } else if (event.getClick() == ClickType.NUMBER_KEY && event.getRawSlot() < event.getWhoClicked().getOpenInventory().getTopInventory().getSize()) {
             ItemStack hotbarItem = event.getWhoClicked().getInventory().getContents()[event.getHotbarButton()];
             if (hotbarItem != null && plugin.getEnderChestManager().getBlacklist().contains(hotbarItem.getType())) {
                 event.setCancelled(true);
-                plugin.getMessages().sendTo(event.getWhoClicked(), Messages.BLACKLIST_MESSAGE);
+                plugin.getMessenger().sendMessage(event.getWhoClicked(), MessageKey.BLACKLIST_MESSAGE);
             }
         }
 
@@ -59,7 +59,7 @@ public class EnderChestClickListener implements Listener {
 
         if (event.getOldCursor() != null && event.getRawSlots().stream().anyMatch(integer -> integer < event.getWhoClicked().getOpenInventory().getTopInventory().getSize()) && plugin.getEnderChestManager().getBlacklist().contains(event.getOldCursor().getType())) {
             event.setCancelled(true);
-            plugin.getMessages().sendTo(event.getWhoClicked(), Messages.BLACKLIST_MESSAGE);
+            plugin.getMessenger().sendMessage(event.getWhoClicked(), MessageKey.BLACKLIST_MESSAGE);
         }
 
     }

@@ -1,0 +1,59 @@
+lang: 'zh'
+
+countries:
+  - 'CN'
+
+#This is meant to be configurable
+configurable:
+  # 玩家打开末影箱时会看到的名称
+  # 你可以为不同行数的末影箱设置不同的名称
+  # <player>将会被替换趁玩家名
+  enderchest-names:
+    1-rows: "&7<player>的末影箱"
+    2-rows: "&7<player>的末影箱"
+    3-rows: "&7<player>的末影箱"
+    4-rows: "&7<player>的末影箱"
+    5-rows: "&7<player>的末影箱"
+    6-rows: "&7<player>的末影箱"
+
+  command-permission-self:
+    - '&4你没有权限执行此命令.'
+  command-permission-others:
+    - '&4你没有权限查看他人的末影箱.'
+  no-rows:
+    - '&4你并未拥有一个末影箱.'
+  no-enderchest-found:
+    - '&4<player> 并未拥有一个末影箱.'
+  blacklisted-message:
+    - '&4你不能将这个物品放进末影箱.'
+
+
+#These are meant for translation only
+internal:
+  converter:
+    all-players-offline:
+      - '只有当所有玩家都离线时才能执行此命令'
+    not-valid-conveter:
+      - '被迁移的插件名无效.'
+    list-valid-convenrters:
+      - '支持的插件如下'
+    confirm-converter:
+      - '请再次执行此命令以确保你已准备好进行迁移.'
+      - '这可能会导致所有在线的玩家被踢出或出现严重的卡顿.'
+      - '这也会导致插件内的原有数据丢失.'
+      - '请谨慎行事!'
+    conversion-start:
+      - '从 <converter> 的迁移已开始.'
+    conversion-success:
+      - '迁移成功'
+    conversion-failure:
+      - '迁移失败'
+  enderchest:
+    cleared-enderchest:
+      - '已清除 <player> 的末影箱'
+    confirm-clear:
+      - '确定要清除 <player> 的末影箱吗?'
+      - '请在 <seconds> 秒内再次执行此命令以确认.'
+  blacklist:
+    invalid-type:
+      - '黑名单中名为 <type> 的物品无效. 它已被忽略.'
