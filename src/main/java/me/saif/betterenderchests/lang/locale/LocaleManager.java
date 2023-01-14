@@ -64,8 +64,9 @@ public class LocaleManager {
 
             String lang = localeConfig.getString("lang");
             List<String> countries = localeConfig.getStringList("countries");
-
             Map<MessageKey, String[]> messages = new HashMap<>();
+
+            boolean madeChanges = false;
 
             for (MessageKey key : MessageKey.values()) {
                 List<String> lines = localeConfig.getStringList(key.getPath());
@@ -73,11 +74,27 @@ public class LocaleManager {
                     messages.put(key, lines.toArray(new String[0]));
                 } else {
                     String single = localeConfig.getString(key.getPath());
-                    if (single == null)
-                        continue;
+                    if (single == null) {
+                        //we set it in the file
+                        madeChanges = true;
+                        plugin.getLogger().info(key.getPath() +" was not found in " + localeFile.getName() + ". Setting defaults.");
+                        String[] def = key.getDefault();
+                        if (def.length == 1) {
+                            localeConfig.set(key.getPath(), def[0]);
+                        } else {
+                            localeConfig.set(key.getPath(), Arrays.asList(def));
+                        }
+                    }
 
                     messages.put(key, new String[]{single});
+                }
+            }
 
+            if (madeChanges) {
+                try {
+                    localeConfig.save(localeFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
 

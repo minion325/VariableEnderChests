@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Locale {
@@ -23,12 +24,16 @@ public class Locale {
         this.countries = countries.stream().map(s -> s.toLowerCase(java.util.Locale.ROOT)).collect(Collectors.toSet());
         this.messages = new ConcurrentHashMap<>();
         messages.forEach((key, stringArray) -> {
-            this.messages.put(key, Arrays.stream(stringArray).map(msgLine -> ChatColor.translateAlternateColorCodes('&', msgLine)).toArray(String[]::new));
+            String[] array = Arrays.stream(stringArray).map(msgLine -> {
+                msgLine = ChatColor.translateAlternateColorCodes('&', msgLine);
+                return msgLine;
+            }).toArray(String[]::new);
+            this.messages.put(key, array);
         });
     }
 
     public String[] getMessage(MessageKey key) {
-        return messages.getOrDefault(key, key.getDefault());
+        return messages.getOrDefault(key, key.getTranslated());
     }
 
     public String[] getFormattedMessage(MessageKey key, PlaceholderResult... placeholderResults) {
@@ -44,6 +49,19 @@ public class Locale {
         return toReturn;
     }
 
+    public String getSingleMessage(MessageKey key) {
+        return messages.getOrDefault(key, key.getTranslated())[0];
+    }
+
+    public String getSingleFormattedMessage(MessageKey key, PlaceholderResult... placeholderResults) {
+        String msg = getSingleMessage(key);
+        for (PlaceholderResult placeholderResult : placeholderResults) {
+            msg = placeholderResult.replace(msg);
+        }
+
+        return msg;
+    }
+
     public String getLang() {
         return lang;
     }
@@ -56,4 +74,12 @@ public class Locale {
         return countries.stream().map(s -> lang + SEPARATOR + s).collect(Collectors.toSet());
     }
 
+    @Override
+    public String toString() {
+        return "Locale{" +
+                "lang='" + lang + '\'' +
+                ", countries=" + countries +
+                ", messages=" + messages.values().stream().map(Arrays::toString).collect(Collectors.toList()) +
+                '}';
+    }
 }

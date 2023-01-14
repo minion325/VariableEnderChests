@@ -2,7 +2,7 @@ package me.saif.betterenderchests.lang;
 
 import me.saif.betterenderchests.lang.locale.Locale;
 import me.saif.betterenderchests.lang.locale.LocaleManager;
-import me.saif.betterenderchests.lang.locale.PlayerLocaleLoader;
+import me.saif.betterenderchests.lang.locale.PlayerLocale;
 import me.saif.betterenderchests.lang.placeholder.PlaceholderResult;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 public class Messenger {
 
     private LocaleManager lm;
-    private PlayerLocaleLoader pll;
+    private PlayerLocale pll;
 
-    public Messenger(LocaleManager lm, PlayerLocaleLoader pll) {
+    public Messenger(LocaleManager lm, PlayerLocale pll) {
         this.lm = lm;
         this.pll = pll;
     }

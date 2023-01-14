@@ -1,6 +1,7 @@
 package me.saif.betterenderchests.enderchest;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -12,15 +13,19 @@ import java.util.function.BiConsumer;
 
 public class EnderChest implements InventoryHolder {
 
-    private static final Map<Integer, String> INVENTORY_NAMES = new HashMap<>();
+    public static final Map<Integer, String> INVENTORY_NAMES;
+    public static final String PREFIX = "VECEnderChest";
 
     static {
-        INVENTORY_NAMES.put(1, "VEC:<player>:1");
-        INVENTORY_NAMES.put(2, "VEC:<player>:2");
-        INVENTORY_NAMES.put(3, "VEC:<player>:3");
-        INVENTORY_NAMES.put(4, "VEC:<player>:4");
-        INVENTORY_NAMES.put(5, "VEC:<player>:5");
-        INVENTORY_NAMES.put(6, "VEC:<player>:6");
+        Map<Integer, String> temp = new HashMap<>();
+        temp.put(1, PREFIX + ":1:<player>");
+        temp.put(2, PREFIX + ":2:<player>");
+        temp.put(3, PREFIX + ":3:<player>");
+        temp.put(4, PREFIX + ":4:<player>");
+        temp.put(5, PREFIX + ":5:<player>");
+        temp.put(6, PREFIX + ":6:<player>");
+
+        INVENTORY_NAMES = Collections.unmodifiableMap(temp);
     }
 
     private final UUID UUID;

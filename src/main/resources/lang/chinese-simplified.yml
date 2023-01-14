@@ -5,6 +5,17 @@ countries:
 
 #This is meant to be configurable
 configurable:
+  # 玩家打开末影箱时会看到的名称
+  # 你可以为不同行数的末影箱设置不同的名称
+  # <player>将会被替换趁玩家名
+  enderchest-names:
+    1-rows: "&7<player>的末影箱"
+    2-rows: "&7<player>的末影箱"
+    3-rows: "&7<player>的末影箱"
+    4-rows: "&7<player>的末影箱"
+    5-rows: "&7<player>的末影箱"
+    6-rows: "&7<player>的末影箱"
+
   command-permission-self:
     - '&4你没有权限执行此命令.'
   command-permission-others:

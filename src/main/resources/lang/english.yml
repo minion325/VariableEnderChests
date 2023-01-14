@@ -7,6 +7,17 @@ countries:
 
 #This is meant to be configurable
 configurable:
+
+  #These are the inventory names that players will see when they open their inventory
+  #You can set a different name for each size eg. Level 1, Level 2
+  #<player> is replaced with the player's name
+  enderchest-names:
+    1-rows: "&7<player>'s Enderchest"
+    2-rows: "&7<player>'s Enderchest"
+    3-rows: "&7<player>'s Enderchest"
+    4-rows: "&7<player>'s Enderchest"
+    5-rows: "&7<player>'s Enderchest"
+    6-rows: "&7<player>'s Enderchest"
   command-permission-self:
     - '&4You do not have permission to use this command.'
   command-permission-others:

@@ -55,6 +55,10 @@
                                     <pattern>org.slf4j</pattern>
                                     <shadedPattern>me.saif.betterenderchests.slf4j</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>me.saif.reflectionutils</pattern>
+                                    <shadedPattern>me.saif.betterenderchests.reflectionutils</shadedPattern>
+                                </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
@@ -93,14 +97,11 @@
             <version>1.18.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <!-- For the common module -->
         <dependency>
             <groupId>com.github.Revxrsal.Lamp</groupId>
             <artifactId>common</artifactId>
             <version>3.1.0</version>
         </dependency>
-
-        <!-- For the bukkit module -->
         <dependency>
             <groupId>com.github.Revxrsal.Lamp</groupId>
             <artifactId>bukkit</artifactId>
@@ -118,7 +119,10 @@
             <artifactId>HikariCP</artifactId>
             <version>4.0.3</version>
         </dependency>
-
-
+        <dependency>
+            <groupId>com.github.minion325</groupId>
+            <artifactId>ReflectionUtils</artifactId>
+            <version>v1.1</version>
+        </dependency>
     </dependencies>
 </project>

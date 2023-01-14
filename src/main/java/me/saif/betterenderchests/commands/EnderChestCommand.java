@@ -24,11 +24,12 @@ import java.util.function.Function;
 
 public class EnderChestCommand {
 
-    private EnderChestManager ecm;
-    private Messenger messenger;
-    private VariableEnderChests plugin;
-    private Map<UUID, EnderChest> toClear = new HashMap<>();
-    private Placeholder<Player> playerPlaceholder = Placeholder.getPlaceholder("player", Player::getName);
+    private final EnderChestManager ecm;
+    private final Messenger messenger;
+    private final VariableEnderChests plugin;
+    private final Map<UUID, EnderChest> toClear = new HashMap<>();
+    private final Placeholder<Player> playerPlaceholder = Placeholder.getPlaceholder("player", Player::getName);
+    private final Placeholder<EnderChest> enderChestPlaceholder = Placeholder.getPlaceholder("player", EnderChest::getName);
 
     public EnderChestCommand(VariableEnderChests plugin) {
         this.plugin = plugin;
@@ -116,12 +117,11 @@ public class EnderChestCommand {
     private void commonClearEnderChest(Player player, EnderChest enderChest) {
         if (this.toClear.get(player.getUniqueId()) == enderChest) {
             this.ecm.clearEnderChest(enderChest);
-            player.sendMessage("Cleared the enderchest of " + enderChest.getName());
+            messenger.sendMessage(player, MessageKey.CLEARED_ENDERCHEST, enderChestPlaceholder.getResult(enderChest));
             return;
         }
         this.toClear.put(player.getUniqueId(), enderChest);
-        player.sendMessage(ChatColor.AQUA + "Are you sure you wish to clear the enderchest of " + enderChest.getName());
-        player.sendMessage(ChatColor.GRAY + "Run this command again within 5 seconds to confirm");
+        messenger.sendMessage(player, MessageKey.CONFIRM_CLEAR_ENDERCHEST, enderChestPlaceholder.getResult(enderChest));
         Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> this.toClear.remove(player.getUniqueId()), 100L);
     }
 

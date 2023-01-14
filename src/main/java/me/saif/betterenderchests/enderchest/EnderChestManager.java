@@ -42,8 +42,6 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
     private int defaultRows;
     private final boolean convert;
 
-    private final Map<Integer, String> inventoryNames = new HashMap<>();
-
     private final Sound OPEN_SOUND;
     private final Sound CLOSE_SOUND;
 
@@ -55,24 +53,20 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
 
 
         //load the correct sound depending on verison
-        if (plugin.getVersion() == 8) {
+        if (VariableEnderChests.getMCVersion() == 8) {
             OPEN_SOUND = Sound.valueOf("CHEST_OPEN");
             CLOSE_SOUND = Sound.valueOf("CHEST_CLOSE");
-        } else if (plugin.getVersion() < 13) {
+        } else if (VariableEnderChests.getMCVersion() < 13) {
             OPEN_SOUND = Sound.valueOf("BLOCK_ENDERCHEST_OPEN");
             CLOSE_SOUND = Sound.valueOf("BLOCK_ENDERCHEST_CLOSE");
         } else {
-            OPEN_SOUND = Sound.BLOCK_ENDER_CHEST_OPEN;
-            CLOSE_SOUND = Sound.BLOCK_ENDER_CHEST_CLOSE;
+            OPEN_SOUND = Sound.valueOf("BLOCK_ENDER_CHEST_OPEN");
+            CLOSE_SOUND = Sound.valueOf("BLOCK_ENDER_CHEST_CLOSE");
         }
 
         //getting config values
         this.convert = this.getPlugin().getConfig().getBoolean("convert-current-ender-chest", true);
         this.defaultRows = this.getPlugin().getConfig().getInt("default-rows", 3);
-        for (int i = 1; i <= 6; i++) {
-            this.inventoryNames.put(i, ChatColor.translateAlternateColorCodes('&',
-                    this.getPlugin().getConfig().getString("enderchest-names." + i + "-rows", "&a<player>'s Enderchest")));
-        }
         if (this.defaultRows > 6)
             this.defaultRows = 6;
         else if (this.defaultRows < 0)
