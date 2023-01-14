@@ -71,18 +71,12 @@ public class PacketInterceptor implements Listener {
 
                 @Override
                 public void write(ChannelHandlerContext channelHandlerContext, Object o, ChannelPromise channelPromise) throws Exception {
-                    long start = System.nanoTime();
-                    o = modifier.modifyPacket(player, o);
-                    long finish = System.nanoTime();
-                    long time = finish - start;
-                    System.out.println(time);
-
+                    try {
+                        o = modifier.modifyPacket(player, o);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     super.write(channelHandlerContext, o, channelPromise);
-                }
-
-                @Override
-                public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                    super.channelRead(ctx, msg);
                 }
             };
 
