@@ -49,7 +49,6 @@ public final class VariableEnderChests extends JavaPlugin {
         int temp;
         try {
             temp = Integer.parseInt(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].split("_")[1]);
-            ;
         } catch (NumberFormatException e) {
             temp = 13;
         }
