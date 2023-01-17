@@ -7,7 +7,6 @@ import me.saif.betterenderchests.utils.Callback;
 import me.saif.betterenderchests.utils.CaselessString;
 import me.saif.betterenderchests.utils.Manager;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -53,10 +52,10 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
 
 
         //load the correct sound depending on verison
-        if (VariableEnderChests.getMCVersion() == 8) {
+        if (VariableEnderChests.MC_VERSION == 8) {
             OPEN_SOUND = Sound.valueOf("CHEST_OPEN");
             CLOSE_SOUND = Sound.valueOf("CHEST_CLOSE");
-        } else if (VariableEnderChests.getMCVersion() < 13) {
+        } else if (VariableEnderChests.MC_VERSION < 13) {
             OPEN_SOUND = Sound.valueOf("BLOCK_ENDERCHEST_OPEN");
             CLOSE_SOUND = Sound.valueOf("BLOCK_ENDERCHEST_CLOSE");
         } else {
@@ -129,7 +128,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> this.dataManager.saveEnderChestMultiple(toSave));
 
             for (CaselessString minecraftName : this.nameCallbackMap.keySet()) {
-                Player player = Bukkit.getPlayerExact(minecraftName.getName());
+                Player player = Bukkit.getPlayerExact(minecraftName.getOriginal());
                 if (player == null)
                     this.nameCallbackMap.remove(minecraftName);
             }

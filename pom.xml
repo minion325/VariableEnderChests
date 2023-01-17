@@ -61,6 +61,9 @@
                                 </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
                         </configuration>
                     </execution>
                 </executions>
@@ -98,17 +101,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.Revxrsal.Lamp</groupId>
-            <artifactId>common</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.Revxrsal.Lamp</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
             <version>3.0.0</version>
@@ -123,6 +115,16 @@
             <groupId>com.github.minion325</groupId>
             <artifactId>ReflectionUtils</artifactId>
             <version>v1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>2.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.6</version>
         </dependency>
     </dependencies>
 </project>

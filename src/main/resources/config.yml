@@ -20,5 +20,12 @@ default-rows: 3
 
 default-locale: 'en_us'
 
+#You can use this to register the commands that can be used to access the enderchest.
+#The first command is the main command.
+#Any other command in the list will be considered as aliases.
+open-enderchest-commands:
+  - 'enderchest'
+  - 'echest'
+
 blacklisted-items:
   - 'COMMAND_BLOCK'
