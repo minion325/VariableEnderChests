@@ -6,44 +6,39 @@ countries:
   - 'UK'
   - '**'
 
-#This is meant to be configurable
+# This is meant to be configurable
 configurable:
 
-  #These are the inventory names that players will see when they open their inventory
-  #You can set a different name for each size eg. Level 1, Level 2
-  #<player> is replaced with the player's name
+  # These are the inventory names that players will see when they open their inventory
+  # You can set a different name for each size eg. Level 1, Level 2
+  # <player> is replaced with the player's name
   enderchest-names:
-    1-rows: "&7<player>'s Enderchest"
-    2-rows: "&7<player>'s Enderchest"
-    3-rows: "&7<player>'s Enderchest"
-    4-rows: "&7<player>'s Enderchest"
-    5-rows: "&7<player>'s Enderchest"
-    6-rows: "&7<player>'s Enderchest"
-
+    1-rows: '&7<player>''s Enderchest'
+    2-rows: '&7<player>''s Enderchest'
+    3-rows: '&7<player>''s Enderchest'
+    4-rows: '&7<player>''s Enderchest'
+    5-rows: '&7<player>''s Enderchest'
+    6-rows: '&7<player>''s Enderchest'
 
   no-permission-message:
     - '&cYou do not have permission to use this command.'
-
   enderchest-command-messages:
     no-permission-self:
       - '&cYou do not have permission to open your enderchest via command.'
     no-permission-others:
       - '&cYou do not have permission to view the enderchest of others.'
-
   no-rows:
     - '&cYou do not have an enderchest.'
-
   no-enderchest-found:
     - '&c<player> does not have an enderchest.'
-
   blacklisted-message:
     - '&cYou cannot put that item into an ender chest.'
-
   command-console-only:
     - '&cYou can only use this command from the console.'
+  command-usage: '&cUsage: <command>'
 
 
-#These are meant for translation only
+# These are meant for translation only
 internal:
   converter:
     all-players-offline:

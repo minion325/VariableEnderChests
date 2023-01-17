@@ -77,7 +77,7 @@ public class ConfigUpdater {
         if (this.current == 4) {
             try {
                 this.plugin.getLogger().info("Backing up your version 4 config before updating to version 5");
-                this.plugin.getConfig().save(new File("config_v4.yml"));
+                this.plugin.getConfig().save(new File(this.plugin.getDataFolder(), "config_v4.yml"));
             } catch (IOException e) {
                 this.plugin.getLogger().severe("Could not back up old config.");
                 throw new RuntimeException(e);

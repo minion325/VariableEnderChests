@@ -3,18 +3,18 @@ lang: 'zh'
 countries:
   - 'CN'
 
-#This is meant to be configurable
+# This is meant to be configurable
 configurable:
   # 玩家打开末影箱时会看到的名称
   # 你可以为不同行数的末影箱设置不同的名称
   # <player>将会被替换趁玩家名
   enderchest-names:
-    1-rows: "&7<player>的末影箱"
-    2-rows: "&7<player>的末影箱"
-    3-rows: "&7<player>的末影箱"
-    4-rows: "&7<player>的末影箱"
-    5-rows: "&7<player>的末影箱"
-    6-rows: "&7<player>的末影箱"
+    1-rows: '&7<player>的末影箱'
+    2-rows: '&7<player>的末影箱'
+    3-rows: '&7<player>的末影箱'
+    4-rows: '&7<player>的末影箱'
+    5-rows: '&7<player>的末影箱'
+    6-rows: '&7<player>的末影箱'
 
   command-no-permission-self:
     - '&c你没有权限执行此命令.'
@@ -28,9 +28,14 @@ configurable:
     - '&c你不能将这个物品放进末影箱.'
   command-console-only:
     - '只有控制台才能执行此命令.'
+  enderchest-command-messages:
+    no-permission-self: '&c你没有权限执行此命令.'
+    no-permission-others: '&c你没有权限查看他人的末影箱.'
+  no-permission-message: '&cYou do not have permission to use this command.'
+  command-usage: '&cUsage: <command>'
 
 
-#These are meant for translation only
+# These are meant for translation only
 internal:
   converter:
     all-players-offline:
