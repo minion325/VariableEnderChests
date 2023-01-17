@@ -16,16 +16,18 @@ configurable:
     5-rows: "&7<player>的末影箱"
     6-rows: "&7<player>的末影箱"
 
-  command-permission-self:
-    - '&4你没有权限执行此命令.'
-  command-permission-others:
-    - '&4你没有权限查看他人的末影箱.'
+  command-no-permission-self:
+    - '&c你没有权限执行此命令.'
+  command-no-permission-others:
+    - '&c你没有权限查看他人的末影箱.'
   no-rows:
-    - '&4你并未拥有一个末影箱.'
+    - '&c你并未拥有一个末影箱.'
   no-enderchest-found:
-    - '&4<player> 并未拥有一个末影箱.'
+    - '&c<player> 并未拥有一个末影箱.'
   blacklisted-message:
-    - '&4你不能将这个物品放进末影箱.'
+    - '&c你不能将这个物品放进末影箱.'
+  command-console-only:
+    - '只有控制台才能执行此命令.'
 
 
 #These are meant for translation only
@@ -48,12 +50,18 @@ internal:
       - '迁移成功'
     conversion-failure:
       - '迁移失败'
+
   enderchest:
     cleared-enderchest:
       - '已清除 <player> 的末影箱'
     confirm-clear:
       - '确定要清除 <player> 的末影箱吗?'
       - '请在 <seconds> 秒内再次执行此命令以确认.'
+
+  command:
+    command-player-only:
+      - '只有玩家才能执行此命令'
+
   blacklist:
     invalid-type:
       - '黑名单中名为 <type> 的物品无效. 它已被忽略.'

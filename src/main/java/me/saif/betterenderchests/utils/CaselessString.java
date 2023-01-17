@@ -2,16 +2,16 @@ package me.saif.betterenderchests.utils;
 
 public class CaselessString {
 
-    private String name;
+    private String original;
     private String lowerCase;
 
     public CaselessString(String name) {
-        this.name = name;
+        this.original = name;
         this.lowerCase = name.toLowerCase();
     }
 
-    public String getName() {
-        return name;
+    public String getOriginal() {
+        return original;
     }
 
     @Override

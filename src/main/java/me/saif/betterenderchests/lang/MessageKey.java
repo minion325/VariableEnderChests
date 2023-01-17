@@ -6,11 +6,15 @@ import java.util.Arrays;
 
 public enum MessageKey {
 
-    COMMAND_NO_PERMISSION_SELF("configurable.command-permission-self", "&4You do not have permission to use this command."),
-    COMMAND_NO_PERMISSION_OTHERS("configurable.command-permission-others", "&4You do not have permission to view the enderchest of others."),
-    NO_ENDERCHEST_SELF("configurable.no-rows", "&4You do not have an enderchest."),
-    NO_ENDERCHEST_OTHER("configurable.no-enderchest-found", "&4<player> does not have an enderchest."),
-    BLACKLIST_MESSAGE("configurable.blacklisted-message", "&4You cannot put that item into an ender chest."),
+    EC_COMMAND_NO_PERMISSION_SELF("configurable.enderchest-command-messages.no-permission-self", "&cYou do not have permission to open your enderchest via command."),
+    EC_COMMAND_NO_PERMISSION_OTHERS("configurable.enderchest-command-messages.no-permission-others", "&cYou do not have permission to view the enderchest of others."),
+    COMMAND_NO_PERMISSION("configurable.no-permission-message", "&cYou do not have permission to use this command."),
+    COMMAND_CONSOLE_ONLY("configurable.command-console-only", "&cYou can only use this command from the console."),
+    COMMAND_PLAYER_ONLY("internal.command.command-player-only", "You must be a player to use this command"),
+    NO_ENDERCHEST_SELF("configurable.no-rows", "&cYou do not have an enderchest."),
+    NO_ENDERCHEST_OTHER("configurable.no-enderchest-found", "&c<player> does not have an enderchest."),
+    COMMAND_USAGE("configurable.command-usage", "&cUsage: <command>"),
+    BLACKLIST_MESSAGE("configurable.blacklisted-message", "&cYou cannot put that item into an ender chest."),
 
     ENDERCHEST_1_ROWS("configurable.enderchest-names.1-rows","&7<player>'s Enderchest"),
     ENDERCHEST_2_ROWS("configurable.enderchest-names.2-rows","&7<player>'s Enderchest"),

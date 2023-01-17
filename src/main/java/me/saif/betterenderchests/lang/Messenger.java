@@ -4,6 +4,7 @@ import me.saif.betterenderchests.lang.locale.Locale;
 import me.saif.betterenderchests.lang.locale.LocaleLoader;
 import me.saif.betterenderchests.lang.locale.PlayerLocaleFinder;
 import me.saif.betterenderchests.lang.placeholder.PlaceholderResult;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -27,6 +28,10 @@ public class Messenger {
         for (String s : getMessage(sender, messageKey, placeholders)) {
             sender.sendMessage(s);
         }
+    }
+
+    public void sendMessage(CommandSender sender, String message) {
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
     }
 
 

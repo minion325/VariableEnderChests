@@ -1,8 +1,9 @@
 package me.saif.betterenderchests;
 
-import me.saif.betterenderchests.commands.ConversionCommand;
-import me.saif.betterenderchests.commands.EnderChestCommand;
-import me.saif.betterenderchests.converters.Converter;
+import me.saif.betterenderchests.command.CommandManager;
+import me.saif.betterenderchests.command.commands.ClearEnderChestCommand;
+import me.saif.betterenderchests.command.commands.ConversionCommand;
+import me.saif.betterenderchests.command.commands.EnderChestCommand;
 import me.saif.betterenderchests.converters.ConverterManager;
 import me.saif.betterenderchests.data.ConfigUpdater;
 import me.saif.betterenderchests.data.DataManager;
@@ -23,16 +24,13 @@ import me.saif.betterenderchests.lang.locale.PlayerLocaleFinder;
 import me.saif.betterenderchests.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.plugin.java.JavaPlugin;
-import revxrsal.commands.CommandHandler;
-import revxrsal.commands.bukkit.BukkitCommandHandler;
-import revxrsal.commands.bukkit.core.BukkitHandler;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.Locale;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.ServiceLoader;
 
 public final class VariableEnderChests extends JavaPlugin {
 
@@ -42,19 +40,7 @@ public final class VariableEnderChests extends JavaPlugin {
         return API;
     }
 
-    private static final int getMCVersion;
-
-
-    static {
-        int temp;
-        try {
-            temp = Integer.parseInt(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].split("_")[1]);
-        } catch (NumberFormatException e) {
-            temp = 13;
-        }
-        getMCVersion = temp;
-
-    }
+    public static final int MC_VERSION = Integer.parseInt(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].split("_")[1]);
 
     private DataManager dataManager;
     private EnderChestManager enderChestManager;
@@ -64,6 +50,7 @@ public final class VariableEnderChests extends JavaPlugin {
     private PlayerLocaleFinder playerLocaleFinder;
     private SQLDatabase database;
     private PacketInterceptor packetInterceptor;
+    private CommandManager commandManager;
 
     @Override
     public void onEnable() {
@@ -77,9 +64,9 @@ public final class VariableEnderChests extends JavaPlugin {
 
         PacketModifier packetModifier;
 
-        if (getMCVersion() <= 12)
+        if (MC_VERSION <= 12)
             packetModifier = new OpenEnderchestPacketModifier_1_12_Below(this.playerLocaleFinder);
-        else if (getMCVersion() <= 16)
+        else if (MC_VERSION <= 16)
             packetModifier = new OpenEnderchestPacketModifier_1_16_Below(this.playerLocaleFinder);
         else
             packetModifier = new OpenEnderchestPacketModifier_1_19_Below(this.playerLocaleFinder);
@@ -129,19 +116,17 @@ public final class VariableEnderChests extends JavaPlugin {
     }
 
     private void setupCommands() {
-        CommandHandler commandHandler = new BukkitHandler(this)
-                .getAutoCompleter().registerSuggestion("players", (args, sender, command) -> {
-                    String last = args.get(args.size() - 1).toLowerCase(Locale.ROOT);
-                    return Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).filter(s -> s.toLowerCase(Locale.ROOT).startsWith(last)).collect(Collectors.toList());
-                }).registerSuggestion("converters", (args, sender, command) -> {
-                    String last = args.get(args.size() - 1).toLowerCase(Locale.ROOT);
-                    return this.converterManager.getConverters().stream().map(Converter::getName).filter(s -> s.toLowerCase(Locale.ROOT).startsWith(last)).collect(Collectors.toList());
-                }).and()
-                .register(new EnderChestCommand(this))
-                .register(new ConversionCommand(this));
+        this.commandManager = new CommandManager(this);
 
-        if (((BukkitCommandHandler) commandHandler).isBrigadierSupported())
-            ((BukkitCommandHandler) commandHandler).registerBrigadier();
+        this.commandManager.registerCommand(new ClearEnderChestCommand(this));
+        this.commandManager.registerCommand(new ConversionCommand(this));
+
+        List<String> aliases = this.getConfig().getStringList("open-enderchest-commands");
+
+        String cmdName = aliases.size() == 0 ? "enderchest" : aliases.remove(0);
+
+        this.commandManager.registerCommand(new EnderChestCommand(this, cmdName, aliases));
+
     }
 
     private void setupMetricsAndCheckForUpdate() {
@@ -159,6 +144,7 @@ public final class VariableEnderChests extends JavaPlugin {
     @Override
     public void onDisable() {
         this.packetInterceptor.shutdown();
+        this.commandManager.unregisterAll();
         this.enderChestManager.finishUp();
         this.dataManager.finishUp();
     }
@@ -182,10 +168,6 @@ public final class VariableEnderChests extends JavaPlugin {
 
     public ConverterManager getConverterManager() {
         return converterManager;
-    }
-
-    public static int getMCVersion() {
-        return getMCVersion;
     }
 
     public LocaleLoader getLocaleLoader() {

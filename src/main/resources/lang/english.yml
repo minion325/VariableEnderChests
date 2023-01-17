@@ -19,16 +19,28 @@ configurable:
     4-rows: "&7<player>'s Enderchest"
     5-rows: "&7<player>'s Enderchest"
     6-rows: "&7<player>'s Enderchest"
-  command-permission-self:
-    - '&4You do not have permission to use this command.'
-  command-permission-others:
-    - '&4You do not have permission to view the enderchest of others.'
+
+
+  no-permission-message:
+    - '&cYou do not have permission to use this command.'
+
+  enderchest-command-messages:
+    no-permission-self:
+      - '&cYou do not have permission to open your enderchest via command.'
+    no-permission-others:
+      - '&cYou do not have permission to view the enderchest of others.'
+
   no-rows:
-    - '&4You do not have an enderchest.'
+    - '&cYou do not have an enderchest.'
+
   no-enderchest-found:
-    - '&4<player> does not have an enderchest.'
+    - '&c<player> does not have an enderchest.'
+
   blacklisted-message:
-    - '&4You cannot put that item into an ender chest.'
+    - '&cYou cannot put that item into an ender chest.'
+
+  command-console-only:
+    - '&cYou can only use this command from the console.'
 
 
 #These are meant for translation only
@@ -51,12 +63,18 @@ internal:
       - 'Conversion successfully finished'
     conversion-failure:
       - 'Conversion failed'
+
   enderchest:
     cleared-enderchest:
       - 'Cleared the enderchest of <player>'
     confirm-clear:
       - 'Are you sure you wish to clear the enderchest of <player>'
       - 'Run this command again within <seconds> seconds to confirm'
+
+  command:
+    command-player-only:
+      - 'You must be a player to use this command'
+
   blacklist:
     invalid-type:
       - 'Blacklisted item by the name of <type> found. This is not a valid minecraft material. Ignoring...'

@@ -28,4 +28,13 @@ public abstract class Placeholder<E> {
         };
     }
 
+    public static Placeholder<String> getStringPlaceholder(String placeholder) {
+        return new Placeholder<String>(placeholder) {
+            @Override
+            public String getValue(String s) {
+                return s;
+            }
+        };
+    }
+
 }

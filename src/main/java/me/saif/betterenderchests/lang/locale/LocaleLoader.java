@@ -91,6 +91,9 @@ public class LocaleLoader {
                         } else {
                             localeConfig.set(key.getPath(), Arrays.asList(def));
                         }
+
+                        messages.put(key, def);
+                        continue;
                     }
 
                     messages.put(key, new String[]{single});

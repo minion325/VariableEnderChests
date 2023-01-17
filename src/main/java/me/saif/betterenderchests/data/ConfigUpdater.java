@@ -2,6 +2,8 @@ package me.saif.betterenderchests.data;
 
 import me.saif.betterenderchests.VariableEnderChests;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 public class ConfigUpdater {
@@ -17,7 +19,7 @@ public class ConfigUpdater {
 
         this.current = this.plugin.getConfig().getInt("config-version");
 
-        if (current < latest && VariableEnderChests.getMCVersion() < 18) {
+        if (current < latest && VariableEnderChests.MC_VERSION < 18) {
             this.plugin.getConfig().options().header("You are using an older version of minecraft so comments have been deleted by updating the config\n" +
                     "Check out https://github.com/minion325/VariableEnderChests/blob/master/src/main/resources/config.yml to see the config.yml with comments\n" +
                     "Do not touch config-version. This is automatically updated by the plugin.");
@@ -37,7 +39,7 @@ public class ConfigUpdater {
             for (int i = 1; i <= 6; i++) {
                 this.plugin.getConfig().set("enderchest-names." + i + "-rows", "&7<player>'s Enderchest");
             }
-            if (VariableEnderChests.getMCVersion() >= 18) {
+            if (VariableEnderChests.MC_VERSION >= 18) {
                 this.plugin.getConfig().setComments("enderchest-names", Arrays.asList("These are the inventory names that players will see when they open their inventory",
                         "You can set a different name for each size eg. Level 1, Level 2",
                         "<player> is replaced with the player's name"));
@@ -73,6 +75,14 @@ public class ConfigUpdater {
 
         //from 4->5
         if (this.current == 4) {
+            try {
+                this.plugin.getLogger().info("Backing up your version 4 config before updating to version 5");
+                this.plugin.getConfig().save(new File("config_v4.yml"));
+            } catch (IOException e) {
+                this.plugin.getLogger().severe("Could not back up old config.");
+                throw new RuntimeException(e);
+            }
+
             this.plugin.getConfig().set("enderchest-names", null);
             this.plugin.getConfig().set("command-permission-self", null);
             this.plugin.getConfig().set("command-permission-others", null);
