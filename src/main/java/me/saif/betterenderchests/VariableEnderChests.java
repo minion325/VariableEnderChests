@@ -25,12 +25,10 @@ import me.saif.betterenderchests.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.ServiceLoader;
 
 public final class VariableEnderChests extends JavaPlugin {
 
