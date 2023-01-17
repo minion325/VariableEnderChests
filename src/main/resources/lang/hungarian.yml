@@ -1,11 +1,11 @@
-lang: hu
+lang: 'hu'
 
 countries:
-- HU
+  - 'HU'
 
 # Ez azt jelenti, hogy konfigurálható
 configurable:
-  
+
   # Ez a enderláda neve lesz, amit megnyitáskor lát a játékos
   # Minden szintnek külön név adható (Példa: Szint 1, Szint 2)
   # <player> ki lesz cserélve a játékos nevére
@@ -16,28 +16,22 @@ configurable:
     4-rows: '&7<player> enderládája'
     5-rows: '&7<player> enderládája'
     6-rows: '&7<player> enderládája'
-  
-  
+
   no-permission-message:
-  - '&cNincs jogosultságod a parancs használatához!'
-  
+    - '&cNincs jogosultságod a parancs használatához!'
   enderchest-command-messages:
     no-permission-self:
-    - '&cNincs jogosultságod megnyitni az enderládád parancsal.'
+      - '&cNincs jogosultságod megnyitni az enderládád parancsal.'
     no-permission-others:
-    - '&cNincs jogosultságod más játékosok enderládáját megtekinteni.'
-  
+      - '&cNincs jogosultságod más játékosok enderládáját megtekinteni.'
   no-rows:
-  - '&cNincs enderládád.'
-  
+    - '&cNincs enderládád.'
   no-enderchest-found:
-  - '&c<player> nem rendelkezik enderládával.'
-  
+    - '&c<player> nem rendelkezik enderládával.'
   blacklisted-message:
-  - '&cEzt a tárgyat nem helyezheted be az enderládába.'
-  
+    - '&cEzt a tárgyat nem helyezheted be az enderládába.'
   command-console-only:
-  - '&cEz a parancs csak konzolból használható!'
+    - '&cEz a parancs csak konzolból használható!'
   command-usage: '&cHasználat: <command>'
 
 
@@ -45,34 +39,34 @@ configurable:
 internal:
   converter:
     all-players-offline:
-    - Nem lehet online játékos, ha ezt a parancsot használni akarod.
+      - 'Nem lehet online játékos, ha ezt a parancsot használni akarod.'
     not-valid-conveter:
-    - Ez nem valós átváltó
+      - 'Ez nem valós átváltó'
     list-valid-convenrters:
-    - Az elérhető átváltók listája lentebb található
+      - 'Az elérhető átváltók listája lentebb található'
     confirm-converter:
-    - Ezt a parancsot újra le kell futtatnod, hogy megerősítsd, hogy szeretnél konvertálni.
-    - Ennek az eredménye az lehet, hogy minden elérhető játékos ki lesz rúgva a szerverről. Esetlegesen lagg is előfordulhat.
-    - Minden adat el fog veszni, amit a plugin tárol.
-    - Óvatosan ezzel!
+      - 'Ezt a parancsot újra le kell futtatnod, hogy megerősítsd, hogy szeretnél konvertálni.'
+      - 'Ennek az eredménye az lehet, hogy minden elérhető játékos ki lesz rúgva a szerverről. Esetlegesen lagg is előfordulhat.'
+      - 'Minden adat el fog veszni, amit a plugin tárol.'
+      - 'Óvatosan ezzel!'
     conversion-start:
-    - Az átalakítus <converter> -ról/ről elkezdődött.
+      - 'Az átalakítus <converter> -ról/ről elkezdődött.'
     conversion-success:
-    - Az átalakítás sikeresen befejeződött
+      - 'Az átalakítás sikeresen befejeződött'
     conversion-failure:
-    - Az átalakítás nem sikerült
-  
+      - 'Az átalakítás nem sikerült'
+
   enderchest:
     cleared-enderchest:
-    - Sikeresen törölted <player> enderládáját
+      - 'Sikeresen törölted <player> enderládáját'
     confirm-clear:
-    - Biztos törölni akarod <player> enderládáját?
-    - Használd ezt a parancsot <seconds> másodpercen belül újra, hogy elfogadd.
-  
+      - 'Biztos törölni akarod <player> enderládáját?'
+      - 'Használd ezt a parancsot <seconds> másodpercen belül újra, hogy elfogadd.'
+
   command:
     command-player-only:
-    - Ez a parancs csak játékos által használható.
-  
+      - 'Ez a parancs csak játékos által használható.'
+
   blacklist:
     invalid-type:
-    - <type> nevű tiltólistán szereplő tárgy található. Ez nem Minecraft tárgy. Kihagyás...
+      - '<type> nevű tiltólistán szereplő tárgy található. Ez nem Minecraft tárgy. Kihagyás...'
