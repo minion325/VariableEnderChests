@@ -1,6 +1,7 @@
 package me.saif.betterenderchests.data;
 
 import me.saif.betterenderchests.VariableEnderChests;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,7 +91,7 @@ public class ConfigUpdater {
             this.plugin.getConfig().set("no-rows", null);
             this.plugin.getConfig().set("blacklisted-message", null);
             this.plugin.getConfig().set("default-locale", "en_us");
-
+            this.plugin.getConfig().set("open-enderchest-commands", Arrays.asList("enderchest", "echest"));
             this.current++;
             this.plugin.saveConfig();
         }
