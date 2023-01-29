@@ -13,6 +13,7 @@ import me.saif.betterenderchests.data.database.SQLDatabase;
 import me.saif.betterenderchests.data.database.SQLiteDatabase;
 import me.saif.betterenderchests.enderchest.EnderChestClickListener;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
+import me.saif.betterenderchests.hooks.PAPIEnderChestHook;
 import me.saif.betterenderchests.lang.Messenger;
 import me.saif.betterenderchests.lang.inventory.PacketModifier;
 import me.saif.betterenderchests.lang.inventory.impl.OpenEnderchestPacketModifier_1_12_Below;
@@ -49,6 +50,7 @@ public final class VariableEnderChests extends JavaPlugin {
     private SQLDatabase database;
     private PacketInterceptor packetInterceptor;
     private CommandManager commandManager;
+    private PAPIEnderChestHook enderChestHook;
 
     @Override
     public void onEnable() {
@@ -83,6 +85,7 @@ public final class VariableEnderChests extends JavaPlugin {
         }
         setupEnderChestManager();
         setupCommands();
+        setupHooks();
         setupMetricsAndCheckForUpdate();
     }
 
@@ -127,6 +130,13 @@ public final class VariableEnderChests extends JavaPlugin {
 
     }
 
+    private void setupHooks() {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            this.enderChestHook = new PAPIEnderChestHook(this);
+            this.enderChestHook.register();
+        }
+    }
+
     private void setupMetricsAndCheckForUpdate() {
         Metrics metrics = new Metrics(this, 15279);
         UpdateChecker updateChecker = new UpdateChecker(this, 102187);
@@ -141,10 +151,20 @@ public final class VariableEnderChests extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.packetInterceptor.shutdown();
-        this.commandManager.unregisterAll();
-        this.enderChestManager.finishUp();
-        this.dataManager.finishUp();
+        if (this.packetInterceptor != null)
+            packetInterceptor.shutdown();
+
+        if (this.commandManager != null)
+            this.commandManager.unregisterAll();
+
+        if (this.enderChestManager != null)
+            this.enderChestManager.finishUp();
+
+        if (this.dataManager != null)
+            this.dataManager.finishUp();
+
+        if (this.enderChestHook != null)
+            this.enderChestHook.unregister();
     }
 
 

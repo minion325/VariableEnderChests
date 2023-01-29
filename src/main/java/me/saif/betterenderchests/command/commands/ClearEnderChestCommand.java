@@ -42,7 +42,7 @@ public class ClearEnderChestCommand extends PluginCommand {
         }
 
         if (args.length == 0) {
-            PlaceholderResult result = usagePlaceholder.getResult(sender instanceof Player ? "/" : "" + alias + " <player>");
+            PlaceholderResult result = usagePlaceholder.getResult((sender instanceof Player ? "/" : "") + alias + " <player>");
             messenger.sendMessage(sender, MessageKey.COMMAND_USAGE, result);
             return;
         }
