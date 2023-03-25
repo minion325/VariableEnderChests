@@ -52,4 +52,18 @@ public class EnderChestSnapshot {
         return Arrays.copyOf(contents, contents.length);
     }
 
+    @Override
+    public int hashCode() {
+        return uuid.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EnderChestSnapshot)) return false;
+
+        EnderChestSnapshot that = (EnderChestSnapshot) o;
+
+        return getUuid().equals(that.getUuid());
+    }
 }

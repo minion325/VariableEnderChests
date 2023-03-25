@@ -18,7 +18,7 @@ public class PAPIEnderChestHook extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getIdentifier() {
-        return plugin.getName().toLowerCase(Locale.ENGLISH);
+        return plugin.getConfig().getString("papi-identifier", plugin.getName()).toLowerCase(Locale.ENGLISH);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class PAPIEnderChestHook extends PlaceholderExpansion {
         if (player == null)
             return null;
 
-        if (params.equalsIgnoreCase("size"))
+        if (params.equalsIgnoreCase("size") || params.equalsIgnoreCase("slots"))
             return String.valueOf(plugin.getEnderChestManager().getNumRows(player) * 9);
 
         else if (params.equalsIgnoreCase("rows")) {

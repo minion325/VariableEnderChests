@@ -1,5 +1,6 @@
 package me.saif.betterenderchests.enderchest;
 
+import com.google.common.collect.Sets;
 import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.lang.MessageKey;
@@ -36,6 +37,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
 
     private final Map<UUID, Callback<EnderChest>> uuidCallbackMap = new HashMap<>();
     private final Map<CaselessString, Callback<EnderChest>> nameCallbackMap = new HashMap<>();
+    private final Set<EnderChestSnapshot> snapshotsToSave = Sets.newConcurrentHashSet();
 
     private final Map<UUID, Block> openFromBlocks = new HashMap<>();
     private int defaultRows;
@@ -179,7 +181,6 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             if (rows == 0) {
                 this.getPlugin().getMessenger().sendMessage(player, MessageKey.NO_ENDERCHEST_SELF);
             } else {
-
                 EnderChest enderChest = this.getEnderChest(player);
                 event.getPlayer().playSound(event.getClickedBlock().getLocation(), OPEN_SOUND, 1, 1F);
                 this.openEnderChest(enderChest, player, rows);
@@ -214,8 +215,13 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             this.uuidEnderChestMap.remove(snapshot.getUuid());
             this.nameUUIDMap.remove(new CaselessString(snapshot.getName()));
 
+            //adds snapshot
+            this.snapshotsToSave.add(snapshot);
+
             Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
                 this.dataManager.saveEnderChest(snapshot.getUuid(), snapshot);
+                //removes snapshot from savelist
+                this.snapshotsToSave.remove(snapshot);
             });
         }
 
@@ -362,6 +368,13 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             enderChestSnapshotMap.put(value.getUUID(), value.snapshot());
         }
         this.dataManager.saveEnderChestMultiple(enderChestSnapshotMap);
+
+        //saves the snapshots that have not been saved
+        for (EnderChestSnapshot enderChestSnapshot : this.snapshotsToSave) {
+            this.dataManager.saveEnderChest(enderChestSnapshot.getUuid(), enderChestSnapshot);
+        }
+
+        this.snapshotsToSave.clear();
 
         this.uuidCallbackMap.clear();
         this.nameCallbackMap.clear();

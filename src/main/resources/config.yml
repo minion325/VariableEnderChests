@@ -1,5 +1,5 @@
 #Do not change this manually, this is to keep track of config changes.
-config-version: 5
+config-version: 6
 
 #If mysql is set to false, database defaults to a data.db file
 #Do not set mysql to true unless you have a mysql database set up
@@ -19,6 +19,11 @@ convert-current-ender-chest: true
 default-rows: 3
 
 default-locale: 'en_us'
+
+#This is used when the plugin hooks into placeholder api to provide placeholders
+#This allows you to modify the placeholder identifier.
+#Placeholders can be parsed as %<papi-identifier>_size%
+papi-identifier: 'variableenderchests'
 
 #You can use this to register the commands that can be used to access the enderchest.
 #The first command is the main command.

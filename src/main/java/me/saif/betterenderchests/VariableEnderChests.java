@@ -151,14 +151,14 @@ public final class VariableEnderChests extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (this.enderChestManager != null)
+            this.enderChestManager.finishUp();
+
         if (this.packetInterceptor != null)
             packetInterceptor.shutdown();
 
         if (this.commandManager != null)
             this.commandManager.unregisterAll();
-
-        if (this.enderChestManager != null)
-            this.enderChestManager.finishUp();
 
         if (this.dataManager != null)
             this.dataManager.finishUp();

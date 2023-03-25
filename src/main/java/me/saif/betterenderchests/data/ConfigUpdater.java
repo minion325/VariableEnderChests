@@ -6,12 +6,13 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class ConfigUpdater {
 
     private VariableEnderChests plugin;
 
-    private final int latest = 5;
+    private final int latest = 6;
 
     private int current;
 
@@ -83,7 +84,7 @@ public class ConfigUpdater {
                 this.plugin.getLogger().severe("Could not back up old config.");
                 throw new RuntimeException(e);
             }
-
+            this.plugin.getConfig().set("config-version", 5);
             this.plugin.getConfig().set("enderchest-names", null);
             this.plugin.getConfig().set("command-permission-self", null);
             this.plugin.getConfig().set("command-permission-others", null);
@@ -93,6 +94,23 @@ public class ConfigUpdater {
             this.plugin.getConfig().set("default-locale", "en_us");
             this.plugin.getConfig().set("open-enderchest-commands", Arrays.asList("enderchest", "echest"));
             this.current++;
+            this.plugin.saveConfig();
+        }
+
+        //from 5 -> 6
+        if (this.current == 5) {
+            this.plugin.getConfig().set("config-version", 6);
+            this.plugin.getConfig().set("papi-identifier", this.plugin.getName().toLowerCase(Locale.ENGLISH));
+
+            if (VariableEnderChests.MC_VERSION >= 18) {
+                this.plugin.getConfig().setComments("papi-identifier", Arrays.asList(
+                        "This is used when the plugin hooks into placeholder api to provide placeholders",
+                        "This allows you to modify the placeholder identifier.",
+                        "Placeholders can be parsed as %<papi-identifier>_size%"));
+            }
+
+            this.current++;
+
             this.plugin.saveConfig();
         }
     }
