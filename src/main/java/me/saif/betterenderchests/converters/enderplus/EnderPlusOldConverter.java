@@ -1,4 +1,4 @@
-package me.saif.betterenderchests.converters;
+package me.saif.betterenderchests.converters.enderplus;
 
 import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.enderchest.EnderChestSnapshot;
@@ -6,20 +6,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class EnderPlusConverter extends Converter {
+public class EnderPlusOldConverter extends EnderPlusConverter {
 
-    public EnderPlusConverter(VariableEnderChests plugin) {
-        super(plugin, "EnderPlus");
+    public EnderPlusOldConverter(VariableEnderChests plugin) {
+        super(plugin, "EnderPlusOld");
     }
 
     @Override
@@ -67,22 +65,5 @@ public class EnderPlusConverter extends Converter {
             System.out.println("error loading data.yml for conversion");
             return false;
         }
-    }
-
-    private FileConfiguration getConfig() throws IOException, InvalidConfigurationException {
-        File file = new File(this.plugin.getDataFolder().getParentFile(), "EnderPlus");
-        if (!file.isDirectory())
-            return null;
-
-        file = new File(file, "data.yml");
-
-        if (!file.exists())
-            return null;
-
-        FileConfiguration fileConfiguration = new YamlConfiguration();
-        fileConfiguration.load(file);
-
-        return fileConfiguration;
-
     }
 }

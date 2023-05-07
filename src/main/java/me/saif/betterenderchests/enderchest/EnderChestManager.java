@@ -95,9 +95,11 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
 
                 EnderChestSnapshot snapshot = data.get(player.getUniqueId());
                 if (snapshot == null) {
+                    this.getPlugin().getLogger().info("Creating new enderchest for " + player.getName());
                     this.uuidEnderChestMap.put(player.getUniqueId(),
                             createNew(player));
                 } else {
+                    this.getPlugin().getLogger().info("Loaded enderchest for " + player.getName());
                     this.uuidEnderChestMap.put(player.getUniqueId(),
                             new EnderChest(player.getUniqueId(), player.getName(), snapshot.getContents(), snapshot.getRows()));
                 }
@@ -124,7 +126,9 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             }
 
             for (UUID uuid : toRemove) {
-                this.uuidEnderChestMap.remove(uuid);
+                EnderChest enderChest = this.uuidEnderChestMap.remove(uuid);
+
+                this.getPlugin().getLogger().info("Saving data for " + enderChest.getName());
             }
 
             Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> this.dataManager.saveEnderChestMultiple(toSave));
@@ -164,6 +168,13 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
             dataManager.saveNameAndUUID(name, uuid);
             EnderChest enderChest = loadData(name, uuid);
+
+            if (enderChest == null) {
+                this.getPlugin().getLogger().info("Creating new enderchest for " + name);
+            } else {
+                this.getPlugin().getLogger().info("Loaded enderchest for " + name);
+            }
+
             Bukkit.getScheduler().runTask(getPlugin(), () -> uuidEnderChestMap.put(uuid, enderChest == null ? createNew(event.getPlayer()) : enderChest));
         });
     }
@@ -182,6 +193,12 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
                 this.getPlugin().getMessenger().sendMessage(player, MessageKey.NO_ENDERCHEST_SELF);
             } else {
                 EnderChest enderChest = this.getEnderChest(player);
+
+                if (enderChest == null) {
+                    this.getPlugin().getLogger().severe("Enderchest for online player " + player.getName() + " could not be found.");
+                    return;
+                }
+
                 event.getPlayer().playSound(event.getClickedBlock().getLocation(), OPEN_SOUND, 1, 1F);
                 this.openEnderChest(enderChest, player, rows);
                 this.openFromBlocks.put(player.getUniqueId(), event.getClickedBlock());
@@ -230,7 +247,12 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
     }
 
     public EnderChest getEnderChest(Player player) {
-        return this.uuidEnderChestMap.get(player.getUniqueId());
+        EnderChest enderChest = this.uuidEnderChestMap.get(player.getUniqueId());
+
+        if (enderChest == null)
+            this.getPlugin().getLogger().warning(player.getName() + "'s enderchest could not be found!");
+
+        return enderChest;
     }
 
     //opens ender chest and reopens updated enderchest for players
@@ -366,6 +388,8 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         Map<UUID, EnderChestSnapshot> enderChestSnapshotMap = new HashMap<>();
         for (EnderChest value : this.uuidEnderChestMap.values()) {
             enderChestSnapshotMap.put(value.getUUID(), value.snapshot());
+
+            this.getPlugin().getLogger().info("Saving data for " + value.getName());
         }
         this.dataManager.saveEnderChestMultiple(enderChestSnapshotMap);
 

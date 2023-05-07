@@ -1,6 +1,7 @@
 package me.saif.betterenderchests.converters;
 
 import me.saif.betterenderchests.VariableEnderChests;
+import me.saif.betterenderchests.converters.enderplus.EnderPlusOldConverter;
 import me.saif.betterenderchests.utils.CaselessString;
 
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public class ConverterManager {
     public ConverterManager(VariableEnderChests plugin) {
         this.plugin = plugin;
 
-        this.addConverter(new EnderPlusConverter(this.plugin));
+        this.addConverter(new EnderPlusOldConverter(this.plugin));
     }
 
     public void addConverter(Converter converter) {

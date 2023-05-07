@@ -5,6 +5,8 @@ import java.io.IOException;
 
 public class SQLiteDatabase extends SQLDatabase {
 
+    public static final String TYPE = "SQLite";
+
     private File folder;
     private String fileName;
 
@@ -30,6 +32,6 @@ public class SQLiteDatabase extends SQLDatabase {
 
     @Override
     public String getType() {
-        return "SQLite";
+        return TYPE;
     }
 }

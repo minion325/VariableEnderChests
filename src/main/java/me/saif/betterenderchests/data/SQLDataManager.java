@@ -1,6 +1,7 @@
 package me.saif.betterenderchests.data;
 
 import me.saif.betterenderchests.VariableEnderChests;
+import me.saif.betterenderchests.data.database.MySQLDatabase;
 import me.saif.betterenderchests.data.database.SQLDatabase;
 import me.saif.betterenderchests.data.database.SQLiteDatabase;
 import me.saif.betterenderchests.enderchest.EnderChestSnapshot;
@@ -33,7 +34,7 @@ public class SQLDataManager extends DataManager {
 
     @Override
     public void init() {
-        String createDataTable = "CREATE TABLE IF NOT EXISTS " + getDataTableName() + " (`UUID` VARCHAR(36) NOT NULL PRIMARY KEY, `ROWS` INT, `CONTENTS` MEDIUMTEXT);";
+        String createDataTable = "CREATE TABLE IF NOT EXISTS " + getDataTableName() + " (`UUID` VARCHAR(36) NOT NULL PRIMARY KEY, `ROWS` INT, `CONTENTS` LONGTEXT);";
         String createPlayersTable = "CREATE TABLE IF NOT EXISTS " + getPlayersTableName() + " (`UUID` VARCHAR(36) NOT NULL UNIQUE, `NAME` VARCHAR(16) NOT NULL UNIQUE);";
         try (Connection connection = this.database.getConnection();
              Statement statement = connection.createStatement()) {

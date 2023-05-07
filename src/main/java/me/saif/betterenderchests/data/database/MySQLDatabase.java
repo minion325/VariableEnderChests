@@ -6,6 +6,8 @@ import java.sql.Statement;
 
 public class MySQLDatabase extends SQLDatabase {
 
+    public static final String TYPE = "MySQL";
+
     private final String host;
     private final int port;
     private final String database;
@@ -34,6 +36,6 @@ public class MySQLDatabase extends SQLDatabase {
 
     @Override
     public String getType() {
-        return "MySQL";
+        return TYPE;
     }
 }

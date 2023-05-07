@@ -2,6 +2,7 @@ package me.saif.betterenderchests.lang.inventory.packetinterceptor;
 
 import io.netty.channel.*;
 import me.saif.betterenderchests.lang.inventory.PacketModifier;
+import me.saif.betterenderchests.utils.ArrayUtils;
 import me.saif.reflectionutils.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -35,8 +36,10 @@ public class PacketInterceptor implements Listener {
             CraftPlayer_getHandle = CraftPlayer.getMethod("getHandle");
             Class<?> EntityPlayer = CraftPlayer_getHandle.getReturnType();
             EntityPlayer_playerConnection = Arrays.stream(EntityPlayer.getFields()).filter(field -> field.getType().getName().endsWith("PlayerConnection")).findAny().get();
+            EntityPlayer_playerConnection.setAccessible(true);
             Class<?> PlayerConnection = EntityPlayer_playerConnection.getType();
-            PlayerConnetion_networkManager = Arrays.stream(PlayerConnection.getFields()).filter(field -> field.getType().getName().endsWith("NetworkManager")).findAny().get();
+            PlayerConnetion_networkManager = ArrayUtils.concatenate(PlayerConnection.getFields(), PlayerConnection.getDeclaredFields()).stream().filter(field -> field.getType().getName().endsWith("NetworkManager")).findAny().get();
+            PlayerConnetion_networkManager.setAccessible(true);
             Class<?> NetworkManager = PlayerConnetion_networkManager.getType();
             NetworkManager_channel = ReflectionUtils.getFieldsOfType(NetworkManager, Channel.class, true).stream().findFirst().orElse(null);
 
@@ -44,7 +47,8 @@ public class PacketInterceptor implements Listener {
 
             for (Player t : Bukkit.getOnlinePlayers())
                 injectPlayer(t);
-        } catch (ReflectiveOperationException e) {
+        } catch (Exception e) {
+            plugin.getLogger().info("Error occured while trying to enable multi-lang support. The plugin should work fine even with this error.");
             e.printStackTrace();
         }
     }

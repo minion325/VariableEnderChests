@@ -20,6 +20,7 @@ public class EnderChestCommand extends PluginCommand {
 
     private final EnderChestManager ecm;
     private final Messenger messenger;
+    private final VariableEnderChests plugin;
     private final Placeholder<Player> playerPlaceholder = Placeholder.getPlaceholder("player", Player::getName);
 
     private final String PERMISSION_SELF = "enderchest.command";
@@ -27,6 +28,7 @@ public class EnderChestCommand extends PluginCommand {
 
     public EnderChestCommand(VariableEnderChests plugin, String name, List<String> aliases) {
         super(name, aliases.toArray(new String[0]));
+        this.plugin = plugin;
         this.ecm = plugin.getEnderChestManager();
         this.messenger = plugin.getMessenger();
     }
@@ -54,8 +56,16 @@ public class EnderChestCommand extends PluginCommand {
         if (otherPlayer == null) {
             if (player.hasPermission(PERMISSION_SELF)) {
                 int rows = this.ecm.getNumRows(player);
-                if (rows != 0)
-                    this.ecm.openEnderChest(player, rows);
+                if (rows != 0) {
+                    EnderChest enderChest = this.ecm.getEnderChest(player);
+
+                    if (enderChest == null) {
+                        this.plugin.getLogger().severe("Enderchest for online player " + player.getName() + " could not be found.");
+                        return;
+                    }
+
+                    this.ecm.openEnderChest(enderChest, player, rows);
+                }
                 else
                     messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_SELF);
                 return;
@@ -75,6 +85,12 @@ public class EnderChestCommand extends PluginCommand {
         if (Bukkit.getPlayerExact(otherPlayer) != null) {
             Player other = Bukkit.getPlayerExact(otherPlayer);
             EnderChest enderChest = this.ecm.getEnderChest(other);
+
+            if (enderChest == null) {
+                this.plugin.getLogger().severe("Enderchest for online player " + other.getName() + " could not be found.");
+                return;
+            }
+
             int rows = this.ecm.getNumRows(other);
             if (rows == 0) {
                 messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_OTHER, playerPlaceholder.getResult(other));
