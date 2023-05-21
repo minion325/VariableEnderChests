@@ -43,7 +43,7 @@ public class EnderChestClickListener implements Listener {
                 event.setCancelled(true);
                 plugin.getMessenger().sendMessage(event.getWhoClicked(), MessageKey.BLACKLIST_MESSAGE);
             }
-        } else if (VariableEnderChests.MC_VERSION >= 9) {
+        } else if (VariableEnderChests.MC_VERSION >= 16) {
             ItemStack offHand = event.getWhoClicked().getInventory().getItemInOffHand();
             if (event.getClick() == ClickType.SWAP_OFFHAND && offHand != null && plugin.getEnderChestManager().getBlacklist().contains(offHand.getType())) {
                 event.setCancelled(true);
