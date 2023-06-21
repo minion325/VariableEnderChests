@@ -13,15 +13,25 @@ public class ConverterManager {
 
     private VariableEnderChests plugin;
     private Map<CaselessString, Converter> converterMap = new HashMap<>();
+    private boolean converting = false;
 
     public ConverterManager(VariableEnderChests plugin) {
         this.plugin = plugin;
 
         this.addConverter(new EnderPlusOldConverter(this.plugin));
+        this.addConverter(new SQLiteMySQLConverter(this.plugin));
     }
 
     public void addConverter(Converter converter) {
         this.converterMap.put(new CaselessString(converter.getName()), converter);
+    }
+
+    public boolean isConverting() {
+        return converting;
+    }
+
+    public void setConverting(boolean converting) {
+        this.converting = converting;
     }
 
     public Converter getConverter(String name) {

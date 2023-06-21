@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ConversionCommand extends PluginCommand {
@@ -76,10 +79,20 @@ public class ConversionCommand extends PluginCommand {
         }
         this.confirmMap.remove(sender);
         messenger.sendMessage(sender, MessageKey.CONVERSION_STARTING, converterPlaceholder.getResult(converter));
-        boolean succuess = converter.convert();
-        if (succuess)
-            messenger.sendMessage(sender, MessageKey.CONVERSION_SUCCESS);
-        else
-            messenger.sendMessage(sender, MessageKey.CONVERSION_FAILURE);
+
+        this.plugin.getConverterManager().setConverting(true);
+        CompletableFuture<Boolean> success = CompletableFuture.supplyAsync(converter::convert).exceptionally(throwable -> {
+            throwable.printStackTrace();
+            return false;
+        });
+
+        success.thenAccept(aBoolean -> {
+            if (aBoolean)
+                messenger.sendMessage(sender, MessageKey.CONVERSION_SUCCESS);
+            else
+                messenger.sendMessage(sender, MessageKey.CONVERSION_FAILURE);
+
+            this.plugin.getConverterManager().setConverting(false);
+        });
     }
 }

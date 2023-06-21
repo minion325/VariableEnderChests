@@ -24,6 +24,12 @@ public class SQLDataManager extends DataManager {
         this.database = plugin.getSQLDatabase();
     }
 
+    public SQLDataManager(VariableEnderChests plugin, SQLDatabase database) {
+        super(plugin);
+
+        this.database = database;
+    }
+
     public String getPlayersTableName() {
         return playersTableName;
     }
@@ -141,6 +147,25 @@ public class SQLDataManager extends DataManager {
                 stringBuilder.append("OR ");
         }
         return stringBuilder.toString();
+    }
+
+    @Override
+    public Set<UUID> getAllEnderChests() {
+        String sql = "SELECT UUID FROM " + this.getDataTableName() + ";";
+        Set<UUID> uuids = new HashSet<>();
+        try (Connection connection = this.database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                uuids.add(UUID.fromString(resultSet.getString("UUID")));
+            }
+
+            return uuids;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

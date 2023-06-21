@@ -226,7 +226,9 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         enderChest.getInventory().getViewers().remove(event.getPlayer());
         event.getPlayer().closeInventory();
 
-        if (!enderChest.hasViewers()) {
+
+        //keep the enderchest loaded so people can't dupe. Will reassess this bug later
+        /*if (!enderChest.hasViewers()) {
             this.getPlugin().getLogger().info("Saving data for " + enderChest.getName());
             EnderChestSnapshot snapshot = enderChest.snapshot();
             this.uuidEnderChestMap.remove(snapshot.getUuid());
@@ -240,7 +242,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
                 //removes snapshot from savelist
                 this.snapshotsToSave.remove(snapshot);
             });
-        }
+        }*/
 
         //someone is watching the enderchest so keep it loaded
         //we will deal with this later when clearing cache periodically.
@@ -249,8 +251,19 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
     public EnderChest getEnderChest(Player player) {
         EnderChest enderChest = this.uuidEnderChestMap.get(player.getUniqueId());
 
-        if (enderChest == null)
-            this.getPlugin().getLogger().warning(player.getName() + "'s enderchest could not be found!");
+        if (enderChest == null) {
+            this.getPlugin().getLogger().warning(player.getName() + "'s enderchest could not be found! Loading it synchronously");
+            EnderChestSnapshot snapshot = this.dataManager.loadEnderChest(player.getUniqueId());
+
+            if (snapshot == null) {
+                enderChest = createNew(player);
+            } else {
+                enderChest = new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents(), snapshot.getRows());
+            }
+
+            this.uuidEnderChestMap.put(player.getUniqueId(), enderChest);
+            this.nameUUIDMap.put(new CaselessString(player.getName()), player.getUniqueId());
+        }
 
         return enderChest;
     }
