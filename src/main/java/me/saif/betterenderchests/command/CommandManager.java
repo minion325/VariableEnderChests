@@ -3,13 +3,11 @@ package me.saif.betterenderchests.command;
 import me.saif.betterenderchests.VariableEnderChests;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.SimpleCommandMap;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class CommandManager {
 
@@ -26,7 +24,11 @@ public class CommandManager {
 
             bukkitCommandMap.setAccessible(true);
             SimpleCommandMap commandMap = (SimpleCommandMap) bukkitCommandMap.get(Bukkit.getServer());
+
             Command bukkitCommand = new CommandImpl(command);
+
+            removeFromCommandMap(bukkitCommand);
+
             commandMap.register(plugin.getName(), bukkitCommand);
 
             this.pluginCommands.put(command, bukkitCommand);
@@ -41,9 +43,18 @@ public class CommandManager {
         }
     }
 
-    public void unregisterCommand(PluginCommand pluginCommand) {
-        Command command = this.pluginCommands.get(pluginCommand);
+    private void removeCommandAndAliases(SimpleCommandMap simpleCommandMap, Command command) {
+        List<String> aliases = new ArrayList<>(command.getAliases());
+        aliases.add(command.getName());
 
+        for (String alias : aliases) {
+            Command oldCommand = simpleCommandMap.getCommand(alias);
+
+            removeFromCommandMap(oldCommand);
+        }
+    }
+
+    private void removeFromCommandMap(Command command) {
         if (command == null)
             return;
 
@@ -79,6 +90,12 @@ public class CommandManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void unregisterCommand(PluginCommand pluginCommand) {
+        Command command = this.pluginCommands.get(pluginCommand);
+
+        removeFromCommandMap(command);
     }
 
 }
