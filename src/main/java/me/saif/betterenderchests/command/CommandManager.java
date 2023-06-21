@@ -3,7 +3,6 @@ package me.saif.betterenderchests.command;
 import me.saif.betterenderchests.VariableEnderChests;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandMap;
 import org.bukkit.command.SimpleCommandMap;
 
 import java.lang.reflect.Field;
