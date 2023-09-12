@@ -33,7 +33,7 @@ public abstract class OpenEnderchestPacketModifier implements PacketModifier {
     };
 
     public Map.Entry<String, Integer> parseInventoryName(String name) {
-        String[] strings = name.split(":");
+        String[] strings = name.split(";");
 
         if (strings.length != 3)
             return null;

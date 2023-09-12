@@ -25,6 +25,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
 
     private final DataManager dataManager;
 
-    private final Map<UUID, EnderChest> uuidEnderChestMap = new HashMap<>();
+    private final Map<UUID, EnderChest> uuidEnderChestMap = new ConcurrentHashMap<>();
     private final Map<CaselessString, UUID> nameUUIDMap = new HashMap<>();
 
     private final Map<UUID, Callback<EnderChest>> uuidCallbackMap = new HashMap<>();

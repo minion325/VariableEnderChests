@@ -18,12 +18,12 @@ public class EnderChest implements InventoryHolder {
 
     static {
         Map<Integer, String> temp = new HashMap<>();
-        temp.put(1, PREFIX + ":1:<player>");
-        temp.put(2, PREFIX + ":2:<player>");
-        temp.put(3, PREFIX + ":3:<player>");
-        temp.put(4, PREFIX + ":4:<player>");
-        temp.put(5, PREFIX + ":5:<player>");
-        temp.put(6, PREFIX + ":6:<player>");
+        temp.put(1, PREFIX + ";1;<player>");
+        temp.put(2, PREFIX + ";2;<player>");
+        temp.put(3, PREFIX + ";3;<player>");
+        temp.put(4, PREFIX + ";4;<player>");
+        temp.put(5, PREFIX + ";5;<player>");
+        temp.put(6, PREFIX + ";6;<player>");
 
         INVENTORY_NAMES = Collections.unmodifiableMap(temp);
     }
