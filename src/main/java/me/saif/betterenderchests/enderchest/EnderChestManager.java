@@ -180,7 +180,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         });
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     private void onInventoryOpen(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
             return;
@@ -200,6 +200,10 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
                     return;
                 }
 
+                org.bukkit.block.EnderChest chestBlock = ((org.bukkit.block.EnderChest) event.getClickedBlock().getState());
+                chestBlock.open();
+                chestBlock.update();
+
                 event.getPlayer().playSound(event.getClickedBlock().getLocation(), OPEN_SOUND, 1, 1F);
                 this.openEnderChest(enderChest, player, rows);
                 this.openFromBlocks.put(player.getUniqueId(), event.getClickedBlock());
@@ -213,6 +217,13 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             event.getViewers().remove(event.getPlayer());
 
             Block block = this.openFromBlocks.remove(event.getPlayer().getUniqueId());
+
+
+            if (block.getState() instanceof org.bukkit.block.EnderChest && event.getViewers().size() == 0) {
+                org.bukkit.block.EnderChest chestBlock = ((org.bukkit.block.EnderChest) block.getState());
+                chestBlock.close();
+                chestBlock.update();
+            }
             ((Player) event.getPlayer()).playSound(block.getLocation(), CLOSE_SOUND, 1, 1F);
         }
     }

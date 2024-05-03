@@ -20,6 +20,7 @@ public class ConverterManager {
 
         this.addConverter(new EnderPlusOldConverter(this.plugin));
         this.addConverter(new SQLiteMySQLConverter(this.plugin));
+        this.addConverter(new CustomEnderChestFlatFileConverter(this.plugin));
     }
 
     public void addConverter(Converter converter) {
