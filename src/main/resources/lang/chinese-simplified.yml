@@ -1,29 +1,29 @@
-lang: 'zh'
+lang: 'zhcn'
 
 countries:
   - 'CN'
 
-# This is meant to be configurable
+# 该部分可自行配置
 configurable:
   # 玩家打开末影箱时会看到的名称
   # 你可以为不同行数的末影箱设置不同的名称
-  # <player>将会被替换趁玩家名
+  # <player> 会被替换为玩家名
   enderchest-names:
-    1-rows: '&7<player>的末影箱'
-    2-rows: '&7<player>的末影箱'
-    3-rows: '&7<player>的末影箱'
-    4-rows: '&7<player>的末影箱'
-    5-rows: '&7<player>的末影箱'
-    6-rows: '&7<player>的末影箱'
+    1-rows: '&7<player> 的末影箱'
+    2-rows: '&7<player> 的末影箱'
+    3-rows: '&7<player> 的末影箱'
+    4-rows: '&7<player> 的末影箱'
+    5-rows: '&7<player> 的末影箱'
+    6-rows: '&7<player> 的末影箱'
 
   command-no-permission-self:
     - '&c你没有权限执行此命令.'
   command-no-permission-others:
     - '&c你没有权限查看他人的末影箱.'
   no-rows:
-    - '&c你并未拥有一个末影箱.'
+    - '&c你没有末影箱.'
   no-enderchest-found:
-    - '&c<player> 并未拥有一个末影箱.'
+    - '&c玩家 <player> 没有末影箱.'
   blacklisted-message:
     - '&c你不能将这个物品放进末影箱.'
   command-console-only:
@@ -31,26 +31,26 @@ configurable:
   enderchest-command-messages:
     no-permission-self: '&c你没有权限执行此命令.'
     no-permission-others: '&c你没有权限查看他人的末影箱.'
-  no-permission-message: '&cYou do not have permission to use this command.'
-  command-usage: '&cUsage: <command>'
+  no-permission-message: '&c你没有权限使用此命令.'
+  command-usage: '&c命令用法: <command>'
 
 
-# These are meant for translation only
+# 该部分配置仅用于本地化
 internal:
   converter:
     all-players-offline:
-      - '只有当所有玩家都离线时才能执行此命令'
+      - '仅所有玩家都离线时才可执行此命令'
     not-valid-conveter:
-      - '被迁移的插件名无效.'
+      - '待迁移插件名无效.'
     list-valid-convenrters:
-      - '支持的插件如下'
+      - '支持插件如下'
     confirm-converter:
       - '请再次执行此命令以确保你已准备好进行迁移.'
       - '这可能会导致所有在线的玩家被踢出或出现严重的卡顿.'
       - '这也会导致插件内的原有数据丢失.'
       - '请谨慎行事!'
     conversion-start:
-      - '从 <converter> 的迁移已开始.'
+      - '从插件 <converter> 的数据迁移已开始.'
     conversion-success:
       - '迁移成功'
     conversion-failure:
@@ -58,10 +58,10 @@ internal:
 
   enderchest:
     cleared-enderchest:
-      - '已清除 <player> 的末影箱'
+      - '已清除 <player> 的末影箱内容'
     confirm-clear:
       - '确定要清除 <player> 的末影箱吗?'
-      - '请在 <seconds> 秒内再次执行此命令以确认.'
+      - '请在 <seconds> 秒内再次执行此命令以确认操作.'
 
   command:
     command-player-only:
