@@ -13,6 +13,10 @@ public class CommandImpl extends Command {
         super(command.getName());
         this.setAliases(command.getAliases());
 
+        if (command.requiresPermission()) {
+            this.setPermission(command.getPermission());
+        }
+
         this.command = command;
     }
 

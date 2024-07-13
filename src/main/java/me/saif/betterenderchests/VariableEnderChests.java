@@ -15,6 +15,7 @@ import me.saif.betterenderchests.enderchest.EnderChestClickListener;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
 import me.saif.betterenderchests.hooks.PAPIEnderChestHook;
 import me.saif.betterenderchests.lang.Messenger;
+import me.saif.betterenderchests.lang.inventory.InventoryNameListener_1_20;
 import me.saif.betterenderchests.lang.inventory.PacketModifier;
 import me.saif.betterenderchests.lang.inventory.impl.OpenEnderchestPacketModifier_1_12_Below;
 import me.saif.betterenderchests.lang.inventory.impl.OpenEnderchestPacketModifier_1_16_Below;
@@ -39,7 +40,18 @@ public final class VariableEnderChests extends JavaPlugin {
         return API;
     }
 
-    public static final int MC_VERSION = Integer.parseInt(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].split("_")[1]);
+    public static final int MC_VERSION;
+
+    static {
+        int temp;
+        try {
+            temp = Integer.parseInt(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].split("_")[1]);
+        } catch (Exception e) {
+            temp = 99;
+        }
+
+        MC_VERSION = temp;
+    }
 
     private DataManager dataManager;
     private EnderChestManager enderChestManager;
@@ -62,16 +74,20 @@ public final class VariableEnderChests extends JavaPlugin {
         this.localeLoader = new LocaleLoader(this);
         this.playerLocaleFinder = new PlayerLocaleFinder(this);
 
-        PacketModifier packetModifier;
+        if (MC_VERSION <= 19) {
+            PacketModifier packetModifier;
 
-        if (MC_VERSION <= 12)
-            packetModifier = new OpenEnderchestPacketModifier_1_12_Below(this.playerLocaleFinder);
-        else if (MC_VERSION <= 16)
-            packetModifier = new OpenEnderchestPacketModifier_1_16_Below(this.playerLocaleFinder);
-        else
-            packetModifier = new OpenEnderchestPacketModifier_1_19_Below(this.playerLocaleFinder);
+            if (MC_VERSION <= 12)
+                packetModifier = new OpenEnderchestPacketModifier_1_12_Below(this.playerLocaleFinder);
+            else if (MC_VERSION <= 16)
+                packetModifier = new OpenEnderchestPacketModifier_1_16_Below(this.playerLocaleFinder);
+            else
+                packetModifier = new OpenEnderchestPacketModifier_1_19_Below(this.playerLocaleFinder);
 
-        this.packetInterceptor = new PacketInterceptor(this, packetModifier);
+            this.packetInterceptor = new PacketInterceptor(this, packetModifier);
+        } else {
+            Bukkit.getPluginManager().registerEvents(new InventoryNameListener_1_20(this), this);
+        }
 
         this.messenger = new Messenger(this.localeLoader, this.playerLocaleFinder);
 

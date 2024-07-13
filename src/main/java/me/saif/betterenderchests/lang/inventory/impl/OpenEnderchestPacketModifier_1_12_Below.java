@@ -1,5 +1,6 @@
 package me.saif.betterenderchests.lang.inventory.impl;
 
+import me.saif.betterenderchests.lang.inventory.InvMultilangCommons;
 import me.saif.betterenderchests.lang.locale.Locale;
 import me.saif.betterenderchests.lang.locale.PlayerLocaleFinder;
 import me.saif.reflectionutils.ReflectionUtils;
@@ -49,14 +50,14 @@ public class OpenEnderchestPacketModifier_1_12_Below extends OpenEnderchestPacke
 
             String invName = ((String) Component_getText.invoke(component));
 
-            Map.Entry<String, Integer> ownerSizePair = parseInventoryName(invName);
+            Map.Entry<String, Integer> ownerSizePair = InvMultilangCommons.parseInventoryName(invName);
 
             if (ownerSizePair == null)
                 return o;
 
             Locale loc = locale.getLocale(player);
 
-            String newName = loc.getSingleFormattedMessage(SIZE_NAME_MAP.get(ownerSizePair.getValue()), PLAYER_NAME_PLACEHOLDER.getResult(ownerSizePair.getKey()));
+            String newName = loc.getSingleFormattedMessage(InvMultilangCommons.SIZE_NAME_MAP.get(ownerSizePair.getValue()), InvMultilangCommons.PLAYER_NAME_PLACEHOLDER.getResult(ownerSizePair.getKey()));
 
             Object newComp = ChatComponentText_init.newInstance(newName);
 

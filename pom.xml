@@ -6,7 +6,7 @@
 
     <groupId>me.saif</groupId>
     <artifactId>VariableEnderChests</artifactId>
-    <version>1.10.7.0</version>
+    <version>1.11.1.0</version>
     <packaging>jar</packaging>
 
     <name>BetterEnderChests</name>
@@ -59,6 +59,10 @@
                                     <pattern>me.saif.reflectionutils</pattern>
                                     <shadedPattern>me.saif.betterenderchests.reflectionutils</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>de.tr7zw.changeme.nbtapi</pattern>
+                                    <shadedPattern>me.saif.betterenderchests.nbtapi</shadedPattern>
+                                </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <transformers>
@@ -93,6 +97,11 @@
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
+            <layout>default</layout>
         </repository>
     </repositories>
 
@@ -135,6 +144,11 @@
             <artifactId>placeholderapi</artifactId>
             <version>2.11.1</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api</artifactId>
+            <version>2.13.1</version>
         </dependency>
     </dependencies>
 </project>

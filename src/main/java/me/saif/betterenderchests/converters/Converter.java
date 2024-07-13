@@ -18,6 +18,6 @@ public abstract class Converter {
         return name;
     }
 
-    public abstract boolean convert();
+    public abstract boolean convert(String... args);
 
 }

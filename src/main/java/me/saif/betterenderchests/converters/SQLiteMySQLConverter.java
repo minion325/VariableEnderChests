@@ -26,7 +26,7 @@ public class SQLiteMySQLConverter extends Converter {
     }
 
     @Override
-    public boolean convert() {
+    public boolean convert(String... args) {
         if (Bukkit.getOnlinePlayers().size() > 0)
             throw new IllegalStateException("Cannot convert with players online");
 

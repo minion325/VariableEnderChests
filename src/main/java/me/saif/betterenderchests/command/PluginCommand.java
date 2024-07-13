@@ -29,4 +29,13 @@ public abstract class PluginCommand {
     public List<String> getAliases() {
         return Collections.unmodifiableList(aliases);
     }
+
+    public String getPermission(){
+        return null;
+    }
+
+    public boolean requiresPermission() {
+        return getPermission() != null;
+    }
+
 }

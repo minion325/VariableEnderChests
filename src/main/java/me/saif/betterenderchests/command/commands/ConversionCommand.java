@@ -10,10 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -45,6 +42,7 @@ public class ConversionCommand extends PluginCommand {
             return;
         }
 
+        String[] flags = args.length == 1 ? new String[0] : Arrays.copyOfRange(args, 1, args.length);
         onConvertCommand((ConsoleCommandSender) sender, args[0]);
     }
 
@@ -58,7 +56,7 @@ public class ConversionCommand extends PluginCommand {
                 .collect(Collectors.toList());
     }
 
-    public void onConvertCommand(ConsoleCommandSender sender, String converterName) {
+    public void onConvertCommand(ConsoleCommandSender sender, String converterName, String... flags) {
         if (Bukkit.getOnlinePlayers().size() > 0) {
             messenger.sendMessage(sender, MessageKey.ALL_PLAYERS_OFFLINE);
             return;
@@ -81,7 +79,9 @@ public class ConversionCommand extends PluginCommand {
         messenger.sendMessage(sender, MessageKey.CONVERSION_STARTING, converterPlaceholder.getResult(converter));
 
         this.plugin.getConverterManager().setConverting(true);
-        CompletableFuture<Boolean> success = CompletableFuture.supplyAsync(converter::convert).exceptionally(throwable -> {
+        CompletableFuture<Boolean> success = CompletableFuture.supplyAsync(() ->
+                converter.convert(flags)
+        ).exceptionally(throwable -> {
             throwable.printStackTrace();
             return false;
         });
