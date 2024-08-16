@@ -1,0 +1,73 @@
+lang: 'es'
+
+countries:
+  - 'ES'
+  - '**'
+
+# Esto está pensado para ser configurable
+configurable:
+
+  # Estos son los nombres del inventario que los jugadores verán cuando abran su inventario
+  # Puedes establecer un nombre diferente para cada tamaño, por ejemplo, Nivel 1, Nivel 2
+  # <player> se reemplaza con el nombre del jugador
+  enderchest-names:
+    1-rows: '&7Enderchest de <player>'
+    2-rows: '&7Enderchest de <player>'
+    3-rows: '&7Enderchest de <player>'
+    4-rows: '&7Enderchest de <player>'
+    5-rows: '&7Enderchest de <player>'
+    6-rows: '&7Enderchest de <player>'
+
+  no-permission-message:
+    - '&cNo tienes permiso para usar este comando.'
+  enderchest-command-messages:
+    no-permission-self:
+      - '&cNo tienes permiso para abrir tu enderchest a través de comandos.'
+    no-permission-others:
+      - '&cNo tienes permiso para ver el enderchest de otros.'
+  no-rows:
+    - '&cNo tienes un enderchest.'
+  no-enderchest-found:
+    - '&c<player> no tiene un enderchest.'
+  blacklisted-message:
+    - '&cNo puedes poner ese objeto en un enderchest.'
+  command-console-only:
+    - '&cSolo puedes usar este comando desde la consola.'
+  command-usage: '&cUso: <command>'
+
+
+# Esto está pensado solo para traducción
+internal:
+  converter:
+    all-players-offline:
+      - 'Todos los jugadores deben estar desconectados para usar este comando.'
+    not-valid-conveter:
+      - 'Ese no es un convertidor válido.'
+    list-valid-convenrters:
+      - 'Los convertidores válidos están listados a continuación.'
+    confirm-converter:
+      - 'Necesitas ejecutar este comando nuevamente para estar seguro de que deseas convertir.'
+      - 'Esto puede resultar en que todos los jugadores en línea sean expulsados del servidor o en un gran lag.'
+      - 'Esto también resultará en la pérdida de todos los datos almacenados por este plugin.'
+      - '¡Procede con precaución!'
+    conversion-start:
+      - 'La conversión desde <converter> está comenzando.'
+    conversion-success:
+      - 'Conversión finalizada con éxito.'
+    conversion-failure:
+      - 'La conversión falló.'
+
+  enderchest:
+    cleared-enderchest:
+      - 'Enderchest de <player> limpiado.'
+    confirm-clear:
+      - '¿Estás seguro de que deseas limpiar el enderchest de <player>?'
+      - 'Ejecuta este comando nuevamente dentro de <seconds> segundos para confirmar.'
+
+  command:
+    command-player-only:
+      - 'Debes ser un jugador para usar este comando.'
+
+  blacklist:
+    invalid-type:
+      - 'Objeto en la lista negra con el nombre de <type> encontrado. Este no es un material válido de Minecraft. Ignorando...'
