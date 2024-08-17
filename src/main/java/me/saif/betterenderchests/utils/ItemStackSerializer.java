@@ -1,9 +1,10 @@
 package me.saif.betterenderchests.utils;
 
-import de.tr7zw.changeme.nbtapi.NBTCompound;
-import de.tr7zw.changeme.nbtapi.NBTContainer;
-import de.tr7zw.changeme.nbtapi.NBTItem;
-import de.tr7zw.changeme.nbtapi.NBTReflectionUtil;
+import de.tr7zw.changeme.nbtapi.*;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
+import de.tr7zw.changeme.nbtapi.utils.DataFixerUtil;
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
@@ -11,14 +12,26 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
 
 public class ItemStackSerializer {
 
-    public static String serialize(ItemStack[] obj) {
+    public static String serialize(ItemStack[] items) {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-            NBTContainer container = NBTItem.convertItemArraytoNBT(obj);
+            NBTContainer container = new NBTContainer();
+            container.setInteger("size", items.length);
+            NBTCompoundList list = container.getCompoundList("items");
+
+            for(int i = 0; i < items.length; ++i) {
+                ItemStack item = items[i];
+                if (item != null && item.getType() != Material.AIR) {
+                    NBTListCompound entry = list.addCompound();
+                    entry.setInteger("Slot", i);
+                    entry.mergeCompound(NBT.itemStackToNBT(item));
+                }
+            }
             NBTReflectionUtil.writeApiNBT(container, outputStream);
 
             outputStream.close();
@@ -66,11 +79,43 @@ public class ItemStackSerializer {
         try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(str));
 
-            NBTContainer container = new NBTContainer(NBTReflectionUtil.readNBT(inputStream));
-            ItemStack[] stacks = NBTItem.convertNBTtoItemArray(container);
+            NBTContainer comp = new NBTContainer(NBTReflectionUtil.readNBT(inputStream));
+
+            ItemStack[] rebuild;
+            if (!comp.hasTag("size")) {
+                rebuild = null;
+            } else {
+                rebuild = new ItemStack[comp.getInteger("size")];
+
+                for(int i = 0; i < rebuild.length; ++i) {
+                    rebuild[i] = new ItemStack(Material.AIR);
+                }
+
+                if (!comp.hasTag("items")) {
+                    return rebuild;
+                } else {
+                    NBTCompoundList list = comp.getCompoundList("items");
+                    Iterator var3 = list.iterator();
+
+                    while(var3.hasNext()) {
+                        ReadWriteNBT lcomp = (ReadWriteNBT)var3.next();
+                        if (lcomp instanceof NBTCompound) {
+                            int slot = lcomp.getInteger("Slot");
+
+                            if (lcomp.hasTag("Count") && MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_20_R4)) {
+                                lcomp = DataFixerUtil.fixUpItemData(lcomp, 3700, DataFixerUtil.getCurrentVersion());
+                            }
+
+                            rebuild[slot] = NBT.itemStackFromNBT(lcomp);
+                        }
+                    }
+
+                    return rebuild;
+                }
+            }
 
             inputStream.close();
-            return stacks;
+            return rebuild;
         } catch (Exception e) {
             return new ItemStack[0];
         }
