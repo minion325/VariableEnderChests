@@ -1,5 +1,6 @@
 package me.saif.betterenderchests.enderchest;
 
+import me.saif.betterenderchests.hooks.ChestSortHook;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
@@ -43,6 +44,9 @@ public class EnderChest implements InventoryHolder {
         });
         this.contents = contents.length == 54 ? contents : Arrays.copyOf(contents, 54);
         this.inventory = Bukkit.createInventory(this, lastNumRows * 6, this.inventoryNames.get(lastNumRows));
+
+        ChestSortHook.setSortable(this.inventory);
+
         populateInventory();
     }
 
@@ -65,7 +69,11 @@ public class EnderChest implements InventoryHolder {
         //else
         updateContentsArray();
         List<HumanEntity> viewers = new ArrayList<>(this.inventory.getViewers());
-        inventory = Bukkit.createInventory(this, rows * 9, this.inventoryNames.get(rows));
+        ChestSortHook.setUnsortable(this.inventory);
+
+        this.inventory = Bukkit.createInventory(this, rows * 9, this.inventoryNames.get(rows));
+        ChestSortHook.setSortable(this.inventory);
+
         populateInventory();
         for (HumanEntity viewer : viewers) {
             viewer.openInventory(inventory);
