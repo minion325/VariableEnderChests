@@ -54,23 +54,23 @@ public class EnderChestCommand extends PluginCommand {
 
     public void openEchest(Player player, String otherPlayer) {
         if (otherPlayer == null) {
-            if (player.hasPermission(PERMISSION_SELF)) {
-                int rows = this.ecm.getNumRows(player);
-                if (rows != 0) {
-                    EnderChest enderChest = this.ecm.getEnderChest(player);
-
-                    if (enderChest == null) {
-                        this.plugin.getLogger().severe("Enderchest for online player " + player.getName() + " could not be found.");
-                        return;
-                    }
-
-                    this.ecm.openEnderChest(enderChest, player, rows);
-                }
-                else
-                    messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_SELF);
+            if (!player.hasPermission(PERMISSION_SELF)) {
+                messenger.sendMessage(player, MessageKey.EC_COMMAND_NO_PERMISSION_SELF);
                 return;
             }
-            messenger.sendMessage(player, MessageKey.EC_COMMAND_NO_PERMISSION_SELF);
+            int rows = this.ecm.getNumRows(player);
+            if (rows == 0) {
+                messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_SELF);
+                return;
+            }
+
+            EnderChest enderChest = this.ecm.getEnderChest(player);
+
+            if (enderChest == null) {
+                this.plugin.getLogger().severe("Enderchest for online player " + player.getName() + " could not be found.");
+                return;
+            }
+            this.ecm.openEnderChest(enderChest, player, rows);
             return;
         }
 
