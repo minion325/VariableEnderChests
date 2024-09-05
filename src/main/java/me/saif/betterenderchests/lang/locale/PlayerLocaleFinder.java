@@ -1,5 +1,6 @@
 package me.saif.betterenderchests.lang.locale;
 
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.reflectionutils.ReflectionUtils;
 import org.bukkit.entity.Player;
@@ -16,13 +17,13 @@ public class PlayerLocaleFinder {
     public PlayerLocaleFinder(VariableEnderChests plugin) {
         this.plugin = plugin;
 
-        if (VariableEnderChests.MC_VERSION < 12) {
+        if (!MinecraftVersion.isNewerThan(MinecraftVersion.MC1_11_R1)) {
             getLocaleMethod = ReflectionUtils.getMethod(Player.Spigot.class, "getLocale", true).get();
         }
     }
 
     public Locale getLocale(Player player) {
-        if (VariableEnderChests.MC_VERSION >= 12)
+        if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_12_R1))
             return plugin.getLocaleLoader().getOrDefault(player.getLocale());
         try {
             return plugin.getLocaleLoader().getOrDefault((String) getLocaleMethod.invoke(player.spigot()));

@@ -1,6 +1,7 @@
 package me.saif.betterenderchests.enderchest;
 
 import com.google.common.collect.Sets;
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.lang.MessageKey;
@@ -55,10 +56,10 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
 
 
         //load the correct sound depending on verison
-        if (VariableEnderChests.MC_VERSION == 8) {
+        if (MinecraftVersion.getVersion() == MinecraftVersion.MC1_8_R3) {
             OPEN_SOUND = Sound.valueOf("CHEST_OPEN");
             CLOSE_SOUND = Sound.valueOf("CHEST_CLOSE");
-        } else if (VariableEnderChests.MC_VERSION < 13) {
+        } else if (!MinecraftVersion.isNewerThan(MinecraftVersion.MC1_12_R1)) {
             OPEN_SOUND = Sound.valueOf("BLOCK_ENDERCHEST_OPEN");
             CLOSE_SOUND = Sound.valueOf("BLOCK_ENDERCHEST_CLOSE");
         } else {

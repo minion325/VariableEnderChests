@@ -1,5 +1,6 @@
 package me.saif.betterenderchests.data;
 
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.saif.betterenderchests.VariableEnderChests;
 import org.yaml.snakeyaml.Yaml;
 
@@ -21,7 +22,7 @@ public class ConfigUpdater {
 
         this.current = this.plugin.getConfig().getInt("config-version");
 
-        if (current < latest && VariableEnderChests.MC_VERSION < 18) {
+        if (current < latest && !MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_18_R1)) {
             this.plugin.getConfig().options().header("You are using an older version of minecraft so comments have been deleted by updating the config\n" +
                     "Check out https://github.com/minion325/VariableEnderChests/blob/master/src/main/resources/config.yml to see the config.yml with comments\n" +
                     "Do not touch config-version. This is automatically updated by the plugin.");
@@ -41,7 +42,7 @@ public class ConfigUpdater {
             for (int i = 1; i <= 6; i++) {
                 this.plugin.getConfig().set("enderchest-names." + i + "-rows", "&7<player>'s Enderchest");
             }
-            if (VariableEnderChests.MC_VERSION >= 18) {
+            if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_18_R1)) {
                 this.plugin.getConfig().setComments("enderchest-names", Arrays.asList("These are the inventory names that players will see when they open their inventory",
                         "You can set a different name for each size eg. Level 1, Level 2",
                         "<player> is replaced with the player's name"));
@@ -102,7 +103,7 @@ public class ConfigUpdater {
             this.plugin.getConfig().set("config-version", 6);
             this.plugin.getConfig().set("papi-identifier", this.plugin.getName().toLowerCase(Locale.ENGLISH));
 
-            if (VariableEnderChests.MC_VERSION >= 18) {
+            if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_18_R1)) {
                 this.plugin.getConfig().setComments("papi-identifier", Arrays.asList(
                         "This is used when the plugin hooks into placeholder api to provide placeholders",
                         "This allows you to modify the placeholder identifier.",

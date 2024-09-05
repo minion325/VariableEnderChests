@@ -1,5 +1,6 @@
 package me.saif.betterenderchests.enderchest;
 
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.lang.MessageKey;
 import org.bukkit.event.EventHandler;
@@ -43,7 +44,7 @@ public class EnderChestClickListener implements Listener {
                 event.setCancelled(true);
                 plugin.getMessenger().sendMessage(event.getWhoClicked(), MessageKey.BLACKLIST_MESSAGE);
             }
-        } else if (VariableEnderChests.MC_VERSION >= 16) {
+        } else if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_16_R3)) {
             ItemStack offHand = event.getWhoClicked().getInventory().getItemInOffHand();
             if (event.getClick() == ClickType.SWAP_OFFHAND && offHand != null && plugin.getEnderChestManager().getBlacklist().contains(offHand.getType())) {
                 event.setCancelled(true);

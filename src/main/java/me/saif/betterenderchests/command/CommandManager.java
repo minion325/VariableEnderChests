@@ -1,5 +1,6 @@
 package me.saif.betterenderchests.command;
 
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.saif.betterenderchests.VariableEnderChests;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -65,7 +66,7 @@ public class CommandManager {
             command.unregister(commandMap);
 
             Field knownCommands;
-            if (VariableEnderChests.MC_VERSION >= 13)
+            if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_13_R1))
                 knownCommands = commandMap.getClass().getSuperclass().getDeclaredField("knownCommands");
             else
                 knownCommands = commandMap.getClass().getDeclaredField("knownCommands");
@@ -84,7 +85,7 @@ public class CommandManager {
                 stringCommandMap.remove(s);
             }
 
-            if (VariableEnderChests.MC_VERSION >= 13)
+            if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_13_R1))
                 Bukkit.getServer().getClass().getMethod("syncCommands").invoke(Bukkit.getServer());
         } catch (Exception e) {
             e.printStackTrace();

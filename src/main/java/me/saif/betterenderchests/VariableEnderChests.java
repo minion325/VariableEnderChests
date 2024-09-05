@@ -1,5 +1,6 @@
 package me.saif.betterenderchests;
 
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.saif.betterenderchests.command.CommandManager;
 import me.saif.betterenderchests.command.commands.ClearEnderChestCommand;
 import me.saif.betterenderchests.command.commands.ConversionCommand;
@@ -17,7 +18,6 @@ import me.saif.betterenderchests.enderchest.EnderChestManager;
 import me.saif.betterenderchests.hooks.ChestSortHook;
 import me.saif.betterenderchests.hooks.InteractiveChatHook;
 import me.saif.betterenderchests.hooks.PAPIEnderChestHook;
-import me.saif.betterenderchests.hooks.ShowItemHook;
 import me.saif.betterenderchests.lang.Messenger;
 import me.saif.betterenderchests.lang.inventory.InventoryNameListener_1_20;
 import me.saif.betterenderchests.lang.inventory.PacketModifier;
@@ -39,22 +39,25 @@ import java.util.List;
 public final class VariableEnderChests extends JavaPlugin {
 
     private static VariableEnderChestAPI API;
+    private static final boolean paper;
+
+    static {
+        boolean temp;
+        try {
+            Bukkit.getServer().spigot().getClass().getMethod("getPaperConfig");
+            temp = true;
+        } catch (NoSuchMethodException e) {
+            temp = false;
+        }
+        paper = temp;
+    }
+
+    public static boolean isPaper() {
+        return paper;
+    }
 
     public static VariableEnderChestAPI getAPI() {
         return API;
-    }
-
-    public static final int MC_VERSION;
-
-    static {
-        int temp;
-        try {
-            temp = Integer.parseInt(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].split("_")[1]);
-        } catch (Exception e) {
-            temp = 99;
-        }
-
-        MC_VERSION = temp;
     }
 
     private DataManager dataManager;
@@ -78,12 +81,12 @@ public final class VariableEnderChests extends JavaPlugin {
         this.localeLoader = new LocaleLoader(this);
         this.playerLocaleFinder = new PlayerLocaleFinder(this);
 
-        if (MC_VERSION <= 19) {
+        if (!MinecraftVersion.isNewerThan(MinecraftVersion.MC1_19_R3)) {
             PacketModifier packetModifier;
 
-            if (MC_VERSION <= 12)
+            if (!MinecraftVersion.isNewerThan(MinecraftVersion.MC1_12_R1))
                 packetModifier = new OpenEnderchestPacketModifier_1_12_Below(this.playerLocaleFinder);
-            else if (MC_VERSION <= 16)
+            else if (!MinecraftVersion.isNewerThan(MinecraftVersion.MC1_16_R3))
                 packetModifier = new OpenEnderchestPacketModifier_1_16_Below(this.playerLocaleFinder);
             else
                 packetModifier = new OpenEnderchestPacketModifier_1_19_Below(this.playerLocaleFinder);

@@ -28,6 +28,11 @@ public class EnderChestDebugCommand extends PluginCommand {
             return;
         }
 
+        if (args[0].equalsIgnoreCase("paper?")) {
+            sender.sendMessage(VariableEnderChests.isPaper() ? "Yes" : "No");
+            return;
+        }
+
         cmdDefault(sender);
     }
 
