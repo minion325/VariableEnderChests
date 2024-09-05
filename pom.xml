@@ -6,7 +6,7 @@
 
     <groupId>me.saif</groupId>
     <artifactId>VariableEnderChests</artifactId>
-    <version>1.11.1.4</version>
+    <version>1.11.2.0</version>
     <packaging>jar</packaging>
 
     <name>BetterEnderChests</name>
@@ -107,6 +107,14 @@
             <id>jeff-media-public</id>
             <url>https://repo.jeff-media.com/public/</url>
         </repository>
+        <repository>
+            <id>minebench-repo</id>
+            <url>https://repo.minebench.de/</url>
+        </repository>
+        <repository>
+            <id>loohp-repo</id>
+            <url>https://repo.loohpjames.com/repository</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -158,6 +166,18 @@
             <groupId>de.jeff_media</groupId>
             <artifactId>ChestSortAPI</artifactId>
             <version>13.0.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.themoep.showitem</groupId>
+            <artifactId>api</artifactId>
+            <version>1.7.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.loohp</groupId>
+            <artifactId>InteractiveChat</artifactId>
+            <version>4.2.12.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
