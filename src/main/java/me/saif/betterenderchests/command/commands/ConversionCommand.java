@@ -43,7 +43,7 @@ public class ConversionCommand extends PluginCommand {
         }
 
         String[] flags = args.length == 1 ? new String[0] : Arrays.copyOfRange(args, 1, args.length);
-        onConvertCommand((ConsoleCommandSender) sender, args[0]);
+        onConvertCommand((ConsoleCommandSender) sender, args[0], flags);
     }
 
     @Override

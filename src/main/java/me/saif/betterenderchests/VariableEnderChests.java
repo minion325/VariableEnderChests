@@ -4,6 +4,7 @@ import me.saif.betterenderchests.command.CommandManager;
 import me.saif.betterenderchests.command.commands.ClearEnderChestCommand;
 import me.saif.betterenderchests.command.commands.ConversionCommand;
 import me.saif.betterenderchests.command.commands.EnderChestCommand;
+import me.saif.betterenderchests.command.commands.EnderChestDebugCommand;
 import me.saif.betterenderchests.converters.ConverterManager;
 import me.saif.betterenderchests.data.ConfigUpdater;
 import me.saif.betterenderchests.data.DataManager;
@@ -14,7 +15,9 @@ import me.saif.betterenderchests.data.database.SQLiteDatabase;
 import me.saif.betterenderchests.enderchest.EnderChestClickListener;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
 import me.saif.betterenderchests.hooks.ChestSortHook;
+import me.saif.betterenderchests.hooks.InteractiveChatHook;
 import me.saif.betterenderchests.hooks.PAPIEnderChestHook;
+import me.saif.betterenderchests.hooks.ShowItemHook;
 import me.saif.betterenderchests.lang.Messenger;
 import me.saif.betterenderchests.lang.inventory.InventoryNameListener_1_20;
 import me.saif.betterenderchests.lang.inventory.PacketModifier;
@@ -138,10 +141,11 @@ public final class VariableEnderChests extends JavaPlugin {
 
         this.commandManager.registerCommand(new ClearEnderChestCommand(this));
         this.commandManager.registerCommand(new ConversionCommand(this));
+        this.commandManager.registerCommand(new EnderChestDebugCommand(this));
 
         List<String> aliases = this.getConfig().getStringList("open-enderchest-commands");
 
-        String cmdName = aliases.size() == 0 ? "enderchest" : aliases.remove(0);
+        String cmdName = aliases.isEmpty() ? "enderchest" : aliases.remove(0);
 
         this.commandManager.registerCommand(new EnderChestCommand(this, cmdName, aliases));
 
@@ -154,6 +158,8 @@ public final class VariableEnderChests extends JavaPlugin {
         }
 
         ChestSortHook.hook();
+        new InteractiveChatHook(this);
+        //ShowItemHook hook = new ShowItemHook(this);
     }
 
     private void setupMetricsAndCheckForUpdate() {

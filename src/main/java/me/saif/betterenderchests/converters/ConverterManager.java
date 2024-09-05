@@ -1,6 +1,7 @@
 package me.saif.betterenderchests.converters;
 
 import me.saif.betterenderchests.VariableEnderChests;
+import me.saif.betterenderchests.converters.enderplus.EnderPlusNewConverter;
 import me.saif.betterenderchests.converters.enderplus.EnderPlusOldConverter;
 import me.saif.betterenderchests.utils.CaselessString;
 
@@ -19,10 +20,12 @@ public class ConverterManager {
         this.plugin = plugin;
 
         this.addConverter(new EnderPlusOldConverter(this.plugin));
+        this.addConverter(new EnderPlusNewConverter(this.plugin));
         this.addConverter(new SQLiteMySQLConverter(this.plugin));
         this.addConverter(new CustomEnderChestFlatFileConverter(this.plugin));
         this.addConverter(new BukkitToNBTConverter(this.plugin));
         this.addConverter(new VanillaConverter(this.plugin));
+        this.addConverter(new AdvancedEnderChestConverter(this.plugin));
     }
 
     public void addConverter(Converter converter) {

@@ -313,6 +313,10 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         return defaultRows;
     }
 
+    public void updateRows(Player player) {
+        getEnderChest(player).setRows(getNumRows(player));
+    }
+
     public Callback<EnderChest> getEnderChest(String name) {
         CaselessString mcName = new CaselessString(name);
         if (this.nameUUIDMap.containsKey(mcName) && this.uuidEnderChestMap.get(this.nameUUIDMap.get(mcName)) != null)
