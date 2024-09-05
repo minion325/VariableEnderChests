@@ -35,7 +35,8 @@ public class InventoryNameListener_1_20 implements Listener {
 
         String newName = loc.getSingleFormattedMessage(InvMultilangCommons.SIZE_NAME_MAP.get(ownerSizePair.getValue()), InvMultilangCommons.PLAYER_NAME_PLACEHOLDER.getResult(ownerSizePair.getKey()));
 
-        Bukkit.getScheduler().runTask(this.plugin, () -> event.getView().setTitle(newName));
+        event.getView().setTitle(newName);
+        //Bukkit.getScheduler().runTask(this.plugin, () -> event.getView().setTitle(newName));
 
     }
 
