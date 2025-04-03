@@ -6,6 +6,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.io.File;
+import java.util.UUID;
+
 public class EnderChestDebugCommand extends PluginCommand {
 
     private VariableEnderChests plugin;
@@ -32,6 +35,15 @@ public class EnderChestDebugCommand extends PluginCommand {
             sender.sendMessage(VariableEnderChests.isPaper() ? "Yes" : "No");
             return;
         }
+
+        /*if (args[0].equalsIgnoreCase("dobackup")) {
+            boolean success = this.plugin.getDataManager().createBackup(this.plugin.getLogger(), new File());
+            if (success)
+                sender.sendMessage("Backup complete.");
+            else
+                sender.sendMessage("Backup failed. See console for more info");
+            return;
+        }*/
 
         cmdDefault(sender);
     }

@@ -6,27 +6,20 @@ import me.saif.betterenderchests.data.database.SQLDatabase;
 import me.saif.betterenderchests.data.database.SQLiteDatabase;
 import me.saif.betterenderchests.enderchest.EnderChestSnapshot;
 import me.saif.betterenderchests.utils.ItemStackSerializer;
+import me.saif.betterenderchests.utils.TimeUtils;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.sql.*;
 import java.util.*;
 
-public class SQLDataManager extends DataManager {
+public abstract class SQLDataManager implements DataManager {
 
-    private final SQLDatabase database;
+    protected final SQLDatabase database;
     private final String dataTableName = "enderchests";
     private final String playersTableName = "players";
 
-    public SQLDataManager(VariableEnderChests plugin) {
-        super(plugin);
-
-        this.database = plugin.getSQLDatabase();
-    }
-
-    public SQLDataManager(VariableEnderChests plugin, SQLDatabase database) {
-        super(plugin);
-
+    public SQLDataManager(SQLDatabase database) {
         this.database = database;
     }
 
@@ -213,22 +206,6 @@ public class SQLDataManager extends DataManager {
                 stringBuilder.append("OR ");
         }
         return stringBuilder.toString();
-    }
-
-    @Override
-    public void createBackup() {
-        if (this.database instanceof SQLiteDatabase) {
-            try (Connection connection = this.database.getConnection();
-                 Statement statement = connection.createStatement()) {
-                this.getPlugin().getLogger().info("Creating backup of data.");
-                statement.executeUpdate("backup to " + new File(this.getPlugin().getDataFolder(), "backup.db"));
-                this.getPlugin().getLogger().info("Finished backing up to backup.db");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else {
-            this.getPlugin().getLogger().info("Backup is not supported for this database type.");
-        }
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import java.io.File;
 import java.util.*;
 
 public class EnderPlusNewConverter extends Converter {
@@ -32,7 +33,7 @@ public class EnderPlusNewConverter extends Converter {
 
         boolean online = enderPlusPlugin.getConfig().getBoolean("Config.Online");
 
-        this.plugin.getDataManager().createBackup();
+        this.plugin.getDataManager().createBackup(plugin.getLogger(), new File(plugin.getDataFolder(), "backups"));
         this.plugin.getEnderChestManager().finishUp();
 
         boolean overwrite = args.length > 0 && args[0] != null && args[0].equalsIgnoreCase("overwrite");

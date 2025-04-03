@@ -30,7 +30,7 @@ public class VanillaConverter extends Converter {
 
         boolean overwrite = args.length > 0 && args[0] != null && args[0].equalsIgnoreCase("overwrite");
 
-        this.plugin.getDataManager().createBackup();
+        this.plugin.getDataManager().createBackup(plugin.getLogger(), new File(plugin.getDataFolder(), "backups"));
 
         List<OfflinePlayer> offlinePlayers = new ArrayList<>(Arrays.asList(Bukkit.getOfflinePlayers()));
 

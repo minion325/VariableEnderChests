@@ -8,6 +8,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,7 @@ public class EnderPlusOldConverter extends EnderPlusConverter {
             }
 
             this.plugin.getEnderChestManager().finishUp();
-            this.plugin.getDataManager().createBackup();
+            this.plugin.getDataManager().createBackup(plugin.getLogger(), new File(plugin.getDataFolder(), "backups"));
             this.plugin.getDataManager().purge('Y', 'E', 'S');
 
             Map<String, ItemStack[]> dataMap = new HashMap<>();

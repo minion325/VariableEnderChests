@@ -27,7 +27,7 @@ public class CustomEnderChestFlatFileConverter extends Converter{
             throw new IllegalStateException("Cannot convert with players online");
 
         this.plugin.getEnderChestManager().finishUp();
-        this.plugin.getDataManager().createBackup();
+        this.plugin.getDataManager().createBackup(plugin.getLogger(), new File(plugin.getDataFolder(), "backups"));
         this.plugin.getDataManager().purge('Y', 'E', 'S');
 
         Map<UUID, EnderChestSnapshot> chests = new HashMap<>();

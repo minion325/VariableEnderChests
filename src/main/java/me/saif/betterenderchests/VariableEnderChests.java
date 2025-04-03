@@ -7,9 +7,7 @@ import me.saif.betterenderchests.command.commands.ConversionCommand;
 import me.saif.betterenderchests.command.commands.EnderChestCommand;
 import me.saif.betterenderchests.command.commands.EnderChestDebugCommand;
 import me.saif.betterenderchests.converters.ConverterManager;
-import me.saif.betterenderchests.data.ConfigUpdater;
-import me.saif.betterenderchests.data.DataManager;
-import me.saif.betterenderchests.data.SQLDataManager;
+import me.saif.betterenderchests.data.*;
 import me.saif.betterenderchests.data.database.MySQLDatabase;
 import me.saif.betterenderchests.data.database.SQLDatabase;
 import me.saif.betterenderchests.data.database.SQLiteDatabase;
@@ -18,6 +16,7 @@ import me.saif.betterenderchests.enderchest.EnderChestManager;
 import me.saif.betterenderchests.hooks.ChestSortHook;
 import me.saif.betterenderchests.hooks.InteractiveChatHook;
 import me.saif.betterenderchests.hooks.PAPIEnderChestHook;
+import me.saif.betterenderchests.hooks.ShowItemHook;
 import me.saif.betterenderchests.lang.Messenger;
 import me.saif.betterenderchests.lang.inventory.InventoryNameListener_1_20;
 import me.saif.betterenderchests.lang.inventory.PacketModifier;
@@ -120,10 +119,11 @@ public final class VariableEnderChests extends JavaPlugin {
                     getConfig().getString("database.database"),
                     getConfig().getString("database.username"),
                     getConfig().getString("database.password"));
+            this.dataManager = new MySQLDataManager((MySQLDatabase) this.database);
         } else {
             this.database = new SQLiteDatabase(this.getDataFolder(), "data.db");
+            this.dataManager = new SQLiteDataManager((SQLiteDatabase) this.database);
         }
-        this.dataManager = new SQLDataManager(this);
         this.dataManager.init();
     }
 
@@ -162,7 +162,7 @@ public final class VariableEnderChests extends JavaPlugin {
 
         ChestSortHook.hook();
         new InteractiveChatHook(this);
-        //ShowItemHook hook = new ShowItemHook(this);
+        new ShowItemHook(this);
     }
 
     private void setupMetricsAndCheckForUpdate() {

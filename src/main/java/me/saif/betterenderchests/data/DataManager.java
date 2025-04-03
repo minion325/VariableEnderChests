@@ -1,56 +1,52 @@
 package me.saif.betterenderchests.data;
 
-import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.enderchest.EnderChestSnapshot;
-import me.saif.betterenderchests.utils.Manager;
 
+import java.io.File;
 import java.util.*;
+import java.util.logging.Logger;
 
-public abstract class DataManager extends Manager<VariableEnderChests> {
+public interface DataManager {
 
-    public DataManager(VariableEnderChests plugin) {
-        super(plugin);
-    }
+    void init();
 
-    public abstract void init();
+    void finishUp();
 
-    public abstract void finishUp();
-
-    public void saveEnderChest(UUID uuid, EnderChestSnapshot snapshot) {
+    default void saveEnderChest(UUID uuid, EnderChestSnapshot snapshot) {
         Map<UUID, EnderChestSnapshot> map = new HashMap<>();
         map.put(uuid, snapshot);
         saveEnderChestMultiple(map);
     }
 
-    public abstract void saveEnderChestMultiple(Map<UUID, EnderChestSnapshot> snapshotMap);
+    void saveEnderChestMultiple(Map<UUID, EnderChestSnapshot> snapshotMap);
 
-    public abstract void saveNameAndUUIDs(Map<String, UUID> map);
+    void saveNameAndUUIDs(Map<String, UUID> map);
 
-    public abstract void saveNameAndUUID(String name, UUID uuid);
+    void saveNameAndUUID(String name, UUID uuid);
 
-    public EnderChestSnapshot loadEnderChest(UUID uuid) {
+    default EnderChestSnapshot loadEnderChest(UUID uuid) {
         Map<UUID, EnderChestSnapshot> enderChestSnapshotMap = loadEnderChestsByUUID(Collections.singleton(uuid));
         return enderChestSnapshotMap.get(uuid);
     }
 
-    public abstract Map<UUID, EnderChestSnapshot> loadEnderChestsByUUID(Set<UUID> uuids);
+    Map<UUID, EnderChestSnapshot> loadEnderChestsByUUID(Set<UUID> uuids);
 
-    public EnderChestSnapshot loadEnderChest(String name) {
+    default EnderChestSnapshot loadEnderChest(String name) {
         name = name.toLowerCase();
         Map<String, EnderChestSnapshot> enderChestSnapshotMap = loadEnderChestsByName(Collections.singleton(name));
         return enderChestSnapshotMap.get(name);
     }
 
-    public abstract Map<String, EnderChestSnapshot> loadEnderChestsByName(Set<String> names);
+    Map<String, EnderChestSnapshot> loadEnderChestsByName(Set<String> names);
 
-    public abstract Set<UUID> getAllEnderChests();
+    Set<UUID> getAllEnderChests();
 
-    public abstract void deleteEnderChest(UUID uuid);
+    void deleteEnderChest(UUID uuid);
 
-    public abstract void deleteEnderChest(String name);
+    void deleteEnderChest(String name);
 
-    public abstract void createBackup();
+    boolean createBackup(Logger logger, File backupsFolder);
 
-    public abstract void purge(char... confirm);
+    void purge(char... confirm);
 
 }

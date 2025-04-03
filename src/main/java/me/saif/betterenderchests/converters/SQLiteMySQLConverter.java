@@ -2,20 +2,17 @@ package me.saif.betterenderchests.converters;
 
 import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.data.DataManager;
+import me.saif.betterenderchests.data.MySQLDataManager;
 import me.saif.betterenderchests.data.SQLDataManager;
 import me.saif.betterenderchests.data.database.MySQLDatabase;
-import me.saif.betterenderchests.data.database.SQLDatabase;
 import me.saif.betterenderchests.data.database.SQLiteDatabase;
 import me.saif.betterenderchests.enderchest.EnderChestSnapshot;
 import org.bukkit.Bukkit;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 public class SQLiteMySQLConverter extends Converter {
 
@@ -33,7 +30,7 @@ public class SQLiteMySQLConverter extends Converter {
         if (!(plugin.getSQLDatabase() instanceof SQLiteDatabase))
             throw new IllegalStateException("Current database is not SQLite");
 
-        SQLDatabase mySQLDB;
+        MySQLDatabase mySQLDB;
         try {
             mySQLDB = new MySQLDatabase(
                     this.plugin.getConfig().getString("database.host"),
@@ -45,7 +42,7 @@ public class SQLiteMySQLConverter extends Converter {
             throw new RuntimeException(e);
         }
 
-        SQLDataManager sqlDataManager = new SQLDataManager(this.plugin, mySQLDB);
+        SQLDataManager sqlDataManager = new MySQLDataManager(mySQLDB);
 
         try (Connection connection = mySQLDB.getConnection();
              Statement statement = connection.createStatement();) {

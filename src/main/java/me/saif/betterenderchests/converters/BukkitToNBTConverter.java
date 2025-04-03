@@ -5,6 +5,7 @@ import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.enderchest.EnderChestSnapshot;
 import org.bukkit.Bukkit;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -23,7 +24,7 @@ public class BukkitToNBTConverter extends Converter {
         if (Bukkit.getOnlinePlayers().size() > 0)
             throw new IllegalStateException("Cannot convert with players online");
 
-        this.plugin.getDataManager().createBackup();
+        this.plugin.getDataManager().createBackup(plugin.getLogger(), new File(plugin.getDataFolder(), "backups"));
 
         Set<UUID> allOld = plugin.getDataManager().getAllEnderChests();
 

@@ -8,6 +8,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.util.*;
@@ -35,7 +36,7 @@ public class AdvancedEnderChestConverter extends Converter {
         if (!single)
             throw new IllegalStateException("Cannot convert using " + this.getName() + " while AdvancedEnderchest is using multi-mode.");
 
-        this.plugin.getDataManager().createBackup();
+        this.plugin.getDataManager().createBackup(plugin.getLogger(), new File(plugin.getDataFolder(), "backups"));
         this.plugin.getEnderChestManager().finishUp();
 
         boolean overwrite = args.length > 0 && args[0] != null && args[0].equalsIgnoreCase("overwrite");

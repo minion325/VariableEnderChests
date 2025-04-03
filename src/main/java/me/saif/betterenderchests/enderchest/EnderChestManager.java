@@ -201,9 +201,11 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
                     return;
                 }
 
-                org.bukkit.block.EnderChest chestBlock = ((org.bukkit.block.EnderChest) event.getClickedBlock().getState());
-                chestBlock.open();
-                chestBlock.update();
+                if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_19_R1)) {
+                    org.bukkit.block.EnderChest chestBlock = ((org.bukkit.block.EnderChest) event.getClickedBlock().getState());
+                    chestBlock.open();
+                    chestBlock.update();
+                }
 
                 event.getPlayer().playSound(event.getClickedBlock().getLocation(), OPEN_SOUND, 1, 1F);
                 this.openEnderChest(enderChest, player, rows);
@@ -220,7 +222,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             Block block = this.openFromBlocks.remove(event.getPlayer().getUniqueId());
 
 
-            if (block.getState() instanceof org.bukkit.block.EnderChest && event.getViewers().size() == 0) {
+            if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_19_R1) && block.getState() instanceof org.bukkit.block.EnderChest && event.getViewers().isEmpty()) {
                 org.bukkit.block.EnderChest chestBlock = ((org.bukkit.block.EnderChest) block.getState());
                 chestBlock.close();
                 chestBlock.update();
