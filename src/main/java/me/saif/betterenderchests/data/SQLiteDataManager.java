@@ -13,6 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class SQLiteDataManager extends SQLDataManager {
@@ -39,6 +40,11 @@ public class SQLiteDataManager extends SQLDataManager {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public void init() {
+        this.executeOnSingleThread(super::init);
     }
 
     @Override
@@ -86,7 +92,12 @@ public class SQLiteDataManager extends SQLDataManager {
 
     @Override
     public void finishUp() {
-        super.finishUp();
         this.executorService.shutdown();
+        try {
+            this.executorService.awaitTermination(System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        super.finishUp();
     }
 }
