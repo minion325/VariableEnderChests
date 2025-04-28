@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -79,9 +78,15 @@ public class SQLiteDataManager extends SQLDataManager {
 
     private void executeOnSingleThread(Runnable runnable) {
         try {
-            CompletableFuture.runAsync(runnable, executorService).get();
+            executorService.submit(runnable).get();
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void finishUp() {
+        super.finishUp();
+        this.executorService.shutdown();
     }
 }
