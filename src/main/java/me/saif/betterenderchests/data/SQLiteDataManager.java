@@ -1,5 +1,6 @@
 package me.saif.betterenderchests.data;
 
+import me.saif.betterenderchests.data.database.SQLDatabase;
 import me.saif.betterenderchests.data.database.SQLiteDatabase;
 import me.saif.betterenderchests.enderchest.EnderChestSnapshot;
 import me.saif.betterenderchests.utils.TimeUtils;
@@ -9,11 +10,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 public class SQLiteDataManager extends SQLDataManager {
@@ -88,6 +87,49 @@ public class SQLiteDataManager extends SQLDataManager {
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    private <T> T executeOnSingleThread(Callable<T> callable) {
+        try {
+            return executorService.submit(callable).get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Set<UUID> getAllEnderChests() {
+        return this.executeOnSingleThread(() ->  super.getAllEnderChests());
+    }
+
+    @Override
+    public String getDataTableName() {
+        return this.executeOnSingleThread(() ->  super.getDataTableName());
+    }
+
+    @Override
+    public String getPlayersTableName() {
+        return this.executeOnSingleThread(() ->  super.getPlayersTableName());
+    }
+
+    @Override
+    public Map<String, EnderChestSnapshot> loadEnderChestsByName(Set<String> names) {
+        return this.executeOnSingleThread(() ->  super.loadEnderChestsByName(names));
+    }
+
+    @Override
+    public Map<UUID, EnderChestSnapshot> loadEnderChestsByUUID(Set<UUID> uuids) {
+        return this.executeOnSingleThread(() ->  super.loadEnderChestsByUUID(uuids));
+    }
+
+    @Override
+    public EnderChestSnapshot loadEnderChest(String name) {
+        return this.executeOnSingleThread(() ->  super.loadEnderChest(name));
+    }
+
+    @Override
+    public EnderChestSnapshot loadEnderChest(UUID uuid) {
+        return this.executeOnSingleThread(() -> super.loadEnderChest(uuid));
     }
 
     @Override
