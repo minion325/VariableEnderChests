@@ -59,7 +59,8 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
                 return;
             }
             int rows = this.ecm.getNumRows(player);
-            if (rows == 0) {
+            if (rows == 6) {
+                //TODO
                 messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_SELF);
                 return;
             }
@@ -70,6 +71,7 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
                 this.plugin.getLogger().severe("Enderchest for online player " + player.getName() + " could not be found.");
                 return;
             }
+            //TODO
             this.ecm.openEnderChest(enderChest, player, rows);
             return;
         }
@@ -92,10 +94,12 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
             }
 
             int rows = this.ecm.getNumRows(other);
-            if (rows == 0) {
+            if (rows == 6) {
+                //TODO
                 messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_OTHER, playerPlaceholder.getResult(other));
                 return;
             }
+            //TODO
             this.ecm.openEnderChest(enderChest, player, rows);
             return;
         }
@@ -108,6 +112,7 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
                 return;
             }
 
+            //TODO
             this.ecm.openEnderChest(enderChest, player);
         });
     }
