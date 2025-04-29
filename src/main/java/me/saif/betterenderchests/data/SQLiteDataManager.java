@@ -99,17 +99,7 @@ public class SQLiteDataManager extends SQLDataManager {
 
     @Override
     public Set<UUID> getAllEnderChests() {
-        return this.executeOnSingleThread(() ->  super.getAllEnderChests());
-    }
-
-    @Override
-    public String getDataTableName() {
-        return this.executeOnSingleThread(() ->  super.getDataTableName());
-    }
-
-    @Override
-    public String getPlayersTableName() {
-        return this.executeOnSingleThread(() ->  super.getPlayersTableName());
+        return this.executeOnSingleThread(super::getAllEnderChests);
     }
 
     @Override
@@ -120,16 +110,6 @@ public class SQLiteDataManager extends SQLDataManager {
     @Override
     public Map<UUID, EnderChestSnapshot> loadEnderChestsByUUID(Set<UUID> uuids) {
         return this.executeOnSingleThread(() ->  super.loadEnderChestsByUUID(uuids));
-    }
-
-    @Override
-    public EnderChestSnapshot loadEnderChest(String name) {
-        return this.executeOnSingleThread(() ->  super.loadEnderChest(name));
-    }
-
-    @Override
-    public EnderChestSnapshot loadEnderChest(UUID uuid) {
-        return this.executeOnSingleThread(() -> super.loadEnderChest(uuid));
     }
 
     @Override
