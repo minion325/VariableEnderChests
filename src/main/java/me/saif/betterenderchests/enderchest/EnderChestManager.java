@@ -122,7 +122,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             Set<UUID> toRemove = new HashSet<>();
             for (EnderChest enderChest : this.uuidEnderChestMap.values()) {
                 toSave.put(enderChest.getUUID(), enderChest.snapshot());
-                if (Bukkit.getPlayer(enderChest.getUUID()) == null) {
+                if (Bukkit.getPlayer(enderChest.getUUID()) == null && !enderChest.hasViewers()) {
                     toRemove.add(enderChest.getUUID());
                 }
             }
