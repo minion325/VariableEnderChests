@@ -61,7 +61,7 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
             int rows = this.ecm.getNumRows(player);
             if (rows == 6) {
                 //TODO
-                messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_SELF);
+                messenger.sendMessage(player, "Nothing to retrieve please ask the dev to make this configurable");
                 return;
             }
 
@@ -71,8 +71,8 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
                 this.plugin.getLogger().severe("Enderchest for online player " + player.getName() + " could not be found.");
                 return;
             }
-            //TODO
-            this.ecm.openEnderChest(enderChest, player, rows);
+            //open the retrieval inv
+            player.openInventory(enderChest.getRetriever().getInventory());
             return;
         }
 
@@ -96,11 +96,11 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
             int rows = this.ecm.getNumRows(other);
             if (rows == 6) {
                 //TODO
-                messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_OTHER, playerPlaceholder.getResult(other));
+                messenger.sendMessage(player, "Nothing to retrieve for <player> please ask the dev to make this configurable".replace("<player>", otherPlayer));
                 return;
             }
-            //TODO
-            this.ecm.openEnderChest(enderChest, player, rows);
+            //open the retrieval inv
+            player.openInventory(enderChest.getRetriever().getInventory());
             return;
         }
 
@@ -112,8 +112,8 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
                 return;
             }
 
-            //TODO
-            this.ecm.openEnderChest(enderChest, player);
+            //open the retreival inv
+            player.openInventory(enderChest.getRetriever().getInventory());
         });
     }
 

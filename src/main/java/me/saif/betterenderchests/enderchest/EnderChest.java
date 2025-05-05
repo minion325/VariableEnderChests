@@ -33,7 +33,7 @@ public class EnderChest implements InventoryHolder {
     private final String name;
     private ItemStack[] contents;
     private Inventory inventory;
-    private final EnderRetrievalInventory retrivalHolder = new EnderRetrievalInventory();
+    private final EnderChestRetreiver retrivalHolder = new EnderChestRetreiver();
     private Inventory retrievalInventory;
     private final Map<Integer, String> inventoryNames = new HashMap<>();
     private int lastNumRows = 6;
@@ -76,7 +76,8 @@ public class EnderChest implements InventoryHolder {
 
         //else
         updateContentsArray();
-        List<HumanEntity> viewers = new ArrayList<>(this.inventory.getViewers());
+        List<HumanEntity> chestViewers = new ArrayList<>(this.inventory.getViewers());
+        List<HumanEntity> retrievalViewers = new ArrayList<>(this.retrievalInventory.getViewers());
         ChestSortHook.setUnsortable(this.inventory);
 
         this.inventory = Bukkit.createInventory(this, rows * 9, this.inventoryNames.get(rows));
@@ -90,8 +91,16 @@ public class EnderChest implements InventoryHolder {
         ChestSortHook.setUnsortable(this.retrievalInventory);
 
         populateInventory();
-        for (HumanEntity viewer : viewers) {
+        for (HumanEntity viewer : chestViewers) {
             viewer.openInventory(inventory);
+        }
+
+        //reopen the retrieval inventory or close it if there is none anymore
+        for (HumanEntity retrievalViewer : retrievalViewers) {
+            if (retrievalSize != 0)
+                retrievalViewer.openInventory(this.retrivalHolder.getInventory());
+            else
+                retrievalViewer.closeInventory();
         }
     }
 
@@ -171,11 +180,16 @@ public class EnderChest implements InventoryHolder {
         return new EnderChestSnapshot(this);
     }
 
-    public static class EnderRetrievalInventory implements InventoryHolder {
+    public EnderChestRetreiver getRetriever() {
+        return retrivalHolder;
+    }
+
+    public static class EnderChestRetreiver implements InventoryHolder {
 
         private Inventory inventory;
 
-        private EnderRetrievalInventory() {}
+        private EnderChestRetreiver() {
+        }
 
         @NotNull
         @Override
