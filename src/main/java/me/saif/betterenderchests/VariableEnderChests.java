@@ -13,6 +13,7 @@ import me.saif.betterenderchests.data.database.SQLDatabase;
 import me.saif.betterenderchests.data.database.SQLiteDatabase;
 import me.saif.betterenderchests.enderchest.EnderChestClickListener;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
+import me.saif.betterenderchests.enderchest.EnderChestRetrieverClickListener;
 import me.saif.betterenderchests.hooks.ChestSortHook;
 import me.saif.betterenderchests.hooks.InteractiveChatHook;
 import me.saif.betterenderchests.hooks.PAPIEnderChestHook;
@@ -135,6 +136,7 @@ public final class VariableEnderChests extends JavaPlugin {
         this.enderChestManager = new EnderChestManager(this);
         Bukkit.getPluginManager().registerEvents(this.enderChestManager, this);
         Bukkit.getPluginManager().registerEvents(new EnderChestClickListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new EnderChestRetrieverClickListener(this), this);
 
         this.converterManager = new ConverterManager(this);
     }
