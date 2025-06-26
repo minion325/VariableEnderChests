@@ -23,8 +23,8 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
     private final VariableEnderChests plugin;
     private final Placeholder<Player> playerPlaceholder = Placeholder.getPlaceholder("player", Player::getName);
 
-    private final String PERMISSION_SELF = "enderchest.retrieve";
-    private final String PERMISSION_OTHERS = "enderchest.retrieve.others";
+    public static final String PERMISSION_SELF = "enderchest.retrieve";
+    public static final String PERMISSION_OTHERS = "enderchest.retrieve.others";
 
     public RetrieveEnderContentsCommand(VariableEnderChests plugin, String name, List<String> aliases) {
         super(name, aliases.toArray(new String[0]));
