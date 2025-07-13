@@ -49,7 +49,7 @@ public class EnderChest implements InventoryHolder {
 
         int retrievalSize = 54 - lastNumRows * 9;
 
-        this.retrievalInventory = Bukkit.createInventory(this.retrivalHolder, retrievalSize == 0 ? 9 : retrievalSize, RETRIEVAL_NAME);
+        this.retrievalInventory = Bukkit.createInventory(this.retrivalHolder, retrievalSize == 0 ? 9 : retrievalSize, retrievalSize == 0 ? "Nothing to retrieve" : RETRIEVAL_NAME);
         this.retrivalHolder.setInventory(this.retrievalInventory);
 
         ChestSortHook.setSortable(this.inventory);
@@ -85,7 +85,7 @@ public class EnderChest implements InventoryHolder {
 
         int retrievalSize = 54 - lastNumRows * 9;
 
-        this.retrievalInventory = Bukkit.createInventory(this.retrivalHolder, retrievalSize == 0 ? 9 : retrievalSize, RETRIEVAL_NAME);
+        this.retrievalInventory = Bukkit.createInventory(this.retrivalHolder, retrievalSize == 0 ? 9 : retrievalSize, retrievalSize == 0 ? "Nothing to retrieve" : RETRIEVAL_NAME);
         this.retrivalHolder.setInventory(this.retrievalInventory);
 
         ChestSortHook.setUnsortable(this.retrievalInventory);
