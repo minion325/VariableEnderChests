@@ -35,14 +35,7 @@ public class EnderChestCommand extends PluginCommand {
 
     @Override
     public void onCommand(CommandSender sender, String alias, String[] args) {
-        if (!(sender instanceof Player)) {
-            messenger.sendMessage(sender, MessageKey.COMMAND_PLAYER_ONLY);
-            return;
-        }
-
-        Player player = ((Player) sender);
-
-        openEchest(player, args.length == 0 ? null : args[0]);
+        openEchest(sender, args.length == 0 ? null : args[0]);
     }
 
     @Override
@@ -52,12 +45,20 @@ public class EnderChestCommand extends PluginCommand {
         return new ArrayList<>();
     }
 
-    public void openEchest(Player player, String otherPlayer) {
+    public void openEchest(CommandSender sender, String otherPlayer) {
         if (otherPlayer == null) {
-            if (!player.hasPermission(PERMISSION_SELF)) {
-                messenger.sendMessage(player, MessageKey.EC_COMMAND_NO_PERMISSION_SELF);
+            if (!sender.hasPermission(PERMISSION_SELF)) {
+                messenger.sendMessage(sender, MessageKey.EC_COMMAND_NO_PERMISSION_SELF);
                 return;
             }
+
+            if (!(sender instanceof Player)) {
+                messenger.sendMessage(sender, MessageKey.COMMAND_PLAYER_ONLY);
+                return;
+            }
+
+            final Player player = (Player) sender;
+
             int rows = this.ecm.getNumRows(player);
             if (rows == 0) {
                 messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_SELF);
@@ -74,12 +75,12 @@ public class EnderChestCommand extends PluginCommand {
             return;
         }
 
-        if (!player.hasPermission(PERMISSION_OTHERS)) {
-            messenger.sendMessage(player, MessageKey.EC_COMMAND_NO_PERMISSION_OTHERS);
+        if (!sender.hasPermission(PERMISSION_OTHERS)) {
+            messenger.sendMessage(sender, MessageKey.EC_COMMAND_NO_PERMISSION_OTHERS);
             return;
         }
         if (otherPlayer.length() < 3 || otherPlayer.length() > 16) {
-            messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_OTHER);
+            messenger.sendMessage(sender, MessageKey.NO_ENDERCHEST_OTHER);
         }
 
         if (Bukkit.getPlayerExact(otherPlayer) != null) {
@@ -93,10 +94,10 @@ public class EnderChestCommand extends PluginCommand {
 
             int rows = this.ecm.getNumRows(other);
             if (rows == 0) {
-                messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_OTHER, playerPlaceholder.getResult(other));
+                messenger.sendMessage(sender, MessageKey.NO_ENDERCHEST_OTHER, playerPlaceholder.getResult(other));
                 return;
             }
-            this.ecm.openEnderChest(enderChest, player, rows);
+            this.ecm.openEnderChest(enderChest, sender instanceof Player ? (Player) sender : other, rows);
             return;
         }
 
@@ -104,12 +105,18 @@ public class EnderChestCommand extends PluginCommand {
         callback.addResultListener(() -> {
             EnderChest enderChest = callback.getResult();
             if (enderChest == null) {
-                messenger.sendMessage(player, MessageKey.NO_ENDERCHEST_OTHER, PlaceholderResult.of("<player>", otherPlayer));
+                messenger.sendMessage(sender, MessageKey.NO_ENDERCHEST_OTHER, PlaceholderResult.of("<player>", otherPlayer));
                 return;
             }
+
+            if (!(sender instanceof Player)) {
+                messenger.sendMessage(sender, MessageKey.COMMAND_PLAYER_ONLY);
+                return;
+            }
+
+            final Player player = (Player) sender;
 
             this.ecm.openEnderChest(enderChest, player);
         });
     }
-
 }
