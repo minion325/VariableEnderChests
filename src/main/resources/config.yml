@@ -11,7 +11,8 @@ database:
   username: 'username'
   password: 'password'
 
-#If this is set to false, it will convert current ender chests to be used by this plugin;
+#If this is set to true, it will convert current ender chests to be used by this plugin;
+#If set to false, when players log in their vanilla enderchest contents will not transfer over.
 #Whether this is set to true or false, does NOT affect the enderchest contents that is saved by default minecraft.
 convert-current-ender-chest: true
 
