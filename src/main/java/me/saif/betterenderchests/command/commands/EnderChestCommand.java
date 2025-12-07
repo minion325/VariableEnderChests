@@ -42,6 +42,14 @@ public class EnderChestCommand extends PluginCommand {
 
         Player player = ((Player) sender);
 
+        //check if world is disabled before allowing the command to run
+        if (this.plugin.getDisabledWorlds().contains(player.getWorld().getName())) {
+            //TODO make configurable
+
+            player.sendMessage("Command disabled in " + player.getWorld().getName());
+            return;
+        }
+
         openEchest(player, args.length == 0 ? null : args[0]);
     }
 

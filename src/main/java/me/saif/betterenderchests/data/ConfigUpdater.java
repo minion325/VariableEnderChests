@@ -114,6 +114,23 @@ public class ConfigUpdater {
 
             this.plugin.saveConfig();
         }
+
+        //from 5 -> 6
+        if (this.current == 6) {
+            this.plugin.getConfig().set("config-version", 7);
+            this.plugin.getConfig().set("disabled-worlds", this.plugin.getName().toLowerCase(Locale.ENGLISH));
+
+            if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_18_R1)) {
+                this.plugin.getConfig().setComments("disabled-worlds", Arrays.asList(
+                        "VariableEnderChests are disabled in the worlds specified here.",
+                        "WHen players right click an enderchest, it will open their vanilla enderchest",
+                        "The enderchest commands will also not work in these worlds"));
+            }
+
+            this.current++;
+
+            this.plugin.saveConfig();
+        }
     }
 
 

@@ -33,5 +33,10 @@ open-enderchest-commands:
   - 'enderchest'
   - 'echest'
 
+disabled-worlds:
+  - 'some_world_here'
+  - 'some_world_here_nether'
+  - 'some_world_here_the_end'
+
 blacklisted-items:
   - 'COMMAND_BLOCK'
