@@ -25,6 +25,8 @@ configurable:
       - '&cNo tienes permiso para abrir tu enderchest a través de comandos.'
     no-permission-others:
       - '&cNo tienes permiso para ver el enderchest de otros.'
+    world-disabled:
+      - '&cEste comando está deshabilitado en este mundo.'
   no-rows:
     - '&cNo tienes un enderchest.'
   no-enderchest-found:

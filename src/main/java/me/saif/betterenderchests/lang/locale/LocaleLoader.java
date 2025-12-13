@@ -48,6 +48,7 @@ public class LocaleLoader {
 
     private void loadLocales() {
         List<String> inJar = findLocaleResources();
+        //these look like "lang/english.yml" for example <-- for future reference lol
         for (String s : inJar) {
             this.saveResource(s, false);
         }
@@ -62,9 +63,14 @@ public class LocaleLoader {
                 continue;
 
             FileConfiguration localeConfig = new YamlConfiguration();
+            FileConfiguration inJarLocaleConfig = new YamlConfiguration();
+            InputStream inJarStream = this.plugin.getResource("lang/" + localeFile.getName());
 
             try {
                 localeConfig.load(localeFile);
+                if (inJarStream != null) {
+                    inJarLocaleConfig.load(new InputStreamReader(inJarStream));
+                }
             } catch (IOException | InvalidConfigurationException e) {
                 e.printStackTrace();
             }
@@ -81,18 +87,32 @@ public class LocaleLoader {
                     messages.put(key, lines.toArray(new String[0]));
                 } else {
                     String single = localeConfig.getString(key.getPath());
-                    if (single == null) {
+                    if (!localeConfig.isString(key.getPath())) {
                         //we set it in the file
                         madeChanges = true;
                         plugin.getLogger().info(key.getPath() + " was not found in " + localeFile.getName() + ". Setting defaults.");
-                        String[] def = key.getDefault();
-                        if (def.length == 1) {
-                            localeConfig.set(key.getPath(), def[0]);
+
+                        if (inJarLocaleConfig.isSet(key.getPath())) {
+                            List<String> inJarConfigLines = inJarLocaleConfig.getStringList(key.getPath());
+
+                            if (inJarConfigLines.size() == 0) {
+                                String msg = inJarLocaleConfig.getString(key.getPath());
+                                localeConfig.set(key.getPath(), msg);
+                                messages.put(key, new String[]{msg});
+                            } else {
+                                localeConfig.set(key.getPath(), inJarConfigLines);
+                                messages.put(key, inJarConfigLines.toArray(new String[0]));
+                            }
                         } else {
-                            localeConfig.set(key.getPath(), Arrays.asList(def));
+                            String[] def = key.getDefault();
+                            if (def.length == 1) {
+                                localeConfig.set(key.getPath(), def[0]);
+                            } else {
+                                localeConfig.set(key.getPath(), Arrays.asList(def));
+                            }
+                            messages.put(key, def);
                         }
 
-                        messages.put(key, def);
                         continue;
                     }
 

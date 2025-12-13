@@ -1,5 +1,5 @@
 #Do not change this manually, this is to keep track of config changes.
-config-version: 6
+config-version: 7
 
 #If mysql is set to false, database defaults to a data.db file
 #Do not set mysql to true unless you have a mysql database set up
@@ -33,6 +33,9 @@ open-enderchest-commands:
   - 'enderchest'
   - 'echest'
 
+#Any worlds specified here will not have access to the Variable Ender Chest
+#Players will not be able to access it via command OR block.
+#Instead accessing blocks will open the default vanilla enderchest.
 disabled-worlds:
   - 'some_world_here'
   - 'some_world_here_nether'
