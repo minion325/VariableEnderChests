@@ -24,6 +24,8 @@ configurable:
       - '&cNincs jogosultságod megnyitni az enderládád parancsal.'
     no-permission-others:
       - '&cNincs jogosultságod más játékosok enderládáját megtekinteni.'
+    world-disabled:
+      - '&cEz a parancs le van tiltva ebben a világban.'
   no-rows:
     - '&cNincs enderládád.'
   no-enderchest-found:

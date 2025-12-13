@@ -29,11 +29,15 @@ import me.saif.betterenderchests.lang.locale.PlayerLocaleFinder;
 import me.saif.betterenderchests.utils.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class VariableEnderChests extends JavaPlugin {
 
@@ -69,6 +73,7 @@ public final class VariableEnderChests extends JavaPlugin {
     private PacketInterceptor packetInterceptor;
     private CommandManager commandManager;
     private PAPIEnderChestHook enderChestHook;
+    private Set<String> disabledWorlds;
 
     @Override
     public void onEnable() {
@@ -109,6 +114,7 @@ public final class VariableEnderChests extends JavaPlugin {
         setupCommands();
         setupHooks();
         setupMetricsAndCheckForUpdate();
+        loadDisabledWorlds();
     }
 
     private void setupDataManager() throws SQLException {
@@ -175,6 +181,16 @@ public final class VariableEnderChests extends JavaPlugin {
                 getLogger().info("There is a new update available.");
             }
         });
+    }
+
+    private void loadDisabledWorlds() {
+        this.disabledWorlds = new HashSet<>();
+        this.disabledWorlds.addAll(this.getConfig().getStringList("disabled-worlds"));
+        this.disabledWorlds = Collections.unmodifiableSet(this.disabledWorlds);
+    }
+
+    public Set<String> getDisabledWorlds() {
+        return this.disabledWorlds;
     }
 
     @Override

@@ -8,7 +8,7 @@ public enum MessageKey {
 
     EC_COMMAND_NO_PERMISSION_SELF("configurable.enderchest-command-messages.no-permission-self", "&cYou do not have permission to open your enderchest via command."),
     EC_COMMAND_NO_PERMISSION_OTHERS("configurable.enderchest-command-messages.no-permission-others", "&cYou do not have permission to view the enderchest of others."),
-    COMMAND_NO_PERMISSION("configurable.no-permission-message", "&cYou do not have permission to use this command."),
+    EC_COMMAND_WORLD_DISABLED("configurable.enderchest-command-messages.world-disabled", "&cThis command is disabled in this world"),
     COMMAND_CONSOLE_ONLY("configurable.command-console-only", "&cYou can only use this command from the console."),
     COMMAND_PLAYER_ONLY("internal.command.command-player-only", "You must be a player to use this command"),
     NO_ENDERCHEST_SELF("configurable.no-rows", "&cYou do not have an enderchest."),

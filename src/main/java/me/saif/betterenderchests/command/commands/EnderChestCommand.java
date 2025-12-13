@@ -21,6 +21,7 @@ public class EnderChestCommand extends PluginCommand {
     private final EnderChestManager ecm;
     private final Messenger messenger;
     private final VariableEnderChests plugin;
+    private boolean openDefaultIfVECDisabledInWorld;
     private final Placeholder<Player> playerPlaceholder = Placeholder.getPlaceholder("player", Player::getName);
 
     private final String PERMISSION_SELF = "enderchest.command";
@@ -41,6 +42,12 @@ public class EnderChestCommand extends PluginCommand {
         }
 
         Player player = ((Player) sender);
+
+        //check if world is disabled before allowing the command to run
+        if (this.plugin.getDisabledWorlds().contains(player.getWorld().getName())) {
+            messenger.sendMessage(player, MessageKey.EC_COMMAND_WORLD_DISABLED);
+            return;
+        }
 
         openEchest(player, args.length == 0 ? null : args[0]);
     }
