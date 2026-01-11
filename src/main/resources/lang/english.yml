@@ -69,6 +69,9 @@ internal:
       - 'Run this command again within <seconds> seconds to confirm'
 
   command:
+    enderchest-console-usage: 'Usage: /enderchest <Player> [(Optional)Other Player] - Opens the enderchest for ''Player''. If ''Other Player'' is specified, The enderchest of ''Other Player'' will be opened for ''Player'''
+    player-needed-online: '<player> must be online to run that command.'
+    console-opened-enderchest: 'Opened <target>''s enderchest for <player>.'
     command-player-only:
       - 'You must be a player to use this command'
 

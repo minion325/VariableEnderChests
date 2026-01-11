@@ -38,7 +38,10 @@ public enum MessageKey {
     CONFIRM_CLEAR_ENDERCHEST("internal.enderchest.confirm-clear", "Are you sure you wish to clear the enderchest of <player>",
             "Run this command again within <seconds> seconds to confirm"),
 
-    BLACKLIST_INVALID_ITEM("internal.blacklist.invalid-type", "Blacklisted item by the name of <type> found. This is not a valid minecraft material. Ignoring...");
+    BLACKLIST_INVALID_ITEM("internal.blacklist.invalid-type", "Blacklisted item by the name of <type> found. This is not a valid minecraft material. Ignoring..."),
+    ENDERCHEST_CONSOLE_USAGE("internal.command.enderchest-console-usage", "Usage: /enderchest <Player> [(Optional)Other Player] - Opens the enderchest for 'Player'. If 'Other Player' is specified, The enderchest of 'Other Player' will be opened for 'Player'"),
+    PLAYER_NEEDED_ONLINE("internal.command.player-needed-online", "<player> must be online to run that command."),
+    CONSOLE_OPENED_ENDERCHEST("internal.command.console-opened-enderchest", "Opened <target>'s enderchest for <player>");
 
     private final String path;
     private final String[] def;
