@@ -66,6 +66,9 @@ internal:
       - 'Használd ezt a parancsot <seconds> másodpercen belül újra, hogy elfogadd.'
 
   command:
+    enderchest-console-usage: 'Használat: /enderchest <Játékos> [(Opcionális)Másik játékos] - Megnyitja a ládát a ''Játékos'' számára. Ha a ''Másik játékos'' meg van adva, akkor a ''Másik játékos'' ládája nyílik meg a ''Játékos'' számára.'
+    player-needed-online: 'A <player> felhasználónak online állapotban kell lennie a parancs futtatásához.'
+    console-opened-enderchest: 'Megnyitottad <target> enderchestjét <player> számára.'
     command-player-only:
       - 'Ez a parancs csak játékos által használható.'
 

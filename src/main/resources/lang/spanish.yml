@@ -67,6 +67,9 @@ internal:
       - 'Ejecuta este comando nuevamente dentro de <seconds> segundos para confirmar.'
 
   command:
+    enderchest-console-usage: 'Uso: /enderchest <Jugador> [(Opcional)Otro Jugador] - Abre el enderchest del ''Jugador''. Si se especifica ''Otro Jugador'', se abrirá el enderchest del ''Otro Jugador'''
+    player-needed-online: '<player> debe estar en línea para ejecutar ese comando.'
+    console-opened-enderchest: 'Abrió el enderchest de <target> para <player>.'
     command-player-only:
       - 'Debes ser un jugador para usar este comando.'
 

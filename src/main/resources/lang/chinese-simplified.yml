@@ -64,6 +64,9 @@ internal:
       - '请在 <seconds> 秒内再次执行此命令以确认.'
 
   command:
+    enderchest-console-usage: '用法：/enderchest <玩家> [(可选)其他玩家] - 为“玩家”打开末影箱。如果指定了“其他玩家”，则会为“玩家”打开“其他玩家”的末影箱。'
+    player-needed-online: '<player> 必须在线才能运行该命令。'
+    console-opened-enderchest: '为 <player> 打开了 <target> 的末影箱。'
     command-player-only:
       - '只有玩家才能执行此命令'
 
