@@ -27,6 +27,43 @@ public abstract class SQLDataManager implements DataManager {
     }
 
     @Override
+    public String getName(UUID uuid) {
+        String sql = "SELECT * from " + getPlayersTableName() + " WHERE UUID=?";
+
+        try (Connection connection = this.database.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, uuid.toString());
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next())
+                return resultSet.getString("NAME");
+
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public UUID getUUID(String name) {
+        String sql = "SELECT * from " + getPlayersTableName() + " WHERE NAME=?";
+
+        try (Connection connection = this.database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, name);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return UUID.fromString(resultSet.getString("UUID"));
+            }
+
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void init() {
         String createDataTable = "CREATE TABLE IF NOT EXISTS " + getDataTableName() + " (`UUID` VARCHAR(36) NOT NULL PRIMARY KEY, `ROWS` INT, `CONTENTS` LONGTEXT);";
         String createPlayersTable = "CREATE TABLE IF NOT EXISTS " + getPlayersTableName() + " (`UUID` VARCHAR(36) NOT NULL UNIQUE, `NAME` VARCHAR(16) NOT NULL UNIQUE);";
