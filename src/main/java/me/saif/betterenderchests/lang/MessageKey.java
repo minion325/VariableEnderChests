@@ -22,6 +22,7 @@ public enum MessageKey {
     ENDERCHEST_4_ROWS("configurable.enderchest-names.4-rows","&7<player>'s Enderchest"),
     ENDERCHEST_5_ROWS("configurable.enderchest-names.5-rows","&7<player>'s Enderchest"),
     ENDERCHEST_6_ROWS("configurable.enderchest-names.6-rows","&7<player>'s Enderchest"),
+    RETRIEVAL_NAME("configurable.enderchest-names.retrieval", "&7<player>'s Lost Enderchest Items"),
 
     ALL_PLAYERS_OFFLINE("internal.converter.all-players-offline", "All players must be offline to use this command"),
     NOT_VALID_CONVERTER("internal.converter.not-valid-conveter", "That is not a valid converter."),

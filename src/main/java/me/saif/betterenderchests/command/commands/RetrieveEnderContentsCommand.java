@@ -72,7 +72,7 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
                 return;
             }
             //open the retrieval inv
-            player.openInventory(enderChest.getRetriever().getInventory());
+            this.ecm.openRetriever(enderChest, player, rows);
             return;
         }
 
@@ -100,7 +100,7 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
                 return;
             }
             //open the retrieval inv
-            player.openInventory(enderChest.getRetriever().getInventory());
+            this.ecm.openRetriever(enderChest, player, rows);
             return;
         }
 
@@ -113,7 +113,7 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
             }
 
             //open the retreival inv
-            player.openInventory(enderChest.getRetriever().getInventory());
+            this.ecm.openRetriever(enderChest, player, enderChest.getLastNumRows());
         });
     }
 

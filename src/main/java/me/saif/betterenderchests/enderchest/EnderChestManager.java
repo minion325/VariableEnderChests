@@ -290,17 +290,18 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
     }
 
     public void openEnderChest(EnderChest chest, Player player) {
-        if (Bukkit.getPlayer(chest.getUUID()) != null) {
-            chest.openInventory(player);
-        } else {
-            chest.openInventory(player);
-        }
+        chest.openInventory(player);
     }
 
     public void openEnderChest(Player player, int rows) {
         EnderChest chest = this.getEnderChest(player);
         chest.setRows(rows);
         this.openEnderChest(chest, player);
+    }
+
+    public void openRetriever(EnderChest chest, Player player, int rows) {
+        chest.setRows(rows);
+        player.openInventory(chest.getRetriever().getInventory());
     }
 
     public void clearEnderChest(EnderChest enderChest) {

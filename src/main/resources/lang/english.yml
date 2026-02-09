@@ -19,6 +19,7 @@ configurable:
     4-rows: '&7<player>''s Enderchest'
     5-rows: '&7<player>''s Enderchest'
     6-rows: '&7<player>''s Enderchest'
+    retrieval: '&7<player>''s Lost Enderchest Items'
 
   no-permission-message:
     - '&cYou do not have permission to use this command.'

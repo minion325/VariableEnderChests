@@ -8,6 +8,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.util.*;
 
@@ -16,6 +17,7 @@ public class EnderChest implements InventoryHolder {
     public static final Map<Integer, String> INVENTORY_NAMES;
     public static final String PREFIX = "VECEnderChest";
     public static final String RETRIEVAL_NAME = "VECRetrieval;<player>";
+    public static final String RETRIEVAL_PREFIX = "VECRetrieval";
 
     static {
         Map<Integer, String> invNames = new HashMap<>();
@@ -36,6 +38,7 @@ public class EnderChest implements InventoryHolder {
     private final EnderChestRetreiver retrivalHolder = new EnderChestRetreiver();
     private Inventory retrievalInventory;
     private final Map<Integer, String> inventoryNames = new HashMap<>();
+    private final String retrievalName;
     private int lastNumRows = 6;
 
     protected EnderChest(UUID owner, String name, ItemStack[] contents) {
@@ -44,6 +47,7 @@ public class EnderChest implements InventoryHolder {
         INVENTORY_NAMES.forEach((integer, s) -> {
             this.inventoryNames.put(integer, s.replace("<player>", name));
         });
+        this.retrievalName = RETRIEVAL_NAME.replace("<player>", name);
         this.contents = contents.length == 54 ? contents : Arrays.copyOf(contents, 54);
         this.inventory = Bukkit.createInventory(this, lastNumRows * 9, this.inventoryNames.get(lastNumRows));
 
@@ -85,7 +89,7 @@ public class EnderChest implements InventoryHolder {
 
         int retrievalSize = 54 - lastNumRows * 9;
 
-        this.retrievalInventory = Bukkit.createInventory(this.retrivalHolder, retrievalSize == 0 ? 9 : retrievalSize, retrievalSize == 0 ? "Nothing to retrieve" : RETRIEVAL_NAME);
+        this.retrievalInventory = Bukkit.createInventory(this.retrivalHolder, retrievalSize == 0 ? 9 : retrievalSize, retrievalSize == 0 ? "Nothing to retrieve" : this.retrievalName);
         this.retrivalHolder.setInventory(this.retrievalInventory);
 
         ChestSortHook.setUnsortable(this.retrievalInventory);
