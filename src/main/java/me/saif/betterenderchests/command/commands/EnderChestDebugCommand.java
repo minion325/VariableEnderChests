@@ -124,6 +124,9 @@ public class EnderChestDebugCommand extends PluginCommand {
 
         inventory.setContents(snapshot.getContents());
         sender.openInventory(inventory);
+
+        dataManager.finishUp();
+        database.close();
     }
 
     @Override
