@@ -18,6 +18,10 @@ public interface DataManager {
         saveEnderChestMultiple(map);
     }
 
+    UUID getUUID(String name);
+
+    String getName(UUID uuid);
+
     void saveEnderChestMultiple(Map<UUID, EnderChestSnapshot> snapshotMap);
 
     void saveNameAndUUIDs(Map<String, UUID> map);

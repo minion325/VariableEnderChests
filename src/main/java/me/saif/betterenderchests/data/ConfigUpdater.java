@@ -2,7 +2,6 @@ package me.saif.betterenderchests.data;
 
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.saif.betterenderchests.VariableEnderChests;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +12,7 @@ public class ConfigUpdater {
 
     private VariableEnderChests plugin;
 
-    private final int latest = 6;
+    private final int latest = 7;
 
     private int current;
 
@@ -108,6 +107,27 @@ public class ConfigUpdater {
                         "This is used when the plugin hooks into placeholder api to provide placeholders",
                         "This allows you to modify the placeholder identifier.",
                         "Placeholders can be parsed as %<papi-identifier>_size%"));
+            }
+
+            this.current++;
+
+            this.plugin.saveConfig();
+        }
+
+        //from 6 -> 7
+        if (this.current == 6) {
+            this.plugin.getConfig().set("config-version", 7);
+            this.plugin.getConfig().set("disabled-worlds", Arrays.asList(
+                    "some_world_here",
+                    "some_world_here_nether",
+                    "some_world_here_the_end"
+            ));
+
+            if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_18_R1)) {
+                this.plugin.getConfig().setComments("disabled-worlds", Arrays.asList(
+                        "Any worlds specified here will not have access to the Variable Ender Chest",
+                        "Players will not be able to access it via command OR block.",
+                        "Instead accessing blocks will open the default vanilla enderchest."));
             }
 
             this.current++;

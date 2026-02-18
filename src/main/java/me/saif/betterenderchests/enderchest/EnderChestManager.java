@@ -21,6 +21,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -106,6 +107,12 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
                             new EnderChest(player.getUniqueId(), player.getName(), snapshot.getContents(), snapshot.getRows()));
                 }
 
+                //if player has vanilla chest open, close it and open their VEC
+                //if in disabled world, no need to do this
+
+                if (this.getPlugin().getDisabledWorlds().contains(player.getWorld().getName()))
+                    continue;
+
                 if (player.getOpenInventory().getTopInventory().equals(player.getEnderChest())) {
                     player.closeInventory();
                     int rows = this.getNumRows(player);
@@ -153,11 +160,8 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         return new EnderChest(uuid, name, enderChestSnapshot.getContents(), enderChestSnapshot.getRows());
     }
 
-    @EventHandler
-    private void onJoin(PlayerLoginEvent event) {
-        if (event.getResult() != PlayerLoginEvent.Result.ALLOWED)
-            return;
-
+    @EventHandler(priority = EventPriority.LOWEST)
+    private void onJoin(PlayerJoinEvent event) {
         String name = event.getPlayer().getName();
         UUID uuid = event.getPlayer().getUniqueId();
 
@@ -187,6 +191,12 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             return;
 
         Player player = event.getPlayer();
+
+        //if world disabled, use vanilla
+        if(this.getPlugin().getDisabledWorlds().contains(player.getWorld().getName()))
+            return;
+
+
         if (event.getClickedBlock().getType() == Material.ENDER_CHEST) {
             event.setCancelled(true);
 

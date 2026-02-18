@@ -28,6 +28,9 @@ public class CommandImpl extends Command {
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
-        return this.command.onTabComplete(sender, alias, args);
+        List<String> completions = this.command.onTabComplete(sender, alias, args);
+        if (completions == null)
+            return super.tabComplete(sender, alias, args);
+        else return completions;
     }
 }

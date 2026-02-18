@@ -2,6 +2,7 @@ package me.saif.betterenderchests.lang.locale;
 
 import me.saif.betterenderchests.lang.MessageKey;
 import me.saif.betterenderchests.lang.placeholder.PlaceholderResult;
+import me.saif.betterenderchests.utils.ColorUtil;
 import org.bukkit.ChatColor;
 
 import java.util.*;
@@ -24,10 +25,7 @@ public class Locale {
         this.countries = countries.stream().map(s -> s.toLowerCase(java.util.Locale.ROOT)).collect(Collectors.toSet());
         this.messages = new ConcurrentHashMap<>();
         messages.forEach((key, stringArray) -> {
-            String[] array = Arrays.stream(stringArray).map(msgLine -> {
-                msgLine = ChatColor.translateAlternateColorCodes('&', msgLine);
-                return msgLine;
-            }).toArray(String[]::new);
+            String[] array = Arrays.stream(stringArray).map(ColorUtil::translate).toArray(String[]::new);
             this.messages.put(key, array);
         });
     }

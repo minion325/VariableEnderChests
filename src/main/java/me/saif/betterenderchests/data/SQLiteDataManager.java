@@ -47,6 +47,16 @@ public class SQLiteDataManager extends SQLDataManager {
     }
 
     @Override
+    public String getName(UUID uuid) {
+        return this.executeOnSingleThread(() -> super.getName(uuid));
+    }
+
+    @Override
+    public UUID getUUID(String name) {
+        return this.executeOnSingleThread(() -> super.getUUID(name));
+    }
+
+    @Override
     public void saveNameAndUUIDs(Map<String, UUID> map) {
         this.executeOnSingleThread(() -> super.saveNameAndUUIDs(map));
     }
