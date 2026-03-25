@@ -83,7 +83,7 @@ internal:
     enderchest-console-usage:
       - 'Usage: /enderchest <Player> [(Optional)Other Player] - Opens the enderchest for ''Player''. If ''Other Player'' is specified, The enderchest of ''Other Player'' will be opened for ''Player'''
     retrieval-console-usage:
-      - 'Usage: /enderchest <Player> [(Optional)Other Player] - Opens the enderchest retriever for ''Player''. If ''Other Player'' is specified, The enderchest retriever of ''Other Player'' will be opened for ''Player'''
+      - 'Usage: /retrieveender <Player> [(Optional)Other Player] - Opens the enderchest retriever for ''Player''. If ''Other Player'' is specified, The enderchest retriever of ''Other Player'' will be opened for ''Player'''
     player-needed-online:
       - '<player> must be online to run that command.'
     console-opened-enderchest:
