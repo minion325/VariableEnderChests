@@ -1,11 +1,9 @@
 package me.saif.betterenderchests;
 
+import com.google.common.collect.Lists;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.saif.betterenderchests.command.CommandManager;
-import me.saif.betterenderchests.command.commands.ClearEnderChestCommand;
-import me.saif.betterenderchests.command.commands.ConversionCommand;
-import me.saif.betterenderchests.command.commands.EnderChestCommand;
-import me.saif.betterenderchests.command.commands.EnderChestDebugCommand;
+import me.saif.betterenderchests.command.commands.*;
 import me.saif.betterenderchests.converters.ConverterManager;
 import me.saif.betterenderchests.data.*;
 import me.saif.betterenderchests.data.database.MySQLDatabase;
@@ -13,6 +11,7 @@ import me.saif.betterenderchests.data.database.SQLDatabase;
 import me.saif.betterenderchests.data.database.SQLiteDatabase;
 import me.saif.betterenderchests.enderchest.EnderChestClickListener;
 import me.saif.betterenderchests.enderchest.EnderChestManager;
+import me.saif.betterenderchests.enderchest.EnderChestRetrieverClickListener;
 import me.saif.betterenderchests.hooks.ChestSortHook;
 import me.saif.betterenderchests.hooks.InteractiveChatHook;
 import me.saif.betterenderchests.hooks.PAPIEnderChestHook;
@@ -141,6 +140,7 @@ public final class VariableEnderChests extends JavaPlugin {
         this.enderChestManager = new EnderChestManager(this);
         Bukkit.getPluginManager().registerEvents(this.enderChestManager, this);
         Bukkit.getPluginManager().registerEvents(new EnderChestClickListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new EnderChestRetrieverClickListener(this), this);
 
         this.converterManager = new ConverterManager(this);
     }
@@ -151,6 +151,7 @@ public final class VariableEnderChests extends JavaPlugin {
         this.commandManager.registerCommand(new ClearEnderChestCommand(this));
         this.commandManager.registerCommand(new ConversionCommand(this));
         this.commandManager.registerCommand(new EnderChestDebugCommand(this));
+        this.commandManager.registerCommand(new RetrieveEnderContentsCommand(this, "retrieveender", Lists.newArrayList()));
 
         List<String> aliases = this.getConfig().getStringList("open-enderchest-commands");
 

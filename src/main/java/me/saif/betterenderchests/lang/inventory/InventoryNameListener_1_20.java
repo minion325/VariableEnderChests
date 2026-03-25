@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -33,7 +35,11 @@ public class InventoryNameListener_1_20 implements Listener {
 
     @EventHandler
     private void onInvOpen(InventoryOpenEvent event) {
-        if (event.getInventory().getHolder() == null || !(event.getInventory().getHolder() instanceof EnderChest))
+        if (event.getInventory().getHolder() == null)
+            return;
+
+        InventoryHolder holder = event.getInventory().getHolder();
+        if (!(holder instanceof EnderChest) && !(holder instanceof EnderChest.EnderChestRetreiver))
             return;
 
         String originalTitle = event.getView().getOriginalTitle();
@@ -45,7 +51,13 @@ public class InventoryNameListener_1_20 implements Listener {
 
         Locale loc = plugin.getPlayerLocaleFinder().getLocale(((Player) event.getPlayer()));
 
-        String newName = loc.getSingleFormattedMessage(InvMultilangCommons.SIZE_NAME_MAP.get(ownerSizePair.getValue()), InvMultilangCommons.PLAYER_NAME_PLACEHOLDER.getResult(ownerSizePair.getKey()));
+        String newName;
+
+        if (ownerSizePair.getValue() == -1) {
+            newName = loc.getSingleFormattedMessage(InvMultilangCommons.RETRIEVAL_NAME, InvMultilangCommons.PLAYER_NAME_PLACEHOLDER.getResult(ownerSizePair.getKey()));
+        } else {
+            newName = loc.getSingleFormattedMessage(InvMultilangCommons.SIZE_NAME_MAP.get(ownerSizePair.getValue()), InvMultilangCommons.PLAYER_NAME_PLACEHOLDER.getResult(ownerSizePair.getKey()));
+        }
 
         Bukkit.getScheduler().runTask(this.plugin, () -> event.getView().setTitle(newName));
 
@@ -57,7 +69,8 @@ public class InventoryNameListener_1_20 implements Listener {
 
             try {
                 this.titleOverride.invoke(event, this.text.invoke(null, newName));
-            } catch (InvocationTargetException | IllegalAccessException ignored) {}
+            } catch (InvocationTargetException | IllegalAccessException ignored) {
+            }
         }
 
     }

@@ -67,7 +67,14 @@ public class OpenEnderchestPacketModifier_1_19_Below extends OpenEnderchestPacke
 
             Locale loc = locale.getLocale(player);
 
-            String newName = loc.getSingleFormattedMessage(InvMultilangCommons.SIZE_NAME_MAP.get(ownerSizePair.getValue()), InvMultilangCommons.PLAYER_NAME_PLACEHOLDER.getResult(ownerSizePair.getKey()));
+            String newName;
+
+            //it is a retrieval inv
+            if (ownerSizePair.getValue() == -1) {
+                newName = loc.getSingleFormattedMessage(InvMultilangCommons.RETRIEVAL_NAME, InvMultilangCommons.PLAYER_NAME_PLACEHOLDER.getResult(ownerSizePair.getKey()));
+            } else {
+                newName = loc.getSingleFormattedMessage(InvMultilangCommons.SIZE_NAME_MAP.get(ownerSizePair.getValue()), InvMultilangCommons.PLAYER_NAME_PLACEHOLDER.getResult(ownerSizePair.getKey()));
+            }
 
             Object newComp = ChatComponent_static_fromString.invoke(null, ComponentSerializer.toString(TextComponent.fromLegacyText(newName)));
 

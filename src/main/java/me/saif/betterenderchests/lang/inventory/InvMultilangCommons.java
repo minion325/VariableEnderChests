@@ -12,6 +12,7 @@ import java.util.Map;
 public class InvMultilangCommons {
 
     public static final Map<Integer, MessageKey> SIZE_NAME_MAP;
+    public static final MessageKey RETRIEVAL_NAME = MessageKey.RETRIEVAL_NAME;
 
     static {
         Map<Integer, MessageKey> temp = new HashMap<>();
@@ -34,20 +35,28 @@ public class InvMultilangCommons {
     public static Map.Entry<String, Integer> parseInventoryName(String name) {
         String[] strings = name.split(";");
 
-        if (strings.length != 3)
-            return null;
+        if (strings.length == 3) {
+            if (!strings[0].equals(EnderChest.PREFIX))
+                return null;
 
-        if (!strings[0].equals(EnderChest.PREFIX))
-            return null;
+            try {
+                int size = Integer.parseInt(strings[1]);
+                String player = strings[2];
 
-        try {
-            int size = Integer.parseInt(strings[1]);
-            String player = strings[2];
+                return new AbstractMap.SimpleEntry<>(player, size);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        } else if (strings.length == 2) {
+            if (!strings[0].equals(EnderChest.RETRIEVAL_PREFIX))
+                return null;
 
-            return new AbstractMap.SimpleEntry<>(player, size);
-        } catch (NumberFormatException e) {
-            return null;
+            String player = strings[1];
+
+            return new AbstractMap.SimpleEntry<>(player, -1);
         }
+
+        return null;
     }
 
 }

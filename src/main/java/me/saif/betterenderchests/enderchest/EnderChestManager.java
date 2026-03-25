@@ -24,6 +24,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -129,7 +130,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             Set<UUID> toRemove = new HashSet<>();
             for (EnderChest enderChest : this.uuidEnderChestMap.values()) {
                 toSave.put(enderChest.getUUID(), enderChest.snapshot());
-                if (Bukkit.getPlayer(enderChest.getUUID()) == null) {
+                if (Bukkit.getPlayer(enderChest.getUUID()) == null && !enderChest.hasViewers()) {
                     toRemove.add(enderChest.getUUID());
                 }
             }
@@ -193,7 +194,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         Player player = event.getPlayer();
 
         //if world disabled, use vanilla
-        if(this.getPlugin().getDisabledWorlds().contains(player.getWorld().getName()))
+        if (this.getPlugin().getDisabledWorlds().contains(player.getWorld().getName()))
             return;
 
 
@@ -300,17 +301,26 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
     }
 
     public void openEnderChest(EnderChest chest, Player player) {
-        if (Bukkit.getPlayer(chest.getUUID()) != null) {
-            chest.openInventory(player);
-        } else {
-            chest.openInventory(player);
-        }
+        chest.openInventory(player);
     }
 
     public void openEnderChest(Player player, int rows) {
         EnderChest chest = this.getEnderChest(player);
         chest.setRows(rows);
         this.openEnderChest(chest, player);
+    }
+
+    //returns whether there are items and if the inventory was opened.
+    public boolean openRetriever(EnderChest chest, Player player, int rows) {
+        chest.setRows(rows);
+        Inventory inventory = chest.getRetriever().getInventory();
+
+        if (!inventory.isEmpty()) {
+            player.openInventory(inventory);
+            return true;
+        }
+
+        return false;
     }
 
     public void clearEnderChest(EnderChest enderChest) {
