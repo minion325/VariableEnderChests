@@ -30,6 +30,16 @@ configurable:
       - '&cYou do not have permission to view the enderchest of others.'
     world-disabled:
       - '&cThis command is disabled in this world'
+  retrieval-command-messages:
+    no-permission-self:
+      - '&cYou do not have permission to open your retrieval inventory via command.'
+    no-permission-others:
+      - '&cYou do not have permission to view the retrieval inventory of others.'
+    nothing-to-retrieve-self:
+      - '&cYou have no items to retrieve.'
+    nothing-to-retrieve-others:
+      - '&c<player> has no items to retrieve.'
+
   no-rows:
     - '&cYou do not have an enderchest.'
   no-enderchest-found:
@@ -70,9 +80,16 @@ internal:
       - 'Run this command again within <seconds> seconds to confirm'
 
   command:
-    enderchest-console-usage: 'Usage: /enderchest <Player> [(Optional)Other Player] - Opens the enderchest for ''Player''. If ''Other Player'' is specified, The enderchest of ''Other Player'' will be opened for ''Player'''
-    player-needed-online: '<player> must be online to run that command.'
-    console-opened-enderchest: 'Opened <target>''s enderchest for <player>.'
+    enderchest-console-usage:
+      - 'Usage: /enderchest <Player> [(Optional)Other Player] - Opens the enderchest for ''Player''. If ''Other Player'' is specified, The enderchest of ''Other Player'' will be opened for ''Player'''
+    retrieval-console-usage:
+      - 'Usage: /enderchest <Player> [(Optional)Other Player] - Opens the enderchest retriever for ''Player''. If ''Other Player'' is specified, The enderchest retriever of ''Other Player'' will be opened for ''Player'''
+    player-needed-online:
+      - '<player> must be online to run that command.'
+    console-opened-enderchest:
+      - 'Opened <target>''s enderchest for <player>.'
+    console-opened-retriever:
+      - 'Opened <target>''s enderchest retriever for <player>.'
     command-player-only:
       - 'You must be a player to use this command'
 

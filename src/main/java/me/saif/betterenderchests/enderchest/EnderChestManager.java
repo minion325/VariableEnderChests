@@ -24,6 +24,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -193,7 +194,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         Player player = event.getPlayer();
 
         //if world disabled, use vanilla
-        if(this.getPlugin().getDisabledWorlds().contains(player.getWorld().getName()))
+        if (this.getPlugin().getDisabledWorlds().contains(player.getWorld().getName()))
             return;
 
 
@@ -309,9 +310,17 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         this.openEnderChest(chest, player);
     }
 
-    public void openRetriever(EnderChest chest, Player player, int rows) {
+    //returns whether there are items and if the inventory was opened.
+    public boolean openRetriever(EnderChest chest, Player player, int rows) {
         chest.setRows(rows);
-        player.openInventory(chest.getRetriever().getInventory());
+        Inventory inventory = chest.getRetriever().getInventory();
+
+        if (!inventory.isEmpty()) {
+            player.openInventory(inventory);
+            return true;
+        }
+
+        return false;
     }
 
     public void clearEnderChest(EnderChest enderChest) {

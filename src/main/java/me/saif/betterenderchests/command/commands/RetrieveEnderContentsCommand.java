@@ -11,6 +11,7 @@ import me.saif.betterenderchests.lang.placeholder.PlaceholderResult;
 import me.saif.betterenderchests.utils.Callback;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -35,13 +36,26 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
 
     @Override
     public void onCommand(CommandSender sender, String alias, String[] args) {
-        if (!(sender instanceof Player)) {
-            messenger.sendMessage(sender, MessageKey.COMMAND_PLAYER_ONLY);
+        if (!(sender instanceof Player) && sender instanceof ConsoleCommandSender) {
+            /*messenger.sendMessage(sender, MessageKey.COMMAND_PLAYER_ONLY);
+            return;*/
+            if (args.length == 0) {
+                messenger.sendMessage(sender, MessageKey.ENDERCHEST_CONSOLE_USAGE);
+                return;
+            }
+
+            Player target = Bukkit.getPlayerExact(args[0]);
+
+            if (target == null) {
+                messenger.sendMessage(sender, MessageKey.PLAYER_NEEDED_ONLINE, PlaceholderResult.of("<player>", args[0]));
+                return;
+            }
+
+            openEchestViaConsole(args.length > 1 ? args[1] : target.getName(), target);
             return;
         }
 
         Player player = ((Player) sender);
-
         openEchest(player, args.length == 0 ? null : args[0]);
     }
 
@@ -53,15 +67,20 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
     }
 
     public void openEchest(Player player, String otherPlayer) {
+        //check if world is disabled before allowing the command to run
+        if (this.plugin.getDisabledWorlds().contains(player.getWorld().getName())) {
+            messenger.sendMessage(player, MessageKey.EC_COMMAND_WORLD_DISABLED);
+            return;
+        }
+
         if (otherPlayer == null) {
             if (!player.hasPermission(PERMISSION_SELF)) {
-                messenger.sendMessage(player, MessageKey.EC_COMMAND_NO_PERMISSION_SELF);
+                messenger.sendMessage(player, MessageKey.RETRIEVAL_COMMAND_NO_PERMISSION_SELF);
                 return;
             }
             int rows = this.ecm.getNumRows(player);
             if (rows == 6) {
-                //TODO
-                messenger.sendMessage(player, "Nothing to retrieve please ask the dev to make this configurable");
+                messenger.sendMessage(player, MessageKey.RETRIEVAL_COMMAND_NOTHING_TO_RETRIEVE_SELF);
                 return;
             }
 
@@ -72,12 +91,15 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
                 return;
             }
             //open the retrieval inv
-            this.ecm.openRetriever(enderChest, player, rows);
+            boolean opened = this.ecm.openRetriever(enderChest, player, rows);
+
+            if (!opened)
+                messenger.sendMessage(player, MessageKey.RETRIEVAL_COMMAND_NOTHING_TO_RETRIEVE_SELF);
             return;
         }
 
         if (!player.hasPermission(PERMISSION_OTHERS)) {
-            messenger.sendMessage(player, MessageKey.EC_COMMAND_NO_PERMISSION_OTHERS);
+            messenger.sendMessage(player, MessageKey.RETRIEVAL_COMMAND_NO_PERMISSION_OTHERS);
             return;
         }
         if (otherPlayer.length() < 3 || otherPlayer.length() > 16) {
@@ -95,12 +117,14 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
 
             int rows = this.ecm.getNumRows(other);
             if (rows == 6) {
-                //TODO
-                messenger.sendMessage(player, "Nothing to retrieve for <player> please ask the dev to make this configurable".replace("<player>", otherPlayer));
+                messenger.sendMessage(player, MessageKey.RETRIEVAL_COMMAND_NOTHING_TO_RETRIEVE_OTHERS, playerPlaceholder.getResult(other));
                 return;
             }
-            //open the retrieval inv
-            this.ecm.openRetriever(enderChest, player, rows);
+
+            boolean opened = this.ecm.openRetriever(enderChest, player, rows);
+
+            if (!opened)
+                messenger.sendMessage(player, MessageKey.RETRIEVAL_COMMAND_NOTHING_TO_RETRIEVE_OTHERS, playerPlaceholder.getResult(other));
             return;
         }
 
@@ -112,9 +136,76 @@ public class RetrieveEnderContentsCommand extends PluginCommand {
                 return;
             }
 
-            //open the retreival inv
-            this.ecm.openRetriever(enderChest, player, enderChest.getLastNumRows());
+            int rows = enderChest.getLastNumRows();
+            if (rows == 6) {
+                messenger.sendMessage(player, MessageKey.RETRIEVAL_COMMAND_NOTHING_TO_RETRIEVE_OTHERS, PlaceholderResult.of("<player>", enderChest.getName()));
+                return;
+            }
+
+            boolean opened = this.ecm.openRetriever(enderChest, player, rows);
+
+            if (!opened)
+                messenger.sendMessage(player, MessageKey.RETRIEVAL_COMMAND_NOTHING_TO_RETRIEVE_OTHERS, PlaceholderResult.of("<player>", enderChest.getName()));
         });
+    }
+
+    public void openEchestViaConsole(String chestPlayer, Player toOpenFor) {
+        CommandSender console = Bukkit.getConsoleSender();
+        //check if world is disabled before allowing the command to run
+        if (this.plugin.getDisabledWorlds().contains(toOpenFor.getWorld().getName())) {
+            messenger.sendMessage(toOpenFor, MessageKey.EC_COMMAND_WORLD_DISABLED);
+            return;
+        }
+
+        if (chestPlayer.length() < 3 || chestPlayer.length() > 16) {
+            messenger.sendMessage(console, MessageKey.NO_ENDERCHEST_OTHER);
+        }
+
+        if (Bukkit.getPlayerExact(chestPlayer) != null) {
+            Player other = Bukkit.getPlayerExact(chestPlayer);
+            EnderChest enderChest = this.ecm.getEnderChest(other);
+
+            if (enderChest == null) {
+                this.plugin.getLogger().severe("Enderchest for online player " + other.getName() + " could not be found.");
+                return;
+            }
+
+            int rows = this.ecm.getNumRows(other);
+            if (rows == 6) {
+                messenger.sendMessage(console, MessageKey.RETRIEVAL_COMMAND_NO_PERMISSION_OTHERS, playerPlaceholder.getResult(other));
+                return;
+            }
+            boolean opened = this.ecm.openRetriever(enderChest, toOpenFor, rows);
+
+            if (!opened)
+                messenger.sendMessage(console, MessageKey.RETRIEVAL_COMMAND_NOTHING_TO_RETRIEVE_OTHERS, PlaceholderResult.of("<player>", enderChest.getName()));
+            else
+                messenger.sendMessage(console, MessageKey.CONSOLE_OPENED_RETRIEVER, playerPlaceholder.getResult(toOpenFor), PlaceholderResult.of("<target>", enderChest.getName()));
+            return;
+        }
+
+        Callback<EnderChest> callback = this.ecm.getEnderChest(chestPlayer);
+        callback.addResultListener(() -> {
+            EnderChest enderChest = callback.getResult();
+            if (enderChest == null) {
+                messenger.sendMessage(console, MessageKey.NO_ENDERCHEST_OTHER, PlaceholderResult.of("<player>", chestPlayer));
+                return;
+            }
+
+            int rows = enderChest.getLastNumRows();
+            if (rows == 6) {
+                messenger.sendMessage(console, MessageKey.RETRIEVAL_COMMAND_NOTHING_TO_RETRIEVE_OTHERS, PlaceholderResult.of("<player>", enderChest.getName()));
+                return;
+            }
+
+            boolean opened = this.ecm.openRetriever(enderChest, toOpenFor, rows);
+
+            if (!opened)
+                messenger.sendMessage(console, MessageKey.RETRIEVAL_COMMAND_NOTHING_TO_RETRIEVE_OTHERS, PlaceholderResult.of("<player>", enderChest.getName()));
+            else
+                messenger.sendMessage(console, MessageKey.CONSOLE_OPENED_RETRIEVER, playerPlaceholder.getResult(toOpenFor), PlaceholderResult.of("<target>", enderChest.getName()));
+        });
+
     }
 
 }

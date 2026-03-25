@@ -8,6 +8,10 @@ public enum MessageKey {
 
     EC_COMMAND_NO_PERMISSION_SELF("configurable.enderchest-command-messages.no-permission-self", "&cYou do not have permission to open your enderchest via command."),
     EC_COMMAND_NO_PERMISSION_OTHERS("configurable.enderchest-command-messages.no-permission-others", "&cYou do not have permission to view the enderchest of others."),
+    RETRIEVAL_COMMAND_NO_PERMISSION_SELF("configurable.retrieval-command-messages.no-permission-self", "&cYou do not have permission to open your retrieval inventory via command."),
+    RETRIEVAL_COMMAND_NO_PERMISSION_OTHERS("configurable.retrieval-command-messages.no-permission-others", "&cYou do not have permission to view the retrieval inventory of others."),
+    RETRIEVAL_COMMAND_NOTHING_TO_RETRIEVE_SELF("configurable.retrieval-command-messages.nothing-to-retrieve-self", "&cYou have no items to retrieve."),
+    RETRIEVAL_COMMAND_NOTHING_TO_RETRIEVE_OTHERS("configurable.retrieval-command-messages.nothing-to-retrieve-others", "&c<player> has no items to retrieve."),
     EC_COMMAND_WORLD_DISABLED("configurable.enderchest-command-messages.world-disabled", "&cThis command is disabled in this world"),
     COMMAND_CONSOLE_ONLY("configurable.command-console-only", "&cYou can only use this command from the console."),
     COMMAND_PLAYER_ONLY("internal.command.command-player-only", "You must be a player to use this command"),
@@ -22,7 +26,7 @@ public enum MessageKey {
     ENDERCHEST_4_ROWS("configurable.enderchest-names.4-rows","&7<player>'s Enderchest"),
     ENDERCHEST_5_ROWS("configurable.enderchest-names.5-rows","&7<player>'s Enderchest"),
     ENDERCHEST_6_ROWS("configurable.enderchest-names.6-rows","&7<player>'s Enderchest"),
-    RETRIEVAL_NAME("configurable.enderchest-names.retrieval", "&7<player>'s Lost Enderchest Items"),
+    RETRIEVAL_NAME("configurable.enderchest-names.retrieval", "&7<player>'s Lost EnderchestItems"),
 
     ALL_PLAYERS_OFFLINE("internal.converter.all-players-offline", "All players must be offline to use this command"),
     NOT_VALID_CONVERTER("internal.converter.not-valid-conveter", "That is not a valid converter."),
@@ -41,8 +45,10 @@ public enum MessageKey {
 
     BLACKLIST_INVALID_ITEM("internal.blacklist.invalid-type", "Blacklisted item by the name of <type> found. This is not a valid minecraft material. Ignoring..."),
     ENDERCHEST_CONSOLE_USAGE("internal.command.enderchest-console-usage", "Usage: /enderchest <Player> [(Optional)Other Player] - Opens the enderchest for 'Player'. If 'Other Player' is specified, The enderchest of 'Other Player' will be opened for 'Player'"),
+    RETRIEVAL_CONSOLE_USAGE("internal.command.retrieval-console-usage", "Usage: /enderchest <Player> [(Optional)Other Player] - Opens the enderchest retriever for 'Player'. If 'Other Player' is specified, The enderchest retriever of 'Other Player' will be opened for 'Player'"),
     PLAYER_NEEDED_ONLINE("internal.command.player-needed-online", "<player> must be online to run that command."),
-    CONSOLE_OPENED_ENDERCHEST("internal.command.console-opened-enderchest", "Opened <target>'s enderchest for <player>");
+    CONSOLE_OPENED_ENDERCHEST("internal.command.console-opened-enderchest", "Opened <target>'s enderchest for <player>"),
+    CONSOLE_OPENED_RETRIEVER("internal.command.console-opened-retriever", "Opened <target>'s enderchest retriever for <player>");
 
     private final String path;
     private final String[] def;
