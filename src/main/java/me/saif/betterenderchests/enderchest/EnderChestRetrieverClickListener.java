@@ -4,6 +4,7 @@ import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.command.commands.RetrieveEnderContentsCommand;
 import me.saif.betterenderchests.lang.MessageKey;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
@@ -26,33 +27,28 @@ public class EnderChestRetrieverClickListener implements Listener {
             return;
 
         onInvInteract(event);
-        /*
+
         if (event.isCancelled())
             return;
 
-        if (event.getCursor() != null && event.getRawSlot() < event.getWhoClicked().getOpenInventory().getTopInventory().getSize() && plugin.getEnderChestManager().getBlacklist().contains(event.getCursor().getType())) {
+        if (event.getCursor() != null && event.getCursor().getType() != Material.AIR && event.getRawSlot() < event.getWhoClicked().getOpenInventory().getTopInventory().getSize()) {
             event.setCancelled(true);
-            plugin.getMessenger().sendMessage(event.getWhoClicked(), MessageKey.BLACKLIST_MESSAGE);
         }
         else if (event.getClick().isShiftClick() && event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && event.getRawSlot() >= event.getWhoClicked().getOpenInventory().getTopInventory().getSize()) {
-            if (event.getCurrentItem() != null && plugin.getEnderChestManager().getBlacklist().contains(event.getCurrentItem().getType())) {
+            if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
                 event.setCancelled(true);
-                plugin.getMessenger().sendMessage(event.getWhoClicked(), MessageKey.BLACKLIST_MESSAGE);
             }
         } else if (event.getClick() == ClickType.NUMBER_KEY && event.getRawSlot() < event.getWhoClicked().getOpenInventory().getTopInventory().getSize()) {
             ItemStack hotbarItem = event.getWhoClicked().getInventory().getContents()[event.getHotbarButton()];
-            if (hotbarItem != null && plugin.getEnderChestManager().getBlacklist().contains(hotbarItem.getType())) {
+            if (hotbarItem != null && hotbarItem.getType() != Material.AIR) {
                 event.setCancelled(true);
-                plugin.getMessenger().sendMessage(event.getWhoClicked(), MessageKey.BLACKLIST_MESSAGE);
             }
         } else if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_16_R3)) {
             ItemStack offHand = event.getWhoClicked().getInventory().getItemInOffHand();
-            if (event.getClick() == ClickType.SWAP_OFFHAND && offHand != null && plugin.getEnderChestManager().getBlacklist().contains(offHand.getType())) {
+            if (event.getClick() == ClickType.SWAP_OFFHAND && offHand != null && offHand.getType() != Material.AIR) {
                 event.setCancelled(true);
-                plugin.getMessenger().sendMessage(event.getWhoClicked(), MessageKey.BLACKLIST_MESSAGE);
             }
         }
-        */
     }
 
     @EventHandler
@@ -65,9 +61,9 @@ public class EnderChestRetrieverClickListener implements Listener {
         if (event.isCancelled())
             return;
 
-        /*if (event.getOldCursor() != null && event.getRawSlots().stream().anyMatch(integer -> integer < event.getWhoClicked().getOpenInventory().getTopInventory().getSize()) && plugin.getEnderChestManager().getBlacklist().contains(event.getOldCursor().getType())) {
+        if (event.getOldCursor() != null && event.getOldCursor().getType() != Material.AIR && event.getRawSlots().stream().anyMatch(integer -> integer < event.getWhoClicked().getOpenInventory().getTopInventory().getSize())) {
             event.setCancelled(true);
-        }*/
+        }
 
     }
 

@@ -4,6 +4,7 @@ import de.tr7zw.changeme.nbtapi.*;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.changeme.nbtapi.utils.DataFixerUtil;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
+import net.minecraft.network.chat.contents.NbtContents;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
@@ -94,10 +95,10 @@ public class ItemStackSerializer {
                     return rebuild;
                 } else {
                     NBTCompoundList list = comp.getCompoundList("items");
-                    Iterator var3 = list.iterator();
+                    Iterator<ReadWriteNBT> var3 = list.iterator();
 
                     while(var3.hasNext()) {
-                        ReadWriteNBT lcomp = (ReadWriteNBT)var3.next();
+                        ReadWriteNBT lcomp = var3.next();
                         if (lcomp instanceof NBTCompound) {
                             int slot = lcomp.getInteger("Slot");
 
@@ -121,7 +122,7 @@ public class ItemStackSerializer {
     }
 
     public static ItemStack[] deserializeJson(String str) {
-        ItemStack[] stacks = NBTItem.convertNBTtoItemArray((NBTCompound) de.tr7zw.changeme.nbtapi.NBT.parseNBT(str));
+        ItemStack[] stacks = NBT.itemStackArrayFromNBT(NBT.parseNBT(str));
 
         if (stacks == null)
             return new ItemStack[0];

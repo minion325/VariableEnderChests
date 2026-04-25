@@ -27,6 +27,11 @@ public class PAPIEnderChestHook extends PlaceholderExpansion {
     }
 
     @Override
+    public boolean persist() {
+        return true;
+    }
+
+    @Override
     public @NotNull String getVersion() {
         return plugin.getDescription().getVersion();
     }
