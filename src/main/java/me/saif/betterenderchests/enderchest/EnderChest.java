@@ -35,7 +35,7 @@ public class EnderChest implements InventoryHolder {
     private final String name;
     private ItemStack[] contents;
     private Inventory inventory;
-    private final EnderChestRetreiver retrivalHolder = new EnderChestRetreiver();
+    private final EnderChestRetreiver retrivalHolder = new EnderChestRetreiver(this);
     private Inventory retrievalInventory;
     private final Map<Integer, String> inventoryNames = new HashMap<>();
     private final String retrievalName;
@@ -191,8 +191,14 @@ public class EnderChest implements InventoryHolder {
     public static class EnderChestRetreiver implements InventoryHolder {
 
         private Inventory inventory;
+        private final EnderChest owner;
 
-        private EnderChestRetreiver() {
+        private EnderChestRetreiver(EnderChest owner) {
+            this.owner = owner;
+        }
+
+        public EnderChest getOwner() {
+            return owner;
         }
 
         @NotNull

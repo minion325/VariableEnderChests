@@ -70,7 +70,7 @@ public class EnderChestRetrieverClickListener implements Listener {
     private void onInvInteract(InventoryInteractEvent event) {
         Inventory inventory = event.getWhoClicked().getOpenInventory().getTopInventory();
 
-        if (!event.getWhoClicked().hasPermission(PERMISSION_TO_EDIT) && !event.getWhoClicked().getUniqueId().equals(((EnderChest) inventory.getHolder()).getUUID()))
+        if (!event.getWhoClicked().hasPermission(PERMISSION_TO_EDIT) && !event.getWhoClicked().getUniqueId().equals(((EnderChest.EnderChestRetreiver) inventory.getHolder()).getOwner().getUUID()))
             event.setCancelled(true);
     }
 
