@@ -7,6 +7,7 @@ import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.lang.MessageKey;
 import me.saif.betterenderchests.utils.Callback;
 import me.saif.betterenderchests.utils.CaselessString;
+import me.saif.betterenderchests.utils.FoliaScheduler;
 import me.saif.betterenderchests.utils.Manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -88,7 +89,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         }
 
         //load data for already online players eg. if plugin is reloaded.
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        FoliaScheduler.runGlobal(plugin, () -> {
 
 
             Set<UUID> toGet = Bukkit.getOnlinePlayers().stream().map((Function<Player, UUID>) Entity::getUniqueId).collect(Collectors.toSet());
@@ -114,18 +115,21 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
                 if (this.getPlugin().getDisabledWorlds().contains(player.getWorld().getName()))
                     continue;
 
-                if (player.getOpenInventory().getTopInventory().equals(player.getEnderChest())) {
-                    player.closeInventory();
-                    int rows = this.getNumRows(player);
-                    if (rows == 0) {
-                        this.getPlugin().getMessenger().sendMessage(player, MessageKey.NO_ENDERCHEST_SELF);
+                final Player p = player;
+                FoliaScheduler.runEntity(this.getPlugin(), p, () -> {
+                    if (p.getOpenInventory().getTopInventory().equals(p.getEnderChest())) {
+                        p.closeInventory();
+                        int rows = this.getNumRows(p);
+                        if (rows == 0) {
+                            this.getPlugin().getMessenger().sendMessage(p, MessageKey.NO_ENDERCHEST_SELF);
+                        }
+                        this.openEnderChest(this.getEnderChest(p), p, this.getNumRows(p));
                     }
-                    this.openEnderChest(this.getEnderChest(player), player, this.getNumRows(player));
-                }
+                }, null);
             }
         });
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this.getPlugin(), () -> {
+        FoliaScheduler.runGlobalTimer(this.getPlugin(), () -> {
             Map<UUID, EnderChestSnapshot> toSave = new HashMap<>();
             Set<UUID> toRemove = new HashSet<>();
             for (EnderChest enderChest : this.uuidEnderChestMap.values()) {
@@ -141,7 +145,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
                 this.getPlugin().getLogger().info("Saving data for " + enderChest.getName());
             }
 
-            Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> this.dataManager.saveEnderChestMultiple(toSave));
+            FoliaScheduler.runAsync(this.getPlugin(), () -> this.dataManager.saveEnderChestMultiple(toSave));
 
             for (CaselessString minecraftName : this.nameCallbackMap.keySet()) {
                 Player player = Bukkit.getPlayerExact(minecraftName.getOriginal());
@@ -172,7 +176,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
             return;
         }
 
-        Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
+        FoliaScheduler.runAsync(this.getPlugin(), () -> {
             dataManager.saveNameAndUUID(name, uuid);
             EnderChest enderChest = loadData(name, uuid);
 
@@ -182,7 +186,7 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
                 this.getPlugin().getLogger().info("Loaded enderchest for " + name);
             }
 
-            Bukkit.getScheduler().runTask(getPlugin(), () -> uuidEnderChestMap.put(uuid, enderChest == null ? createNew(event.getPlayer()) : enderChest));
+            FoliaScheduler.runGlobal(getPlugin(), () -> uuidEnderChestMap.put(uuid, enderChest == null ? createNew(event.getPlayer()) : enderChest));
         });
     }
 
@@ -351,11 +355,11 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         Callback<EnderChest> callback = new Callback<>();
         this.nameCallbackMap.put(mcName, callback);
 
-        Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
+        FoliaScheduler.runAsync(this.getPlugin(), () -> {
             EnderChestSnapshot snapshot = this.dataManager.loadEnderChest(name);
 
             EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents(), snapshot.getRows());
-            Bukkit.getScheduler().runTask(this.getPlugin(), () -> {
+            FoliaScheduler.runGlobal(this.getPlugin(), () -> {
                 this.nameCallbackMap.remove(mcName);
                 if (enderChest != null) {
                     this.uuidEnderChestMap.put(snapshot.getUuid(), enderChest);
@@ -378,11 +382,11 @@ public class EnderChestManager extends Manager<VariableEnderChests> implements L
         Callback<EnderChest> callback = new Callback<>();
         this.uuidCallbackMap.put(uuid, callback);
 
-        Bukkit.getScheduler().runTaskAsynchronously(this.getPlugin(), () -> {
+        FoliaScheduler.runAsync(this.getPlugin(), () -> {
             EnderChestSnapshot snapshot = this.dataManager.loadEnderChest(uuid);
 
             EnderChest enderChest = snapshot == null ? null : new EnderChest(snapshot.getUuid(), snapshot.getName(), snapshot.getContents(), snapshot.getRows());
-            Bukkit.getScheduler().runTask(this.getPlugin(), () -> {
+            FoliaScheduler.runGlobal(this.getPlugin(), () -> {
                 this.uuidCallbackMap.remove(uuid);
                 this.uuidEnderChestMap.put(uuid, enderChest);
                 callback.setResult(enderChest);
