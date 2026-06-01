@@ -6,6 +6,7 @@ import me.saif.betterenderchests.converters.Converter;
 import me.saif.betterenderchests.lang.MessageKey;
 import me.saif.betterenderchests.lang.Messenger;
 import me.saif.betterenderchests.lang.placeholder.Placeholder;
+import me.saif.betterenderchests.utils.FoliaScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -71,7 +72,7 @@ public class ConversionCommand extends PluginCommand {
 
         if (this.confirmMap.get(sender) != converter) {
             this.confirmMap.put(sender, converter);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> confirmMap.remove(sender), 100L);
+            FoliaScheduler.runGlobalLater(plugin, () -> confirmMap.remove(sender), 100L);
             messenger.sendMessage(sender, MessageKey.CONFIRM_CONVERTER);
             return;
         }

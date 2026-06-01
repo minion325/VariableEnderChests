@@ -3,6 +3,7 @@ package me.saif.betterenderchests.lang.inventory;
 import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.enderchest.EnderChest;
 import me.saif.betterenderchests.lang.locale.Locale;
+import me.saif.betterenderchests.utils.FoliaScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -59,7 +60,7 @@ public class InventoryNameListener_1_20 implements Listener {
             newName = loc.getSingleFormattedMessage(InvMultilangCommons.SIZE_NAME_MAP.get(ownerSizePair.getValue()), InvMultilangCommons.PLAYER_NAME_PLACEHOLDER.getResult(ownerSizePair.getKey()));
         }
 
-        Bukkit.getScheduler().runTask(this.plugin, () -> event.getView().setTitle(newName));
+        FoliaScheduler.runEntity(this.plugin, event.getPlayer(), () -> event.getView().setTitle(newName), null);
 
         //This is a 1.20+ paper feature to set the inv name via the event
         //we can then update the actual inv name a tick later

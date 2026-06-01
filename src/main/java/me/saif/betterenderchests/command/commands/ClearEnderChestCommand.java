@@ -9,6 +9,7 @@ import me.saif.betterenderchests.lang.Messenger;
 import me.saif.betterenderchests.lang.placeholder.Placeholder;
 import me.saif.betterenderchests.lang.placeholder.PlaceholderResult;
 import me.saif.betterenderchests.utils.Callback;
+import me.saif.betterenderchests.utils.FoliaScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -93,7 +94,7 @@ public class ClearEnderChestCommand extends PluginCommand {
         }
         this.toClear.put(senderUUID, enderChest);
         messenger.sendMessage(sender, MessageKey.CONFIRM_CLEAR_ENDERCHEST, enderChestPlaceholder.getResult(enderChest));
-        Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> this.toClear.remove(senderUUID), 100L);
+        FoliaScheduler.runGlobalLater(this.plugin, () -> this.toClear.remove(senderUUID), 100L);
     }
 
 }

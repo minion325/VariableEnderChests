@@ -5,6 +5,7 @@ import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import me.saif.betterenderchests.VariableEnderChests;
 import me.saif.betterenderchests.data.DataManager;
 import me.saif.betterenderchests.enderchest.EnderChestSnapshot;
+import me.saif.betterenderchests.utils.FoliaScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
@@ -59,7 +60,7 @@ public class VanillaConverter extends Converter {
         this.plugin.getLogger().info("Migration Complete!");
         this.plugin.getLogger().info("Please restart your server!");
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> Bukkit.getPluginManager().disablePlugin(this.plugin));
+        FoliaScheduler.runGlobalLater(this.plugin, () -> Bukkit.getPluginManager().disablePlugin(this.plugin), 1L);
         return true;
     }
 
